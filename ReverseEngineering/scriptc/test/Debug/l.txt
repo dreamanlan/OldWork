@@ -1,0 +1,87 @@
+function std::test,std::TestObj,std::out,std::testquery;
+extern "user32.dll" 4 MsgBox(4,4,4,4) MessageBoxW;
+extern "kernel32.dll" 4 SleepEx(4,4);
+extern "kernel32.dll" 4 GetLastError();
+extern "user32.dll" 4 SetTimer(4,4,4,4);
+extern "callback" 4 TimerProc(4,4,4,4);
+include "l2.txt";
+function main
+{
+	i=345;
+	t=activex("WScript.Shell");
+	t.Popup("test");
+	t.Popup(t.CurrentDirectory);
+
+	lib::test("name arg");	
+
+	MsgBox(0,"test","msgbox",1);
+	msg(std::test(5));
+	o=std::TestObj();
+	o.ttt();
+	v=vector(7,6,5,4);
+	v.push(1);
+	v.push(2);
+	v[2]=3;
+	v.insert(3,0);	
+	msg(v.toString(";"),v.length);
+	
+	t=std::testquery(0);
+	d=deque();
+	d.concatVariant(t);
+	msg(d.toString("->"),d.length);
+	
+	objs=oqlclass("test2",3,1,4,2,5);
+	defquery(0,select test from test order by distance(test,0,10,0) min);
+	tt=execquery(0,1);
+	msg(tt);
+	
+	t=oqlclass("test3");	
+	t.clear();
+	t.push(vector(2,6,7));
+	t.push(vector(2,3));
+	t.push(vector(1));
+	t.push(vector(2,3,5,9,8));
+	defquery(2,select test3 from test3 order by test3.length min);
+	tt=vector();
+	tt.concatVariant(execquery(2,0));
+	r="$";
+	for(i=0;i<tt.length;i++)
+	{
+		r+="->"+tt[i].toString(",");
+	}
+	msg(r);
+}
+namespace std
+{
+	var count;
+	function TestObj
+	{
+		timerCount=0;
+		o=object();
+		o.t1=10;
+		o.t2=11;
+		o.t3=12;
+		o.ttt=out;
+		return o;
+	}
+	function out()
+	{
+		msg(this.t1 * this.t2 * this.t3);
+	}
+	function test
+	{
+		t=?0;
+		count++;
+		if(t==1)
+			return 1;
+		else
+			return t*test(t-1);
+	}
+	function testquery(namearg)
+	{		
+		objs=oqlclass("test",3,1,4,2,5);
+		local=6;
+		defquery(0,select test from test where test>namearg && test<local order by distance(test,0,10,0) min);
+		return execquery(0,5);
+	}
+}

@@ -1,0 +1,48 @@
+<VisualStudioProject>
+    <CSHARP LastOpenVersion = "7.10.3077" >
+        <Build>
+            <Settings ReferencePath = "D:\test\DotNet\HtmlEditor\Dreaman.Library.HtmlEditor\bin\Release\;D:\test\DotNet\HtmlEditor\Dreaman.Library.HtmlEditor\bin\Debug\;D:\hiss_flood\HtmlEditor\RichWay.Library.HtmlEditor\bin\Release\;D:\hiss_flood\HtmlEditor\RichWay.Library.HtmlEditor\bin\Debug\;D:\hiss_flood\DataAccess\RichWay\bin\Release\;D:\hiss_flood\huairou\bin\;D:\test\DotNet\DataAccess\Dreaman.data\bin\Release\;C:\Program Files\NUnit 2.2\bin\;E:\test\DotNet\DataAccess\Dreaman.data\bin\Release\;E:\test\DotNet\HtmlEditor\Dreaman.Library.HtmlEditor\bin\Release\;C:\Program Files\NUnit 2.2.8\bin\" >
+                <Config
+                    Name = "Debug"
+                    EnableASPDebugging = "false"
+                    EnableASPXDebugging = "false"
+                    EnableUnmanagedDebugging = "false"
+                    EnableSQLServerDebugging = "false"
+                    RemoteDebugEnabled = "false"
+                    RemoteDebugMachine = ""
+                    StartAction = "URL"
+                    StartArguments = ""
+                    StartPage = ""
+                    StartProgram = ""
+                    StartURL = "http://localhost/huairou/test/BatchEdit.aspx"
+                    StartWorkingDirectory = ""
+                    StartWithIE = "true"
+                />
+                <Config
+                    Name = "Release"
+                    EnableASPDebugging = "false"
+                    EnableASPXDebugging = "false"
+                    EnableUnmanagedDebugging = "false"
+                    EnableSQLServerDebugging = "false"
+                    RemoteDebugEnabled = "false"
+                    RemoteDebugMachine = ""
+                    StartAction = "Project"
+                    StartArguments = ""
+                    StartPage = ""
+                    StartProgram = ""
+                    StartURL = ""
+                    StartWorkingDirectory = ""
+                    StartWithIE = "true"
+                />
+            </Settings>
+        </Build>
+        <OtherProjectSettings
+            CopyProjectDestinationFolder = ""
+            CopyProjectUncPath = ""
+            CopyProjectOption = "0"
+            ProjectView = "ShowAllFiles"
+            ProjectTrust = "0"
+        />
+    </CSHARP>
+</VisualStudioProject>
+

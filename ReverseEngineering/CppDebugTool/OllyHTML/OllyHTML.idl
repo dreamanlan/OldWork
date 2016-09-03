@@ -1,0 +1,18 @@
+// OllyHTML.idl : OllyHTML 的 IDL 源
+//
+
+// 此文件将由 MIDL 工具处理以
+// 产生类型库(OllyHTML.tlb)和封送处理代码。
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+[
+	uuid(76DFB425-1845-4BD2-AC9D-625F1709480E),
+	version(1.0),
+	helpstring("OllyHTML 1.0 类型库")
+]
+library OllyHTMLLib
+{
+	importlib("stdole2.tlb");
+};

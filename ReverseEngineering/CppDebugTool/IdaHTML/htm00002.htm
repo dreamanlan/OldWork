@@ -1,0 +1,73 @@
+<html>
+	<head>
+		<title>即时编写与执行脚本</title>
+		<script src="res://IdaHTML.plw/const.js"></script>
+	</head>
+	<body>
+		<table style="font-size:14px;width:100%;height:100%;border-collapse:collapse" cellspacing="0" cellpadding="0" align="center">
+			<tr>
+				<td>
+					<textarea id="resultArea" style="width:100%;height:100%;" rows="10" ondblclick="gotoAddr()" WRAP="off"></textarea>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<div id="scpArea" style="width:100%;height:100%;"></div>
+				</td>
+			</tr>
+			<tr style="height:24px">
+				<td align="center">
+					<input type="button" value="装入" onclick="loadScp()">
+					<input type="button" value="保存" onclick="saveScp()">
+					<input type="button" value="运行" onclick="eval(scpEditor.Text)">
+					<input type="button" value="调试" onclick="doDebug()">
+				</td>
+			</tr>			
+		</table>
+		<script>
+		    //<!--
+		    var scpEditor = null;
+		    function window.onload() {
+		        try {
+		            if (window.external.ControlNumber <= 0) {
+		                scpEditor = window.external.CreateScriptEditor(1, "scpArea");
+		            }
+		            else {
+		                scpEditor = window.external.GetControl(0);
+		                scpEditor.Show();
+		            }
+		            scpEditor.Text = "//<script>\r\n//在此写您的脚本\r\n//</" + "script>";
+		        }
+		        catch (eee) {
+		            alert("本脚本使用编辑器控件，0.5.0.3版本之后的插件才有此功能！");
+		        }
+		    }
+		    function window.onunload() {
+		        window.external.ClearControls();
+		        scpEditor.Hide();
+		    }
+		    function gotoAddr() {
+		        var txtRange = document.selection.createRange();
+		        var val = parseInt(txtRange.text, 16);
+		        if (val > 0x01000) {
+		        }
+		    }
+		    function loadScp() {
+		        var r = app.IdcApi.AskFile(0, ".js", "请指定要装入的javascript脚本文件");
+		        if (r) {
+		            scpEditor.Text = window.external.Shell.ReadTxtFile(r);
+		        }
+		    }
+		    function saveScp() {
+		        var r = app.IdcApi.AskFile(1, "untitled.js", "请指定要保存的javascript脚本文件");
+		        if (r) {
+		            window.external.Shell.WriteTxtFile(r, "Ascii", scpEditor.Text);
+		        }
+		    }
+		    function doDebug() {
+		        eval("debugger;\r\n" + scpEditor.Text);
+		    }
+		    //-->
+		</script>
+	</body>
+</html>

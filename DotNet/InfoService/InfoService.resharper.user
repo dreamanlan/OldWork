@@ -1,0 +1,49 @@
+<Configuration>
+  <CompletionStatisticsManager>
+    <ItemStatistics item="Qualified:System.Data.IDataReader">
+      <Item value="Close" priority="0" />
+    </ItemStatistics>
+  </CompletionStatisticsManager>
+  <EditorManager>
+    <RecentFiles>
+      <File id="752470EA-E6E7-44A4-B66E-3EE99D5BD30B/d:Edit/f:AutoDataTable.cs" caret="53867" visual-x="0" visual-y="16614" />
+      <File id="752470EA-E6E7-44A4-B66E-3EE99D5BD30B/d:Edit/f:BatchEdit.cs" caret="6397" visual-x="0" visual-y="2236" />
+      <File id="752470EA-E6E7-44A4-B66E-3EE99D5BD30B/d:Edit/f:FieldDisplay.cs" caret="0" visual-x="0" visual-y="0" />
+      <File id="752470EA-E6E7-44A4-B66E-3EE99D5BD30B/d:Edit/f:GuideInfo.cs" caret="143" visual-x="0" visual-y="0" />
+      <File id="752470EA-E6E7-44A4-B66E-3EE99D5BD30B/d:Edit/f:InputControl.cs" caret="20158" visual-x="0" visual-y="10595" />
+      <File id="752470EA-E6E7-44A4-B66E-3EE99D5BD30B/d:Edit/f:MultiFacade.cs" caret="0" visual-x="0" visual-y="0" />
+      <File id="752470EA-E6E7-44A4-B66E-3EE99D5BD30B/d:Edit/f:SQLResult.cs" caret="2887" visual-x="0" visual-y="962" />
+      <File id="752470EA-E6E7-44A4-B66E-3EE99D5BD30B/d:Edit/f:XmlBatchEdit.cs" caret="3909" visual-x="0" visual-y="897" />
+      <File id="752470EA-E6E7-44A4-B66E-3EE99D5BD30B/d:MetaInfo/f:MetadataUtility.cs" caret="0" visual-x="0" visual-y="0" />
+      <File id="752470EA-E6E7-44A4-B66E-3EE99D5BD30B/d:MetaInfo/f:MetaInfo.cs" caret="239" visual-x="0" visual-y="0" />
+      <File id="752470EA-E6E7-44A4-B66E-3EE99D5BD30B/d:MetaInfo/f:SQLParser.cs" caret="230" visual-x="0" visual-y="0" />
+      <File id="752470EA-E6E7-44A4-B66E-3EE99D5BD30B/d:ModuleManager/f:ModuleManager.cs" caret="6256" visual-x="0" visual-y="2405" />
+      <File id="752470EA-E6E7-44A4-B66E-3EE99D5BD30B/d:Report/f:DataBlock.cs" caret="0" visual-x="0" visual-y="0" />
+      <File id="752470EA-E6E7-44A4-B66E-3EE99D5BD30B/d:Report/f:SQLDataBlock.cs" caret="5527" visual-x="0" visual-y="1612" />
+      <File id="752470EA-E6E7-44A4-B66E-3EE99D5BD30B/d:Statistic/f:StatisticControl.cs" caret="12637" visual-x="0" visual-y="6656" />
+      <File id="752470EA-E6E7-44A4-B66E-3EE99D5BD30B/d:Statistic/f:StatRow.cs" caret="0" visual-x="0" visual-y="0" />
+      <File id="752470EA-E6E7-44A4-B66E-3EE99D5BD30B/d:TemplateHandler/f:GenerateCode.cs" caret="0" visual-x="0" visual-y="0" />
+      <File id="752470EA-E6E7-44A4-B66E-3EE99D5BD30B/d:Web3D/f:Web3D.cs" caret="149" visual-x="0" visual-y="299" />
+      <File id="E5B0BF49-3782-4016-BD38-28C790956166/f:OdbcDataAccess.cs" caret="10354" visual-x="0" visual-y="5174" />
+    </RecentFiles>
+  </EditorManager>
+  <FileStructureView>
+    <AutoScrollToSource>False</AutoScrollToSource>
+    <TrackCaretLocation>False</TrackCaretLocation>
+  </FileStructureView>
+  <NAntValidationSettings>
+    <NAntPath value="" />
+  </NAntValidationSettings>
+  <ReFormatCode>
+    <OptimizeUsings>False</OptimizeUsings>
+    <RemoveRedundantThis>False</RemoveRedundantThis>
+    <ShortenReferences>False</ShortenReferences>
+    <DecorateModifiers>False</DecorateModifiers>
+  </ReFormatCode>
+  <SharedSolutionDisabledTemplatesManager>
+    <DisabledTemplates />
+  </SharedSolutionDisabledTemplatesManager>
+  <UserSolutionDisabledTemplatesManager>
+    <DisabledTemplates />
+  </UserSolutionDisabledTemplatesManager>
+</Configuration>

@@ -1,0 +1,80 @@
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=zheng)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=ORACLE9)(CID=(PROGRAM=D:\hiss_flood\DataAccess\TestApp\bin\Release\TestApp.exe)(HOST=LAN)(USER=lan))))
+
+  VERSION INFORMATION:
+	TNS for 32-bit Windows: Version 8.1.6.0.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 32-bit Windows: Version 8.1.6.0.0 - Production
+  Time: 18-8ÔÂ -2004 12:27:40
+  Tracing not turned on.
+  Tns error struct:
+    nr err code: 0
+    ns main err code: 12541
+    TNS-12541: TNS£ºÎÞ¼àÌýÆ÷
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: ÎÞ¼àÌýÆ÷
+    nt secondary err code: 61
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=zheng)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=ORACLE9)(CID=(PROGRAM=D:\hiss_flood\DataAccess\TestApp\bin\Release\TestApp.exe)(HOST=LAN)(USER=lan))))
+
+  VERSION INFORMATION:
+	TNS for 32-bit Windows: Version 8.1.6.0.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 32-bit Windows: Version 8.1.6.0.0 - Production
+  Time: 18-8ÔÂ -2004 12:30:21
+  Tracing not turned on.
+  Tns error struct:
+    nr err code: 0
+    ns main err code: 12541
+    TNS-12541: TNS£ºÎÞ¼àÌýÆ÷
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: ÎÞ¼àÌýÆ÷
+    nt secondary err code: 61
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=zheng)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=ORACLE9)(CID=(PROGRAM=D:\hiss_flood\DataAccess\TestApp\bin\Release\TestApp.exe)(HOST=LAN)(USER=lan))))
+
+  VERSION INFORMATION:
+	TNS for 32-bit Windows: Version 8.1.6.0.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 32-bit Windows: Version 8.1.6.0.0 - Production
+  Time: 18-8ÔÂ -2004 12:31:47
+  Tracing not turned on.
+  Tns error struct:
+    nr err code: 0
+    ns main err code: 12541
+    TNS-12541: TNS£ºÎÞ¼àÌýÆ÷
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: ÎÞ¼àÌýÆ÷
+    nt secondary err code: 61
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=zheng)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=ORACLE9)(CID=(PROGRAM=D:\hiss_flood\DataAccess\TestApp\bin\Release\TestApp.exe)(HOST=LAN)(USER=lan))))
+
+  VERSION INFORMATION:
+	TNS for 32-bit Windows: Version 8.1.6.0.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 32-bit Windows: Version 8.1.6.0.0 - Production
+  Time: 26-10ÔÂ-2004 09:46:55
+  Tracing not turned on.
+  Tns error struct:
+    nr err code: 0
+    ns main err code: 12541
+    TNS-12541: TNS£ºÎÞ¼àÌýÆ÷
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: ÎÞ¼àÌýÆ÷
+    nt secondary err code: 61
+    nt OS err code: 0

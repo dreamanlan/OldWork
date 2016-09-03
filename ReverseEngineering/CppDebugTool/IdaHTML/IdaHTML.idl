@@ -1,0 +1,18 @@
+// IdaHTML.idl : IdaHTML 的 IDL 源
+//
+
+// 此文件将由 MIDL 工具处理以
+// 产生类型库(IdaHTML.tlb)和封送处理代码。
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+[
+	uuid(313C38A4-2F53-4311-98E1-9FE3DF3F8F11),
+	version(1.0),
+	helpstring("IdaHTML 1.0 类型库")
+]
+library IdaHTMLLib
+{
+	importlib("stdole2.tlb");
+};

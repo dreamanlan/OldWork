@@ -1,0 +1,1036 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0053)http://christal.suidzer0.org/DAdossier9/debugApis.htm -->
+<HTML><HEAD><TITLE>Piece of Christal's Page</TITLE>
+<META http-equiv=Content-Type content=text/html;CHARSET=iso-8859-1><!--  formamus.htm version 02 February 1998 
+      INSTRUCTIONS FOR SUBMITTING: DO NOT USE HTML EDITORS!
+      SEARCH THIS TEXT FOR THE STRING "Your_" 
+      AND REPLACE WITH WHATEVER YOU WANT TO PUBLISH! 
+      THANKS A LOT: this will allow automated retrieval -->
+<META content="MSHTML 6.00.2600.0" name=GENERATOR></HEAD>
+<BODY text=black bgColor=#000099 background="">
+<P align=right><FONT face="Arial Black" color=#ffcc00 size=5>Dossier n°9 : Les 
+Debug APIs</FONT></P>
+<CENTER>
+<P>
+<TABLE cellSpacing=0 cellPadding=8 width="85%" border=0>
+  <TBODY>
+  <TR>
+    <TD width="100%" bgColor=#ffff66>
+      <P><FONT face=Arial size=2><BR>Ce " dossier " sur les Debug API's a pu 
+      être réalisé grâce à la participation directe ou indirecte de +Spath, 
+      +Frog's Print, Alsindor, Pulsar et </FONT><A 
+      href="http://christal.suidzer0.org/DAdossier9/Debug_Apis/_Index.html" 
+      target=_blank><FONT face=Arial size=2>Morgatte</FONT></A><FONT face=Arial 
+      size=2>, en s'appuyant sur des écrits de </FONT><A 
+      href="http://christal.suidzer0.org/DAdossier9/Debug_Apis/Inside%20Debug%20API.htm" 
+      target=_blank><FONT face=Arial size=2>Iceman</FONT></A><FONT face=Arial 
+      size=2> (WIN32 - Inside Debug API), Matt Pietrek (Window 95 Programming 
+      Secrets dont vous trouverez deux extraits : </FONT><A 
+      href="http://christal.suidzer0.org/DAdossier9/Debug_Apis/Under%20the%20Hood,%20MSJ%20February%201998.htm" 
+      target=_blank><FONT face=Arial size=2>Under the Hood</FONT></A><FONT 
+      face=Arial size=2> et </FONT><A 
+      href="http://christal.suidzer0.org/DAdossier9/Debug_Apis/Matt%20Pietrek%20-%20Dirty%20Little%20Secrets%20about%20Windows%2095.htm" 
+      target=_blank><FONT face=Arial size=2>Dirty Little Secrets about Windows 
+      95</FONT></A><FONT face=Arial size=2>), Iczelion (Win32 Assembly Tutorial 
+      29 Win32 Debug API part I, II &amp; III traduit par </FONT><A 
+      href="http://christal.suidzer0.org/DAdossier9/Debug_Apis/_Index.html" 
+      target=_blank><FONT face=Arial size=2>Morgatte</FONT></A><FONT face=Arial 
+      size=2>) et </FONT><A 
+      href="http://christal.suidzer0.org/DAdossier9/Debug_Apis/Exception%20Handling.htm" 
+      target=_blank><FONT face=Arial size=2>Jeremy Gordon</FONT></A><FONT 
+      face=Arial size=2> (Win32 Exception handling for assembler 
+      programmers).</FONT></P>
+      <P><FONT face=Arial size=2>Ce dossier est accompagné de quatre petits 
+      programmes:</FONT></P>
+      <P><FONT face=Arial size=2>Un programme de </FONT><A 
+      href="http://christal.suidzer0.org/DAdossier9/Debug_Apis/Debugs-API.zip"><FONT 
+      face=Arial size=2>Pulsar</FONT></A><FONT face=Arial size=2> : Patch Mémory 
+      d'un Process via les Debug APIs</FONT></P>
+      <P><A 
+      href="http://christal.suidzer0.org/DAdossier9/Debug_Apis/CIBLE.exe"><FONT 
+      face=Arial size=2>Cible.exe</FONT></A><FONT face=Arial size=2> et 
+      </FONT><A 
+      href="http://christal.suidzer0.org/DAdossier9/Debug_Apis/Debugs-API.zip"><FONT 
+      face=Arial size=2>B-crk475.exe</FONT></A><FONT face=Arial size=2> qui sont 
+      les cibles à atteindre.<BR>Au passage, Cible.exe a été créé pour être un 
+      exemple significatif, donc facile, mais rien ne vous empèche d'en réaliser 
+      le KEYGenerateur.</FONT></P>
+      <P><FONT face=Arial size=2>Un </FONT><A 
+      href="http://christal.suidzer0.org/DAdossier9/Debug_Apis/ASMOBS.exe"><FONT 
+      face=Arial size=2>programme de démonstration</FONT></A><FONT face=Arial 
+      size=2>.</FONT></P>
+      <P><FONT face=Arial size=2><BR></FONT><B><U><FONT face=Arial 
+      size=4>Handle</FONT></U></B><FONT face=Arial size=2><BR><BR>Le terme 
+      'handle' dans ce texte fait référence aux handles des objets gérés par le 
+      kernel32.<BR>A la base, chaque handle peut être fermé par CloseHandle(). 
+      Ceci n'inclus PAS les objets graphiques (GDI) comme HPEN, HDC, HBITMAP 
+      etc, qui n'ont rien à voir avec le kernel32. <BR>Un handle, dans le 
+      contexte d'un process, est supposé être un index dans une table dont 
+      l'entrée contiendrait les informations concernant différents 
+      objets.</FONT></P>
+      <CENTER>
+      <P>
+      <TABLE cellSpacing=0 cellPadding=0 width=425 border=0>
+        <TBODY>
+        <TR>
+          <TD vAlign=top width="22%" bgColor=#ffffcc>
+            <P align=center><FONT face="Courier New" size=2>DialogBox1</FONT> 
+            </P></TD>
+          <TD vAlign=top width="22%" bgColor=#ffffcc>
+            <P align=center><FONT face="Courier New" size=2>handle</FONT> 
+</P></TD>
+          <TD vAlign=top colSpan=2>&nbsp;</TD></TR>
+        <TR>
+          <TD vAlign=top colSpan=2>&nbsp;</TD>
+          <TD vAlign=top width="37%" bgColor=#ffffcc>
+            <P align=center><FONT face="Courier New" size=2>Champ d’édition 
+            1</FONT> </P></TD>
+          <TD vAlign=top width="19%" bgColor=#ffffcc>
+            <P align=center><FONT face="Courier New" size=2>handle</FONT> 
+        </P></TD></TR>
+        <TR>
+          <TD vAlign=top colSpan=2>&nbsp;</TD>
+          <TD vAlign=top width="37%" bgColor=#ffffcc>
+            <P align=center><FONT face="Courier New" size=2>Champ d’édition 
+            2</FONT> </P></TD>
+          <TD vAlign=top width="19%" bgColor=#ffffcc>
+            <P align=center><FONT face="Courier New" size=2>handle</FONT> 
+        </P></TD></TR></TBODY></TABLE></P></CENTER>
+      <P><FONT face=Arial size=2>Prenons l'exemple d'un CrackMe se présentant 
+      sous la forme d'une Boite de dialogue à deux champs, l'un pour le nom, 
+      l'autre pour le serial.<BR>L'application, dés son démarrage, va se faire 
+      attribuer un handle (identificateur hInstance) :</FONT> 
+      <BLOCKQUOTE><PRE><FONT face="Courier New" size=2>invoke GetModuleHandle, NULL
+       mov hInstance, eax</FONT></PRE></BLOCKQUOTE>
+      <P><FONT face=Arial size=2>Puis la fenêtre-objet (ici notre boite de 
+      dialogue) se voit à son tour attribuer un handle (identificateur 
+      </FONT><FONT face=Arial color=blue size=2>hWnd</FONT><FONT face=Arial 
+      size=2>):</FONT></P><PRE><FONT face="Courier New" size=2>       INVOKE CreateWindowExA,WS_EX_WINDOWEDGE,\ 
+       ADDR ClassName,ADDR NameApp,\ 
+       WS_SYSMENU or WS_MINIMIZEBOX or WS_DLGFRAME or WS_BORDER\ 
+       or WS_CLIPCHILDREN or WS_CLIPSIBLINGS or WS_VISIBLE,\ 
+       280,200,385,162,NULL,NULL,hInst,NULL 
+       mov </FONT><FONT face="Courier New" color=blue size=2>hWnd</FONT><FONT face="Courier New" size=2>,eax  </FONT><FONT face=Arial size=2> </FONT></PRE>
+      <P><FONT face=Arial size=2>Le handle de la DialogBox est en seconde 
+      position sur la pile, c'est la fenêtre_objet-propriétaire.<BR>Si cette 
+      boite de Dialogue dépendait d'une autre fenêtre_objet, son handle serait 
+      celui d'une fenêtre_objet-fille.</FONT></P>
+      <CENTER>
+      <P>
+      <TABLE cellSpacing=0 cellPadding=0 width=562 border=0>
+        <TBODY>
+        <TR>
+          <TD vAlign=top width="16%" bgColor=#ffffcc>
+            <P align=center><FONT face="Courier New" size=2>Fenêtre 1</FONT> 
+          </P></TD>
+          <TD vAlign=top width="12%" bgColor=#ffffcc>
+            <P align=center><FONT face="Courier New" size=2>handle</FONT> 
+</P></TD>
+          <TD vAlign=top width="15%">&nbsp;</TD>
+          <TD vAlign=top colSpan=2>&nbsp;</TD>
+          <TD vAlign=top width="27%">&nbsp;</TD>
+          <TD vAlign=top width="15%">&nbsp;</TD></TR>
+        <TR>
+          <TD vAlign=top width="16%">&nbsp;</TD>
+          <TD vAlign=top width="12%">&nbsp;</TD>
+          <TD vAlign=top bgColor=#ffffcc colSpan=2>
+            <P align=center><FONT face="Courier New" size=2>DialogBox1</FONT> 
+            </P></TD>
+          <TD vAlign=top width="13%" bgColor=#ffffcc>
+            <P align=center><FONT face="Courier New" size=2>handle</FONT> 
+</P></TD>
+          <TD vAlign=top width="27%">&nbsp;</TD>
+          <TD vAlign=top width="15%">&nbsp;</TD></TR>
+        <TR>
+          <TD vAlign=top width="16%">&nbsp;</TD>
+          <TD vAlign=top width="12%">&nbsp;</TD>
+          <TD vAlign=top width="15%">&nbsp;</TD>
+          <TD vAlign=top colSpan=2>&nbsp;</TD>
+          <TD vAlign=top width="27%" bgColor=#ffffcc>
+            <P align=center><FONT face="Courier New" size=2>Champ d’édition 
+            1</FONT> </P></TD>
+          <TD vAlign=top width="15%" bgColor=#ffffcc>
+            <P align=center><FONT face="Courier New" size=2>handle</FONT> 
+        </P></TD></TR>
+        <TR>
+          <TD vAlign=top width="16%">&nbsp;</TD>
+          <TD vAlign=top width="12%">&nbsp;</TD>
+          <TD vAlign=top width="15%">&nbsp;</TD>
+          <TD vAlign=top colSpan=2>&nbsp;</TD>
+          <TD vAlign=top width="27%" bgColor=#ffffcc>
+            <P align=center><FONT face="Courier New" size=2>Champ d’édition 
+            2</FONT> </P></TD>
+          <TD vAlign=top width="15%" bgColor=#ffffcc>
+            <P align=center><FONT face="Courier New" size=2>handle</FONT> 
+        </P></TD></TR></TBODY></TABLE></P></CENTER>
+      <P><FONT face=Arial size=2>Puis c'est au tour du premier champ d'édition 
+      (identificateur </FONT><FONT face=Arial color=#cc0000 
+      size=2>hwnedit1</FONT><FONT face=Arial size=2>)</FONT></P><PRE><FONT face=Arial size=2>                </FONT><FONT face="Courier New" size=2>Invoke CreateWindowExA,WS_EX_CLIENTEDGE, ADDR EditClass, NULL,\ 
+       WS_CHILDWINDOW or ES_READONLY or WS_VISIBLE or\ 
+       ES_AUTOHSCROLL,12,80,261,23,hWnd,NULL,hInstance,NULL 
+       Mov </FONT><FONT face="Courier New" color=#cc0000 size=2>hwndEdit1</FONT><FONT face="Courier New" size=2>,eax
+</FONT></PRE>
+      <BLOCKQUOTE><PRE><FONT face="Courier New" color=blue size=2>HWND CreateWindowEx
+DWORD dwExStyle,                      // style de fenêtre étendue 
+LPCTSTR lpClassName,                 // pointe vers le nom de la class enregistrée 
+LPCTSTR lpWindowName,               // pointe vers le nom de la fenêtre 
+DWORD dwStyle,                     // style de fenêtre 
+int x,                            // cordonnée horizontale de la fenêtre 
+int y,                           // cordonnée verticale de la fenêtre 
+int nWidth,                     // largeur de la fenêtre 
+int nHeight,                   // hauteur de la fenêtre 
+HWND hWndParent,              // handle de la fenêtre parent ou propriétaire
+HMENU hMenu,                 // handle du menu ou de l'identifiant de la 
+                            //fenêtre fille (NULL dans ce cas précis)
+HINSTANCE hInstance,       // handle de l'application 
+LPVOID lpParam            // pointe vers les données de la fenêtre de création</FONT></PRE></BLOCKQUOTE>
+      <P><FONT face=Arial size=2>Etc…<BR><BR>La table des handles est un DWORD 
+      contenant le nombre de handles différents, suivi par un tableau [1] 
+      contenant les identificateurs-handle des objets en question. Les 
+      identificateurs-handle sont des DWORD contenant le drapeau d'accès à un 
+      pointeur vers l'objet situé en mémoire.</FONT> 
+      <BLOCKQUOTE><PRE><FONT face="Courier New" color=blue size=2>typedef struct _HANDLE_TABLE
+{
+  DWORD   cEntries;               // Nombre de handles dans la table
+  HANDLE_TABLE_ENTRY array[1];   // Tableau dont la taille est fixée par cEntries
+} HANDLE_TABLE, *PHANDLE_TABLE;
+
+typedef struct _HANDLE_TABLE_ENTRY
+{
+  DWORD   flags;           // flags dépend du type d'objet concerné
+  PVOID   pObject;        // Pointeur vers l'objet auquel se réfère le handle
+} HANDLE_TABLE_ENTRY, *PHANDLE_TABLE_ENTRY;</FONT></PRE></BLOCKQUOTE>
+      <P><FONT face=Arial size=2>Un processID est un pointeur vers la structure 
+      du process contenant les informations de celui ci XORé avec un 
+      'obsfucator'. Il y a plusieurs algorithmes possibles pour récupérer cette 
+      valeur. L'une des méthodes les plus courantes est de passer par l'appel à 
+      la fonction GetCurrentProcessId() en Ring3, qui passe cette valeur à un 
+      VxD qui appelle VWIN32_GetCurrentProcessHandle, et de XORer les deux 
+      valeurs retournées pour obtenir l'Obsfucator.</FONT></P>
+      <P><B><U><FONT face=Arial size=4>Obsfucator</FONT></U></B></P>
+      <P><FONT face=Arial size=2><BR>Mais qu'est ce que cet Obsfucator 
+      ?<BR><BR>Dans les premières versions de Windows 95, GetCurrentProcessId et 
+      GetCurrentThreadId retournaient des pointeurs vers le processus approprié 
+      et les structures Threads DataBase. Peu de temps après, ces fonctions ont 
+      commencé à retourner des valeurs qui n'étaient plus des pointeurs. La 
+      valeur de retour était la valeur du pointeur original, mais XORé avec une 
+      valeur apparemment aléatoire. <BR><BR>D'où vient cette valeur aléatoire 
+      ?<BR><BR>A chaque fois que le système démarre, il emploie l'horloge pour 
+      calculer cette valeur aléatoire. Elle est appelée "Obsfucator", et permet 
+      d'accéder aux informations contenues dans la thread DataBase.<BR><BR>La 
+      seule raison du XOR est d'empêcher quiconque d'arriver aux structures de 
+      données du système...<BR><BR>Une autre méthode pour obtenir cette valeur, 
+      sans utiliser de VxD, est de faire:</FONT> 
+      <BLOCKQUOTE><PRE><FONT face="Courier New" color=blue size=2>DWORD _dw = 0, _dwCurProcId = GetCurrentProcessId();
+__asm {
+	mov eax,dword ptr fs:[18h]  
+	mov eax,dword ptr [eax+30h] 
+	mov ebx,eax
+	xor ebx,dword ptr [_dwCurProcId]
+	mov dword ptr [_dw],ebx  };
+
+Unobsfucator = _dw;</FONT></PRE></BLOCKQUOTE>
+      <P><FONT face=Arial size=2>Ou encore</FONT> 
+      <BLOCKQUOTE><PRE><FONT face="Courier New" color=blue size=2>KERNEL32!GetCurrentProcessId: 
+mov eax, [PTR_CURRENT_PROCESS_ID]
+push dword ptr [eax] 
+call OBFUSCATOR
+ret 
+OBFUSCATOR:
+mov eax, [MAGIC_XOR_PATTERN] ; e.g., 7EAE7049h 
+test eax, eax 
+jnz do_xor
+xor eax, eax 
+jmp do_ret 
+do_xor: 
+xor eax, [esp+4] 
+do_ret: 
+ret 4 </FONT></PRE></BLOCKQUOTE>
+      <P><FONT face=Arial size=2>Ce module utilise TIDTOTDB () et PIDTOPDB () 
+      pour récupérer les valeurs retournées par ces fonctions dans les adresses 
+      des structures de données (Datas). Le code est basé sur le fait que si un 
+      XOR b EQU c, alors un XOR c EQU b.</FONT></P>
+      <P><B><U><FONT face=Arial size=4>Thread DataBase(TDB) et Thread 
+      Information Block (TIB)</FONT></U></B></P>
+      <P><FONT face=Arial size=2><BR>La structure DataBase d'un process (PDB) 
+      contient toute les informations sur le process actif :</FONT></P><PRE><FONT face="Courier New" color=blue size=2>typedef struct _PROCESS_DATABASE
+{
+    DWORD   Type;                      // 00h KERNEL32 object type (5)
+    DWORD   cReference;                // 04h Number of references to process
+    DWORD   un1;                       // 08h
+    DWORD   someEvent;                 // 0Ch An event object 
+    DWORD   TerminationStatus;         // 10h Returned by GetExitCodeProcess
+    DWORD   un2;                       // 14h
+    DWORD   DefaultHeap;               // 18h Address of the process heap
+    DWORD   MemoryContext;             // 1Ch pointer to the process's context
+    DWORD   flags;                     // 20h
+    DWORD   pPSP;                      // 24h Linear address of PSP?
+     WORD   PSPSelector;               // 28h
+     WORD   MTEIndex;                  // 2Ah
+     WORD   cThreads;                  // 2Ch
+     WORD   cNotTermThreads;           // 2Eh
+     WORD   un3;                       // 30h
+     WORD   cRing0Threads;             // 32h number of ring 0 threads
+    HANDLE  HeapHandle;                // 34h Heap to allocate handle tables out of
+                                       // This seems to always be the KERNEL32 heap
+    DWORD   W16TDB;                    // 38h Win16 Task Database selector
+    DWORD   MemMapFiles;               // 3Ch memory mapped file list (?)
+    PENVIRONMENT_DATABASE pEDB;        // 40h Pointer to Environment Database
+    PHANDLE_TABLE pHandleTable;        // 44h Pointer to process handle table
+ struct _PROCESS_DATABASE * ParentPDB; // 48h Parent process database
+    PMODREF MODREFlist;                // 4Ch Module reference list
+    DWORD   ThreadList;                // 50h Threads in this process
+    DWORD   DebuggeeCB;                // 54h Debuggee Context block?
+    DWORD   LocalHeapFreeHead;         // 58h Head of free list in process heap
+    DWORD   InitialRing0ID;            // 5Ch
+    CRITICAL_SECTION    crst;          // 60h
+    DWORD   un4[2];                    // 78h
+    DWORD   pConsole;                  // 84h Pointer to console for process
+    DWORD   tlsInUseBits1;             // 88h  // Represents TLS indices 0 - 31
+    DWORD   tlsInUseBits2;             // 8Ch  // Represents TLS indices 32 - 63
+    DWORD   ProcessDWORD;              // 90h 
+    PROCESS_DATABASE * ProcessGroup;   // 94h
+    PMODREF pExeMODREF;                // 98h pointer to EXE's MODREF
+    DWORD   TopExcFilter;              // 9Ch Top Exception Filter?
+    DWORD   BasePriority;              // A0h Base scheduling priority for process
+    DWORD   HeapOwnList;               // A4h Head of the list of process heaps
+    DWORD   HeapHandleBlockList;       // A8h Pointer to head of heap handle block list
+    DWORD   pSomeHeapPtr;              // ACh normally zero, but can a pointer to a
+                                       // moveable handle block in the heap
+    DWORD   pConsoleProvider;          // B0h Process that owns the console we're using?
+     WORD   EnvironSelector;           // B4h Selector containing process environment
+     WORD   ErrorMode;                 // B6H SetErrorMode value (also thunks to Win16)
+    DWORD   pevtLoadFinished;          // B8h Pointer to event LoadFinished?
+     WORD   UTState;                   // BCh
+} PDB, *PPDB;</FONT></PRE>
+      <P><FONT face=Arial size=2>Avec la Thread DataBase, certains champs sont 
+      indispensables pour exécuter du code. Si indispensable, que l'architecture 
+      WIN32 les rends immédiatement accessibles sans avoir à passer par la 
+      structure Thread DataBase. Ces champs sont stockés dans une structure 
+      appelée TIB (Thread Information Block) et correspondant aux offets 10h à 
+      3Ch dans la Thread DataBase. Il suffit de soustraire 10h à l'adresse 
+      d'entrée du TIB pour avoir celle de la thread DataBase (TDB), parfois 
+      appelées Thread Control Block (suivant votre niveau de privilège : Ring 0 
+      ou Ring 3). <BR><BR>Les champs du TIB sont les suivants :</FONT> 
+      <BLOCKQUOTE><PRE><FONT face="Courier New" color=blue size=2>00h   DWORD   pvExcept
+04h   DWORD   TopOfStack
+08h   DWORD   StackLow
+0Ch    WORD   W16TDB
+0Eh    WORD   StackSelector16
+10h   DWORD   Selmanlist
+14h   DWORD   UserPointer
+18h    PTIB   pTIB
+1Ch    WORD   TIBFlag
+1Eh    WORD   Win16MutexCount
+20h   DWORD   CebugContext
+24h  PDWORD   pCurrentProcess
+28h   DWORD   MessageQueue
+2Ch  PDWORD   PTLSArray
+30h   DWORD   pProcess (Process DataBase Pointer)  </FONT></PRE></BLOCKQUOTE>
+      <P><FONT face=Arial size=2>Quand une thread est créée, Windows charge dans 
+      FS une valeur dont l'adresse de base pointe vers le TIB 
+      correspondant.<BR>L'intérêt est qu'ainsi chaque thread peut utiliser le 
+      même code pour les SEH, par exemple, alors que dans chaque cas FS:0 pointe 
+      vers une zone mémoire différente. Maintenant il est beaucoup plus pratique 
+      pour le système d'utiliser une adresse linéaire ("flat") pour accéder aux 
+      TIBs, d'ou l'intérêt de cette valeur en FS:18.<BR>Autrement dit, FS:0 
+      pointe vers la même zone mémoire que l'adresse linéaire en 
+      FS:18.</FONT></P><PRE><B><FONT face=Arial>Instruction :</FONT></B><FONT face=Arial size=2>  MOV EAX, FS : [18] 
+</FONT><B><FONT face=Arial>Le but : </FONT></B><FONT face=Arial size=2>         indicateur linéaire sur le TEB 
+</FONT><B><FONT face=Arial>Exemples: </FONT></B><FONT face=Arial size=2>
+MOV EAX, FS : [18] 
+MOV EAX, [EAX+24]</FONT></PRE>
+      <P><B><FONT face=Arial size=2>La description :</FONT></B><FONT face=Arial 
+      size=2><BR>le TEB (Thread Environnement Block) est toujours pointé par le 
+      registre FS. Pour accéder au code, il est utile d'employer une adresse 
+      linéaire pour accéder au TEB. L'adresse linéaire du TEB peut être trouvée 
+      à l'offset 0x18 dans celui ci. Le pointeur qui est lu dans FS:[18] permet 
+      de lire d'autres valeurs du TEB.<BR><BR>Un TEB est créé par Windows a 
+      chaque fois qu'une nouvelle thread est créée.<BR>C'est une structure qui 
+      contient des informations sur la thread, et dont Windows se sert, par 
+      exemple a chaque fois qu'il doit passer d'une thread a l'autre 'dans un 
+      environnement multitâches.<BR><BR>A l'aide de l'Obsfucator, il est 
+      possible d'utiliser cette valeur pour obtenir la position de n'importe 
+      quelle TIB, à partir du thread ID correspondant (avec un 
+      XOR).<BR><BR>Chaque objet du kernel32 (en fait tous ce qui peut être 
+      représenté par un handle) utilise une entête commune : le premier DWORD 
+      concerne le type de l'objet, et le second DWORD concerne le nombre de 
+      handles référencés pour cet objet. Les types des objets sont définis ainsi 
+      :</FONT> 
+      <BLOCKQUOTE><PRE><FONT face="Courier New" color=blue size=2>K32OBJ_SEMAPHORE            0x1
+K32OBJ_EVENT                0x2
+K32OBJ_MUTEX                0x3
+K32OBJ_CRITICAL_SECTION     0x4
+K32OBJ_PROCESS              0x5
+K32OBJ_THREAD               0x6
+K32OBJ_FILE                 0x7
+K32OBJ_CHANGE               0x8
+K32OBJ_CONSOLE              0x9
+K32OBJ_SCREEN_BUFFER        0xA
+K32OBJ_MEM_MAPPED_FILE      0xB
+K32OBJ_SERIAL               0xC
+K32OBJ_DEVICE_IOCTL         0xD
+K32OBJ_PIPE                 0xE
+K32OBJ_MAILSLOT             0xF
+K32OBJ_TOOLHELP_SNAPSHOT    0x10
+K32OBJ_SOCKET               0x11</FONT></PRE></BLOCKQUOTE>
+      <P><FONT face=Arial size=2>Pour obtenir le process ID d'un process 
+      référencé par un process handle, il est possible d'utiliser 
+      GetCurrentProcessId() ^ Obsfucator pour récupérer le pointeur vers la 
+      structure DataBase du process en cours. <BR>Cette structure contient un 
+      pointeur vers l'offset 44h qui lui même pointe vers la table des handles. 
+      Tous les objets commencent par un DWORD indiquant le type de cet objet, 
+      suivi par un DWORD contenant le nombre de handles référencés par cet 
+      objet. Le handle pourra être un index dans ce tableau, et le process ID 
+      concerné par le handle sera un pointeur vers l'objet, XORé avec 
+      l'Obsfucator. <BR><BR>Dans la philosophe Win32, un process est un objet 
+      qui a un espace mémoire de réservé, du code, des datas, et une thread 
+      primaire. Chaque process n'a au début qu'une seule thread. A partir de la 
+      Thread primaire, il est possible de créer d'autres Threads, par la suite, 
+      qui fonctionneront dans le même espace mémoire.<BR>Contrairement à ce que 
+      beaucoup pensent, un processus n'exécute PAS du code. Ce sont les Threads 
+      qui s'en chargent. Les objets des Threads partagent le même espace 
+      d'adresse et les mêmes ressources mais elles ont des contextes 
+      individuels. <BR><BR>Qu'est ce que ca veut dire ?<BR><BR>Windows95 et 
+      WindowsNT sont des systèmes multitâches ET multiThreads.<BR>L'OS semble 
+      gérer tous les threads en même temps, mais ce n'est pas exacte. Chaque 
+      Thread individuel est prévue s'exécuter pendant un temps court (de l'ordre 
+      de 20 millisecondes) et l'OS sauve l'état de la Thread dans une structure 
+      appelée CONTEXT_structure, puis passe à la thread suivante. 
+      <BR>L'information sauvée dans cette structure représente le Thread Context 
+      et est structuré ainsi :</FONT> 
+      <BLOCKQUOTE>
+        <P><FONT face=Arial size=2>- threads machine registers (CPU 
+        registers)<BR>- la pile du kernel et les adresses utilisées par celle ci 
+        <BR>- l'adresse du thread environment block (TEB)</FONT> </P></BLOCKQUOTE>
+      <P><FONT face=Arial size=2>Quand l'OS rencontre de nouveau notre thread, 
+      il la rétablit à partir de la structure CONTEXT comme si rien n'était 
+      arrivé.</FONT></P>
+      <P><U><B><FONT face=Arial size=4>Debug API's</FONT></B></U></P>
+      <P><FONT face=Arial size=2>(Pour plus d'information sur ces Fonctions, 
+      reportez vous à la traduction d'Iczelion, faite par Morgatte)<BR>Voyons 
+      comment il serait possible d'utiliser ces informations, maintenant, et 
+      commençons par modifier un programme cible.<BR>La méthode est de sauver 
+      une page de codes du processus cible, et de la recopier avec le nouveau 
+      code, exécuter ce nouveau code, et rétablir la page de code.</FONT></P>
+      <CENTER>
+      <P><FONT face=Arial size=2>Voyons cela point par point dans un premier 
+      exemple (Courtesy of Iceman) : 
+      <TABLE cellSpacing=0 cellPadding=4 width="98%" border=0>
+        <TBODY>
+        <TR>
+          <TD width="100%" bgColor=#ffffcc><FONT face=Arial size=2>1. Employer 
+            CreateProcess pour créer un processus pour la mise au point. <BR>2. 
+            Créer "la Boucle Principale" WaitForDebugEvent - ContinueDebugEvent" 
+            <BR>3. Arrêter la thread de la cible en utilisant SuspendThread. 
+            <BR>4. Employez VirtualProtectEx pour mettre la lecture-écriture 
+            dans la page de la cible <BR>5. Employer ReadProcessMemory pour 
+            sauver la page de la cible.<BR>6. Employer GetThreadContext pour 
+            sauver le context de la thread. <BR>7. Employer WriteProcessMemory 
+            pour écrire le nouveau code.<BR>8. S'assurer que la dernière 
+            instruction dans le nouveau code est une INT 3. Nous avons besoin 
+            pour cela de prendre le contrôle quand notre code est fini. L'INT 3 
+            sera pris au piège par EXCEPTION_DEBUG_EVENT.<BR>Assurez vous que 
+            vous avez bien un EXCEPTION_BREAKPOINT et que vous êtes arrivé à 
+            l'adresse où réside notre INT 3.<BR>9. Faites une copie provisoire 
+            de la structure CONTEXT sauvée. <BR>10. Mettez un nouvel EIP dans la 
+            structure CONTEXT provisoire <BR>11. Reprenez l'exécution de la 
+            thread. Observez le nouveau code s'exécuter. Quand l'INT 3 
+            s'exécute, notre loader va prendre le relais. La Thread de la cible 
+            va être stoppée. <BR>12. Rétablissez la page du code originale en 
+            employant WriteProcessMemory. <BR>13. Rétablissez les attributs de 
+            protection de la page cible. <BR>14. Employez SetThreadContext pour 
+            mettre le context de la thread de la première structure CONTEXT. 
+            <BR>15. Relancez la 
+      thread.</FONT></TD></TR></TBODY></TABLE></FONT></P></CENTER>
+      <P><FONT face=Arial size=2>A l'aide de ce second exemple, vous allez peut 
+      être comprendre plus facilement comment tout cela peut s'articuler, et 
+      tout particulièrement le rôle que peut jouer l'Obsfucator 
+      :<BR><BR>L'objectif de la routine qui suit est de provoquer un saut (en 
+      jouant sur le registre EIP) vers une autre partie de 
+      l'application.<BR>Imaginez la situation :<BR><BR>Vous entrez un 
+      serial<BR>Celui ci est en fait une adresse vers laquelle le programme se 
+      rendra via les Debug Apis par remplacement de l'adresse contenue dans le 
+      registre EIP:<BR><BR>La fonction CreateProcess va créer un nouveau process 
+      et sa thread primaire. Le nouveau process exécute le fichier exécutable 
+      spécifié.</FONT> 
+      <BLOCKQUOTE><PRE><FONT face="Courier New" color=blue size=2>BOOL CreateProcess(
+
+    LPCTSTR lpApplicationName, 
+    LPTSTR lpCommandLine,
+    LPSECURITY_ATTRIBUTES lpProcessAttributes, 
+    LPSECURITY_ATTRIBUTES lpThreadAttributes,  
+    BOOL bInheritHandles, 
+    DWORD dwCreationFlags, 
+    LPVOID lpEnvironment,  
+    LPCTSTR lpCurrentDirectory, 
+    LPSTARTUPINFO lpStartupInfo, 
+    LPPROCESS_INFORMATION lpProcessInformation   );</FONT></PRE></BLOCKQUOTE>
+      <P><FONT face=Arial color=#006600 size=2>lpApplicationName,</FONT><FONT 
+      face=Arial size=2><BR><BR>string dans laquelle se trouve placée le nom de 
+      l'exécutable</FONT></P><PRE><FONT face=Arial size=2>  </FONT><FONT face=Arial color=#006600 size=2>lpCommandLine,</FONT><FONT face=Arial size=2>	// pointeur vers CommandLine  </FONT></PRE>
+      <P><FONT face=Arial size=2>que l'on récupère ainsi:</FONT> 
+      <BLOCKQUOTE>
+        <P><FONT face="Courier New" size=2>invoke GetCommandLine<BR>mov 
+        CommandLine, eax</FONT> </P></BLOCKQUOTE><PRE><FONT face=Arial size=2>  </FONT><FONT face=Arial color=#006600 size=2>lpProcessAttributes,</FONT><FONT face=Arial size=2>     // pointer to process security attributes 
+  </FONT><FONT face=Arial color=#006600 size=2>lpThreadAttributes,       </FONT><FONT face=Arial size=2>// pointer to thread security attributes </FONT></PRE>
+      <P><FONT face=Arial size=2>La structure SECURITY_ATTRIBUTES contient le 
+      descriptor des attributs de sécurité d'un objet</FONT> 
+      <BLOCKQUOTE><PRE><FONT face="Courier New" color=blue size=2>typedef struct _SECURITY_ATTRIBUTES { // sa 
+    DWORD  nLength                     ; taille en octets de la structure
+    LPVOID lpSecurityDescriptor        ; pointe vers le security descriptor de l'objet
+    BOOL   bInheritHandle              
+} SECURITY_ATTRIBUTES; </FONT><FONT face=Arial size=2>  </FONT></PRE></BLOCKQUOTE><PRE><FONT face=Arial color=#006600 size=2>  InheritHandles,</FONT><FONT face=Arial size=2>	// handle inheritance flag 
+</FONT><FONT face=Arial color=#006600 size=2>  dwCreationFlags,</FONT><FONT face=Arial size=2>	// creation flags </FONT></PRE>
+      <P><FONT face=Arial size=2>Les flags peuvent être l'un des cas 
+      suivants:</FONT> 
+      <BLOCKQUOTE><PRE><FONT face="Courier New" color=blue size=2>CREATE_DEFAULT_ERROR_MODE	
+CREATE_NEW_CONSOLE	
+DETACHED_PROCESS flag.
+CREATE_NEW_PROCESS_GROUP	
+CREATE_SEPARATE_WOW_VDM	
+CREATE_SHARED_WOW_VDM	
+CREATE_SUSPENDED	
+CREATE_UNICODE_ENVIRONMENT	
+DEBUG_PROCESS	</FONT></PRE></BLOCKQUOTE>
+      <P><FONT face=Arial size=2>Si ce drapeau est mis, le process appelant est 
+      traité comme étant un debuggeur, et le nouveau process comme étant le 
+      process débuggé. Le system notifie au débuggeur tous les Debug_Events qui 
+      surviennent dans le process débuggé. <BR>En créant un process avec ce 
+      flag, seul le thread appelant pourra utiliser un Call 
+      WaitForDebugEvent.</FONT> 
+      <BLOCKQUOTE><PRE><FONT face="Courier New" color=blue size=2>DEBUG_ONLY_THIS_PROCESS 
+DETACHED_PROCESS</FONT></PRE></BLOCKQUOTE>
+      <P><FONT face=Arial color=#006600 size=2>lpEnvironment,</FONT><FONT 
+      face=Arial size=2> // pointeur vers le new environment block</FONT></P>
+      <P><FONT face=Arial size=2>Pointe vers un "environment block" pour le 
+      nouveau process.<BR>Si ce paramètre est NULL, le nouveau process utilise 
+      l'environnement du process appelant. <BR>Un "environment block" consiste 
+      en un null-terminated block ou une null-terminated 
+      string.<BR><BR></FONT><FONT face=Arial color=#006600 
+      size=2>lpCurrentDirectory</FONT><FONT face=Arial size=2>, // pointeur vers 
+      le nom du directory en cours<BR>Précise le path d'accès au programme 
+      cible. Si aucun paramètre n'est passé, le répertoire de la cible est 
+      concidéré comme étant le même que celui du process 
+      appelant.<BR><BR></FONT><FONT face=Arial color=green 
+      size=2>lpStartupInfo</FONT><FONT face=Arial size=2>, // pointeur vers 
+      STARTUPINFO <BR><BR>Cette structure précise les propriétés de l'objet 
+      créé:</FONT> 
+      <BLOCKQUOTE><PRE><FONT face="Courier New" color=blue size=2>typedef struct _STARTUPINFO { // si 
+    DWORD   cb; 
+    LPTSTR  lpReserved; 
+    LPTSTR  lpDesktop; 
+    LPTSTR  lpTitle; 
+    DWORD   dwX; 
+    DWORD   dwY; 
+    DWORD   dwXSize; 
+    DWORD   dwYSize; 
+    DWORD   dwXCountChars; 
+    DWORD   dwYCountChars; 
+    DWORD   dwFillAttribute; 
+    DWORD   dwFlags; 
+    WORD    wShowWindow; 
+    WORD    cbReserved2; 
+    LPBYTE  lpReserved2; 
+    HANDLE  hStdInput; 
+    HANDLE  hStdOutput; 
+    HANDLE  hStdError; 
+
+} STARTUPINFO, *LPSTARTUPINFO; </FONT></PRE></BLOCKQUOTE>
+      <P><FONT face=Arial color=#006600 size=2>lpProcessInformation</FONT><FONT 
+      face=Arial size=2> // pointer to PROCESS_INFORMATION <BR><BR>La structure 
+      PROCESS_INFORMATION est remplie par la fonction CreateProcess avec les 
+      informations concernant le nouveau process créé et sa Thread 
+      primaire.</FONT> 
+      <BLOCKQUOTE><PRE><FONT face="Courier New" color=blue size=2>typedef struct _PROCESS_INFORMATION { // pi 
+    HANDLE hProcess           ; handle du nouveau process créé 
+    HANDLE hThread            ; handle du Thread primaire de ce process
+    DWORD dwProcessId         ; identificateur du process créé 
+    DWORD dwThreadId          ; identificateur du Thread du process crée
+} PROCESS_INFORMATION;</FONT><FONT face=Arial size=2> </FONT></PRE></BLOCKQUOTE>
+      <P><FONT face=Arial size=2>Dans le cas de </FONT><A 
+      href="http://christal.suidzer0.org/DAdossier9/Debug_Apis/CIBLE.exe"><FONT 
+      face=Arial size=2>CIBLE.exe</FONT></A><FONT face=Arial size=2>,<BR>les 
+      informations rapportées par la structure Process_Information, relevées 
+      dans la fenêtre des datas, sont les suivantes:</FONT> 
+      <BLOCKQUOTE><PRE><FONT face="Courier New" size=2>00403ABE:  00 00 00 08   </FONT><FONT face="Courier New" color=blue size=2>; hProcess</FONT><FONT face="Courier New" size=2>
+00403AC2:  00 00 00 0C  </FONT><FONT face="Courier New" color=blue size=2> ; hThread</FONT><FONT face="Courier New" size=2>
+00403AC6:  FF E3 7E 5D  </FONT><FONT face="Courier New" color=blue size=2> ; dwProcessID</FONT><FONT face="Courier New" size=2>
+00403ACA:  FF E3 65 51   </FONT><FONT face="Courier New" color=blue size=2>; dwThreadID </FONT><FONT face=Arial color=blue size=2> </FONT><FONT face=Arial size=2></FONT></PRE></BLOCKQUOTE>
+      <P><FONT face=Arial size=2>Et pour la fonction WaitForDebugEvent:</FONT> 
+      <BLOCKQUOTE><PRE><FONT face="Courier New" size=2>00403FBE:  00 00 00 01  </FONT><FONT face="Courier New" color=blue size=2> ; dwDebugEvent</FONT><FONT face="Courier New" size=2>
+00403FC2:  FF E3 7E 5D   </FONT><FONT face="Courier New" color=blue size=2>; dwProcessID</FONT><FONT face="Courier New" size=2>
+00403FC6:  FF E3 65 51  </FONT><FONT face="Courier New" color=blue size=2> ; dwThreadID</FONT><FONT face="Courier New" size=2></FONT></PRE></BLOCKQUOTE>
+      <P><FONT face=Arial size=2>Il y a donc plusieurs adresses qui peuvent 
+      contenir dwThreadId...<BR><BR>Mais revenons au Dead Listing :<BR><BR>Un 
+      nouveau Process est créé, destiné à être l'application 
+débuggée.</FONT></P><PRE><FONT face="Courier New" color=#006600 size=2>:004011AA  PUSH      lpProcessInformation 
+:004011AF  PUSH      lpStartupInfo 
+:004011B4  PUSH      00 (lpCurrentDirectory) 
+:004011B6  PUSH      00 (lpEnvironment)
+:004011B8  PUSH      01 (dwCreationFlags)	
+:004011BA  PUSH      01 (bInheritHandles) 	
+:004011BC  PUSH      00 (lpThreadAttributes)
+:004011BE  PUSH      00 (lpProcessAttributes)
+:004011C0  PUSH      00 (lpCommandLine) 
+:004011C2  PUSH      lpApplicationName 
+:004011C7  CALL      CreateProcessA
+
+:004011CC  TEST      EAX,EAX
+:004011CE  JZ        erreur               </FONT><FONT face="Courier New" color=blue size=2>le process n'est pas crée -&gt; Exitprocess</FONT><FONT face="Courier New" color=#006600 size=2>
+:004011D4  MOV       [hInstance],EAX      </FONT><FONT face="Courier New" color=blue size=2>récupère le handle du process</FONT></PRE>
+      <P><FONT face=Arial size=2>lpApplicationName contient le nom du programme. 
+      L'application crée donc une " copie " du process en cours...</FONT></P><PRE><FONT face="Courier New" color=#006600 size=2>:004011D9  PUSH      0000FFFF       </FONT><FONT face="Courier New" color=blue size=2>      dwMilliseconds (6 secondes)</FONT><FONT face="Courier New" color=#006600 size=2>
+:004011DE  PUSH      lpDebugEvent
+:004011E3  CALL      KERNEL32!WaitForDebugEvent</FONT></PRE>
+      <P><FONT face=Arial size=2>La fonction WaitForDebugEvent attends qu'un 
+      debugging event survienne dans le process en cours de débuggage. C'est 
+      l'entrée d'une boucle que l'on ne peut quitter que si le temps alloué est 
+      dépassé (à moins qu'il ne soit mis à FFFFFFFF = INFINITY), ou si un 
+      DEBUG_EVENT est survenu.</FONT> 
+      <BLOCKQUOTE><PRE><FONT face="Courier New" color=blue size=2>BOOL WaitForDebugEvent
+
+   LPDEBUG_EVENT lpDebugEvent, // adresse de la structure "event information"  
+   DWORD dwMilliseconds       // nombre de millisecondes d'attente  </FONT></PRE></BLOCKQUOTE>
+      <P><FONT face=Arial color=#006600 size=2>lpDebugEvent</FONT><FONT 
+      face=Arial size=2><BR>Pointe vers une structure DEBUG_EVENT qui est 
+      remplie avec des informations concernant le debugging event. 
+      <BR><BR></FONT><FONT face=Arial color=#006600 
+      size=2>dwMilliseconds</FONT><FONT face=Arial size=2><BR>Spécifie le temps 
+      alloué pour attendre un debugging event. <BR><BR>La structure DEBUG_EVENT 
+      est définie ainsi:</FONT> 
+      <BLOCKQUOTE><PRE><FONT face="Courier New" color=blue size=2>typedef struct _DEBUG_EVENT { // de 
+    DWORD dwDebugEventCode 
+    DWORD dwProcessId              ;debug_event + 04  
+    DWORD dwThreadId               ;debug_event + 08 
+    union { 
+        EXCEPTION_DEBUG_INFO Exception                
+        CREATE_THREAD_DEBUG_INFO CreateThread          
+        CREATE_PROCESS_DEBUG_INFO CreateProcessInfo  
+        EXIT_THREAD_DEBUG_INFO ExitThread            
+        EXIT_PROCESS_DEBUG_INFO ExitProcess          
+        LOAD_DLL_DEBUG_INFO LoadDll                  
+        UNLOAD_DLL_DEBUG_INFO UnloadDll              
+        OUTPUT_DEBUG_STRING_INFO DebugString         
+        RIP_INFO RipInfo; 
+    } u; 
+} DEBUG_EVENT;</FONT></PRE></BLOCKQUOTE>
+      <P><FONT face=Arial size=2>En fonction du type d'événement qui survient, 
+      un code sera attribué au debugging event :</FONT> 
+      <BLOCKQUOTE><PRE><FONT face="Courier New" color=blue size=2>01  EXCEPTION_DEBUG_EVENT	
+02  CREATE_THREAD_DEBUG_EVENT	
+03  CREATE_PROCESS_DEBUG_EVENT	
+04  EXIT_THREAD_DEBUG_EVENT	
+05  EXIT_PROCESS_DEBUG_EVENT	
+06  LOAD_DLL_DEBUG_EVENT	
+07  UNLOAD_DLL_DEBUG_EVENT	
+08  OUTPUT_DEBUG_STRING_EVENT	
+09  RIP_EVENT</FONT></PRE></BLOCKQUOTE><PRE><FONT face="Courier New" color=#006600 size=2>:004011E8  CMP       DWORD PTR [lpDebugEvent],05 </FONT><FONT face="Courier New" size=2> </FONT><FONT face="Courier New" color=blue size=2>EXIT_PROCESS_DEBUG_EVENT</FONT><FONT face="Courier New" size=2>
+</FONT><FONT face="Courier New" color=#006600 size=2>:004011EF  JZ        ExitProcess</FONT><FONT face="Courier New" size=2>
+</FONT><FONT face="Courier New" color=#006600 size=2>:004011F5  CMP       DWORD PTR [lpDebugEvent],01 </FONT><FONT face="Courier New" size=2> </FONT><FONT face="Courier New" color=blue size=2>EXCEPTION_DEBUG_EVENT</FONT><FONT face="Courier New" size=2>
+</FONT><FONT face="Courier New" color=#006600 size=2>:004011FC  JNZ       continue si pas d'exception</FONT><FONT face="Courier New" size=2>
+</FONT><FONT face="Courier New" color=#006600 size=2>:004011FE  CMP       [Flag_Obsfucator],01 </FONT><FONT face="Courier New" size=2>        </FONT><FONT face="Courier New" color=blue size=2>Flag qui fait sauter par dessus</FONT><FONT face="Courier New" size=2>
+</FONT><FONT face="Courier New" color=#006600 size=2>:00401205  JZ        0040127A  </FONT><FONT face="Courier New" size=2>                   </FONT><FONT face="Courier New" color=blue size=2>la récup de l'obfuscator</FONT></PRE>
+      <P><FONT face=Arial size=2>La fonction GetCurrentThreadId retourne 
+      l'identificateur du "Thread Information Block" (TIB):</FONT></P><PRE><FONT face="Courier New" color=#006600 size=2>:00401207 CALL      GetCurrentThreadId 
+:0040120C MOV       [ThreadID],EAX </FONT><FONT face="Courier New" size=2>               </FONT><FONT face="Courier New" color=blue size=2>pseudo-handle du thread</FONT></PRE>
+      <P><FONT face=Arial size=2>La récupération de l'Obsfucator se fait à 
+      l'aide d'une variante du MOV EAX,FS[18], sur le principe suivante 
+      :</FONT></P><PRE><FONT face="Courier New" color=#006600 size=2>:00401211 MOV       AX,FS </FONT><FONT face="Courier New" size=2>                      </FONT><FONT face="Courier New" color=blue size=2>  passe le segment FS dans AX</FONT><FONT face="Courier New" size=2>
+</FONT><FONT face="Courier New" color=#006600 size=2>:00401214 MOV       BX,ES </FONT><FONT face="Courier New" size=2>                      </FONT><FONT face="Courier New" color=blue size=2>  idem pour ES dans BX</FONT><FONT face="Courier New" size=2>
+</FONT><FONT face="Courier New" color=#006600 size=2>:00401217 MOV       ES,AX </FONT><FONT face="Courier New" size=2>                      </FONT><FONT face="Courier New" color=blue size=2>  passe FS dans ES</FONT><FONT face="Courier New" size=2>
+</FONT><FONT face="Courier New" color=#006600 size=2>:0040121A MOV       EAX,00000018  </FONT><FONT face="Courier New" size=2>              </FONT><FONT face="Courier New" color=blue size=2>  pousse 18</FONT><FONT face="Courier New" size=2>
+</FONT><FONT face="Courier New" color=#006600 size=2>:0040121F MOV       EAX,ES:[EAX] </FONT><FONT face="Courier New" size=2>                </FONT><FONT face="Courier New" color=blue size=2> MOV EAX, FS[18]</FONT><FONT face=Arial size=2>
+</FONT><FONT face="Courier New" color=#006600 size=2>:00401222 SUB       EAX,10 </FONT><FONT face="Courier New" size=2>                      </FONT><FONT face="Courier New" color=blue size=2> petite subtilité que l'on va étudier</FONT><FONT face="Courier New" size=2>
+</FONT><FONT face="Courier New" color=#006600 size=2>:00401225 MOV       ES,BX</FONT><FONT face="Courier New" size=2>                        </FONT><FONT face="Courier New" color=blue size=2> restore ES</FONT><FONT face="Courier New" size=2>
+</FONT><FONT face="Courier New" color=#006600 size=2>:00401228 XOR       EAX,[ThreadID] </FONT><FONT face="Courier New" size=2>              </FONT><FONT face="Courier New" color=blue size=2> @ donnée par GetCurrentThreadID</FONT></PRE>
+      <P><FONT face=Arial size=2>En agissant ainsi, le programme obtient le 
+      pointeur vers la Thread DataBase:</FONT></P>
+      <P align=center><B><FONT face=Arial color=#cc0000 size=2>ThreadID XOR 
+      Pointeur Thread DataBase = Obsfucator</FONT></B></P>
+      <P><U><FONT face=Arial size=2>Petit Rappel</FONT></U><FONT face=Arial 
+      size=2> :<BR>La TIB est toujours pointée par le segment FS. A l'offset 18h 
+      du TIB, vous trouvez une adresse linéaire qui en permet un accès plus 
+      rapide.<BR>Les champs du TIB qui vont nous intéresser le plus sont les 
+      suivants :</FONT></P>
+      <BLOCKQUOTE><PRE><FONT face="Courier New" size=2>00h DWORD pvEXCEPT          </FONT><FONT face="Courier New" color=blue size=2>entrée de la chaîne SEH</FONT><FONT face="Courier New" size=2> (</FONT><A href="http://www.multimania.com/christa2/tutor/dossier6.zip"><FONT face="Courier New" size=2>voir le dossier SEH</FONT></A><FONT face="Courier New" size=2>)
+04h DWORD TopOfStack        </FONT><FONT face="Courier New" color=blue size=2>la soustraction de l'offset 04h et 08h</FONT><FONT face="Courier New" size=2>,
+08h DWORD StackLow          </FONT><FONT face="Courier New" color=blue size=2>permet de connaître la taille de la pile</FONT><FONT face="Courier New" size=2>
+18h  PTIB pTIB              </FONT><FONT face="Courier New" color=blue size=2>pointeur vers le TIB</FONT><FONT face="Courier New" size=2>
+14h DWORD UserPointer
+1Ch  WORD TIBFlags
+20h DWORD DebugContext
+30h DWORD pProcess          </FONT><FONT face="Courier New" color=blue size=2>pointeur vers la process DataBase </FONT><FONT face="Courier New" size=2>
+40h DWORD pProcessDataBase  </FONT><FONT face="Courier New" color=blue size=2>pointeur vers le process auquel appartient la thread</FONT></PRE></BLOCKQUOTE>
+      <P><FONT face=Arial size=2>La relation entre le TIB et la Thread DataBase 
+      est étroite.<BR>Le début du TDB est le suivant :</FONT></P>
+      <BLOCKQUOTE><PRE><FONT face="Courier New" size=2>00h DWORD                   </FONT><FONT face="Courier New" color=blue size=2>contient 7 pour Win 98, 6 pour Win 95</FONT><FONT face="Courier New" size=2>
+04h DWORD             </FONT><FONT face="Courier New" color=blue size=2>      nb d'objets gérés par la Thread</FONT><FONT face="Courier New" size=2>
+08h pProcessDataBase  </FONT><FONT face="Courier New" color=blue size=2>      on retrouve un double de ce pointeur à l'offset 40h</FONT><FONT face="Courier New" size=2>
+0Ch DWORD  pSomeEvent
+10h DWORD  txExcept         </FONT><FONT face="Courier New" color=blue size=2>début du TIB</FONT><FONT face="Courier New" size=2>
+74h DWORD  DebbugerCB </FONT><FONT face="Courier New" color=blue size=2>      pointeur vers un bloc d'informations rempli par WaitFordebuEvent</FONT><FONT face="Courier New" size=2>
+7Ch pCONTEXT          </FONT><FONT face="Courier New" color=blue size=2>      pointe vers la structure CONTEXT</FONT></PRE></BLOCKQUOTE>
+      <P><FONT face=Arial size=2>A partir de l'offset 10h, on retrouve les mêmes 
+      informations que celles du TIB…<BR>Et pour cause ! le TIB commence à cet 
+      offset...<BR>Au total, la TDB contient 200h (512d) offsets dont 30h sont 
+      occupés par le TIB.<BR><BR>le SUB EAX, 10h (EAX contenant le pointeur TIB) 
+      revient donc à dire que :<BR><BR>pThreadDataBase = pTIB -10h -&gt; pTDB va 
+      s'appeler l'UnObsfucator.</FONT></P><PRE><FONT face="Courier New" color=#006600 size=2>:0040122E XOR EAX,[dwThreadID] </FONT><FONT face="Courier New" size=2>       </FONT><FONT face="Courier New" color=blue size=2>Identifie la thread</FONT></PRE>
+      <P><FONT face=Arial size=2>On a déjà vu comment dwThreadID est obtenu, 
+      dans la structure DEBUG_EVENT, et lors de l'appel à CreateProcess. <BR>Eax 
+      va maintenant pointer sur le début de la Thread DataBase</FONT></P><PRE><FONT face="Courier New" color=#006600 size=2>:00401234 ADD EAX,7C</FONT></PRE>
+      <P><FONT face=Arial size=2>Va faire pointer EAX sur le pointeur de la 
+      structure CONTEXT<BR><BR>Tout ce cirque n'avait pour objectif que de 
+      récupérer le pointeur vers la structure CONTEXT. Un façon beaucoup plus 
+      discrète que de faire un :</FONT></P><PRE><FONT face="Courier New" size=2>push dword ptr [hThread]             </FONT><FONT face="Courier New" color=blue size=2> identifie le handle de la thread</FONT><FONT face="Courier New" size=2>
+push dword ptr [lpContext]           </FONT><FONT face="Courier New" color=blue size=2> pointe vers l'@ de la structure CONTEXT</FONT><FONT face="Courier New" size=2>
+Call GetThreadContext </FONT></PRE>
+      <P><FONT face=Arial size=2>Avant de lancer GetThreadContext, lpContext 
+      doit recevoir une ou plusieurs des valeurs suivantes</FONT> 
+      <BLOCKQUOTE><PRE><FONT face="Courier New" color=blue size=2>CONTEXT_i486             equ 00010000h
+CONTEXT_CONTROL          equ CONTEXT_i386 OR 00000001h
+CONTEXT_INTEGER          equ CONTEXT_i386 OR 00000002h
+CONTEXT_SEGMENTS         equ CONTEXT_i386 OR 00000004h
+CONTEXT_FLOATING_POINT   equ CONTEXT_i386 OR 00000008h
+CONTEXT_DEBUG_REGISTERS  equ CONTEXT_i386 OR 00000010h</FONT></PRE></BLOCKQUOTE>
+      <P><FONT face=Arial size=2>L'intérêt de la structure CONTEXT est qu'elle 
+      garde en mémoire pour l'OS, le temps qu'il gère un autre process, 
+      l'ensemble des informations qui seront nécessaires à l'Operating System 
+      pour relancer le process qui nous intéresse Y COMPRIS l'état des registres 
+      !<BR>Il suffit alors de remplacer, par exemple, l'adresse contenue dans le 
+      registre EIP par l'adresse ou vous souhaitez que le programme se rende à 
+      la sortie de la boucle 
+      WaitForDebugEvent/ContinueDebugEvent.<BR><BR>WaitForDebugEvent étant 
+      l'entrée d'un boucle, vous trouverez à la sortie de celle ci :</FONT> 
+      <BLOCKQUOTE><PRE><FONT face="Courier New" color=blue size=2>BOOL ContinueDebugEvent (idProcess, idThread, fdwContinueStatus)
+
+DWORD dwProcessID        // indique quel process doit être repris
+DWORD dwThreadID        // indique quelle thread doit être reprise 
+DWORD dwContinueStatus // indique de quelle façon reprendre le process</FONT></PRE></BLOCKQUOTE>
+      <P><FONT face=Arial size=2>La fonction ContinueDebugEvent permet à un 
+      debuggeur de reprendre la Thread qu'il avait précédemment suspendu dans le 
+      programme cible quand celui-ci avait rencontré un 'Debugging événement', 
+      et de reprendre le cours normal de l'application.</FONT></P><PRE><FONT face="Courier New" color=#006600 size=2>:0040127A PUSH DBG_CONTINUE </FONT><FONT face="Courier New" size=2>       </FONT><FONT face="Courier New" color=blue size=2> Spécifie comment continue la thread</FONT><FONT face="Courier New" size=2>
+</FONT><FONT face="Courier New" color=#006600 size=2>:0040127F PUSH [dwThreadID] </FONT><FONT face="Courier New" size=2>        </FONT><FONT face="Courier New" color=blue size=2>Identifie la thread </FONT><FONT face="Courier New" size=2>
+</FONT><FONT face="Courier New" color=#006600 size=2>:00401285 PUSH [dwProcessId]  </FONT><FONT face="Courier New" size=2>      </FONT><FONT face="Courier New" color=blue size=2>Identifie le process 
+</FONT><FONT face="Courier New" color=#006600 size=2>:0040128B CALL ContinueDebugEvent</FONT></PRE>
+      <P><B><FONT face=Arial size=2>DBG_CONTINUE</FONT></B><FONT face=Arial 
+      size=2><BR>Si le lien indiqué par dwThreadID a précédemment annoncé un 
+      événement du type EXCEPTION_DEBUG_EVENT (equ 01), la fonction arrête tout 
+      le traitement d'exception et reprend le cours de la Thread. Pour un autre 
+      événement, ce Flag permet au programme de continuer normalement.<BR>Les 
+      Informations récupérées par WaitForEventDebug (un gros bloc stocké par la 
+      fonction à l'adresse lpDebugEvent) vont contenir tout un ensemble de 
+      pointeurs dont dwThreadID et dwProcessId (voir la structure 
+      DEBUG_EVENT):<BR><BR></FONT><U><FONT face=Arial size=2>Petit 
+      rappel</FONT></U><FONT face=Arial size=2> :<BR>lpDebug_event + 08 = 
+      dwThreadId<BR>lpDebug_event + 04 = dwProcessId</FONT></P>
+      <P><B><U><FONT face=Arial size=4>CONTEXT</FONT></U></B></P>
+      <P><FONT face=Arial size=2>La structure CONTEXT se décline ainsi</FONT> 
+      <BLOCKQUOTE>
+        <BLOCKQUOTE>
+          <P><FONT face=Arial size=2>+00 context flags (utilisé lors d'un call 
+          GetThreadContext)</FONT></P></BLOCKQUOTE></BLOCKQUOTE>
+      <CENTER>
+      <P>
+      <TABLE cellSpacing=0 cellPadding=4 width="84%" border=0>
+        <TBODY>
+        <TR>
+          <TD vAlign=top bgColor=#ffffcc><B><FONT face="Courier New" 
+            size=2>DEBUG REGISTERS </FONT></B><FONT face="Courier New" 
+            size=2><BR>+04 debug register #0 <BR>+08 debug register #1 <BR>+0C 
+            debug register #2 <BR>+10 debug register #3 <BR>+14 debug register 
+            #6 <BR>+18 debug register #7</FONT></TD>
+          <TD vAlign=top bgColor=#ffffcc><B><FONT face="Courier New" 
+            size=2>SEGMENT REGISTERS</FONT></B><FONT face="Courier New" size=2> 
+            <BR>+8C gs register <BR>+90 fs register <BR>+94 es register <BR>+98 
+            ds register</FONT></TD>
+          <TD vAlign=top bgColor=#ffffcc><B><FONT face="Courier New" 
+            size=2>CONTROL REGISTERS <BR></FONT></B><FONT face="Courier New" 
+            size=2>+B4 ebp register <BR>+B8 eip register <BR>+BC cs register 
+            <BR>+C0 eflags register <BR>+C4 esp register <BR>+C8 ss 
+            register</FONT></TD></TR>
+        <TR>
+          <TD vAlign=top bgColor=#ffffcc><B><FONT face="Courier New" 
+            size=2>FLOATING POINT / MMX registers </FONT></B><FONT 
+            face="Courier New" size=2><BR>+1C ControlWord <BR>+20 StatusWord 
+            <BR>+24 TagWord <BR>+28 ErrorOffset <BR>+2C ErrorSelector <BR>+30 
+            DataOffset <BR>+34 DataSelector <BR>+38 FP registers x 8 (10 bytes 
+            each) <BR>+88 Cr0NpxState</FONT></TD>
+          <TD vAlign=top bgColor=#ffffcc><B><FONT face="Courier New" 
+            size=2>ORDINARY REGISTERS </FONT></B><FONT face="Courier New" 
+            size=2><BR>+9C edi register <BR>+A0 esi register <BR>+A4 ebx 
+            register <BR>+A8 edx register <BR>+AC ecx register <BR>+B0 eax 
+            register</FONT></TD>
+          <TD vAlign=top 
+      bgColor=#ffffcc>&nbsp;</TD></TR></TBODY></TABLE></P></CENTER>
+      <P><B><U><FONT face=Arial size=2>Troisième exemple :</FONT></U></B></P>
+      <CENTER>
+      <P>
+      <TABLE cellSpacing=0 cellPadding=8 width="78%" border=0>
+        <TBODY>
+        <TR>
+          <TD width="100%" bgColor=#ffffcc><PRE ALIGN="CENTER"><FONT face="Courier New" size=2>=========================================================================
+ Ce source ASM est reconstitué à partir d'un programme de Pulsar
+=========================================================================</FONT></PRE><PRE><FONT face="Courier New" size=2>
+debug_patch proc 
+    push      offset StartupInfo    </FONT><FONT face="Courier New" color=blue size=2>; adresse définie par le programmeur</FONT><FONT face="Courier New" size=2>
+    Call      GetStartupInfoA       </FONT><FONT face="Courier New" color=blue size=2>; récupère propriétés du process créé</FONT><FONT face="Courier New" size=2>
+
+    invoke CreateProcess, addr Name_of_exe,  addr Name_of_exe, NULL, NULL,\
+    FALSE, DEBUG_PROCESS + DEBUG_ONLY_THIS_PROCESS , NULL,\ 
+    NULL, ADDR StartupInfo, ADDR lp_process_info </FONT><FONT face="Courier New" color=blue size=2>; lance le nouveau process</FONT><FONT face="Courier New" size=2>
+    mov     esi, dword ptr [lp_process_info+04] </FONT><FONT face="Courier New" color=blue size=2> ; mémorise hThread</FONT><FONT face="Courier New" size=2>
+    mov     dword ptr [hThread], esi  
+    xor     esi,esi                              </FONT><FONT face="Courier New" color=blue size=2>; ESI permettra de sortir de la boucle</FONT><FONT face="Courier New" size=2>
+    jmp     continue2                            </FONT><FONT face="Courier New" color=blue size=2>; saute l'entrée dans la boucle</FONT><FONT face="Courier New" size=2>
+loop_debug:
+    push    esi                                  </FONT><FONT face="Courier New" color=blue size=2>; récupère ESI</FONT><FONT face="Courier New" size=2>
+    invoke  WaitForDebugEvent, addr debug_event, INFINITE </FONT><FONT face="Courier New" color=blue size=2>; début de la boucle</FONT><FONT face="Courier New" size=2>
+          
+    .if  debug_event.dwDebugEventCode==CREATE_PROCESS_DEBUG_EVENT 
+                                                 </FONT><FONT face="Courier New" color=blue size=2>; process à débugger créé?</FONT><FONT face="Courier New" size=2>
+       call   contexte                          </FONT><FONT face="Courier New" color=blue size=2> ; pose le BreakPoint </FONT><FONT face="Courier New" size=2>      
+       invoke ContinueDebugEvent, debug_event.dwProcessId,\
+       debug_event.dwThreadId, DBG_CONTINUE      </FONT><FONT face="Courier New" color=blue size=2>; continue le debuggage</FONT><FONT face="Courier New" size=2>
+       jmp    do_continue
+
+    .elseif  debug_event.dwDebugEventCode==EXCEPTION_DEBUG_EVENT </FONT><FONT face="Courier New" color=blue size=2>; BreakPoint ? </FONT><FONT face="Courier New" size=2>
+       mov    dword  ptr [context],CONTEXT_i486\
+       or CONTEXT_CONTROL or CONTEXT_INTEGER or CONTEXT_SEGMENTS</FONT></PRE><PRE><FONT face="Courier New" color=blue size=2>       ; rempli la structure déclarée context par les infos de CONTEXT_structure</FONT><FONT face="Courier New" size=2>
+       invoke  GetThreadContext, dword ptr [hThread], addr context
+    </FONT><FONT face="Courier New" color=blue size=2>   ; le process debuggé est il rendu à l'adresse 004014E1 ? </FONT><FONT face="Courier New" size=2>
+       cmp    dword  ptr [context+B8hd], 004014E1h </FONT><FONT face="Courier New" color=blue size=2>; RegEIP = 004014E1</FONT><FONT face="Courier New" size=2> 
+       jne    continue4                            </FONT><FONT face="Courier New" color=blue size=2>; adresse non atteinte</FONT><FONT face="Courier New" size=2>
+              
+       call   contexte2                           </FONT><FONT face="Courier New" color=blue size=2> ; modifie les registres</FONT><FONT face="Courier New" size=2>
+       call   contexte3                           </FONT><FONT face="Courier New" color=blue size=2> ; supprime le breakpoint</FONT><FONT face="Courier New" size=2>
+continue4:
+       invoke ContinueDebugEvent, debug_event.dwProcessId,\
+       debug_event.dwThreadId, DBG_CONTINUE 
+
+    .elseif  debug_event.dwDebugEventCode==EXIT_PROCESS_DEBUG_EVENT
+       pop   esi
+       jmp   Go_out_process                   </FONT><FONT face="Courier New" color=blue size=2>     ; abandonne le process</FONT><FONT face="Courier New" size=2>
+    .endif
+
+       invoke ContinueDebugEvent, debug_event.dwProcessId, debug_event.dwThreadId,\
+       DBG_EXCEPTION_NOT_HANDLED
+          
+do_continue:
+          pop esi
+continue2:
+          or  esi, esi
+          je  loop_debug
+ 
+Go_out_process:
+          ret
+
+debug_patch endp
+
+;=========================================================================
+;            pose un breakpoint si le process débug l'@ 004014E1
+;========================================================================= 
+
+contexte proc
+        pushad
+        mov    dword ptr [context], CONTEXT_i486 \
+        or CONTEXT_DEBUG_REGISTERS
+        invoke GetThreadContext, dword ptr [hThread], addr context
+        mov    dword ptr [context+B8h], 004014E1h      </FONT><FONT face="Courier New" color=blue size=2>; regEIP</FONT><FONT face="Courier New" size=2>
+        or     dword ptr [context+18h], 00000003h     </FONT><FONT face="Courier New" color=blue size=2> ; DR7</FONT><FONT face="Courier New" size=2>
+        and    dword ptr [context+18h], FFF0FFFFh      </FONT><FONT face="Courier New" color=blue size=2>; DR7</FONT><FONT face="Courier New" size=2>
+        invoke SetThreadContext, dword ptr [hThread], addr context
+        popad
+ret
+contexte endp
+
+;=========================================================================
+;                   remplace le registre EDX par EAX
+;========================================================================= 
+contexte2 proc 
+        pushad
+        mov    dword ptr [context], CONTEXT_i486 \
+        or CONTEXT_CONTROL or CONTEXT_INTEGER or CONTEXT_SEGMENTS
+        invoke GetThreadContext, dword ptr [hThread], addr context
+        mov    eax, dword ptr [context+B0h]         </FONT><FONT face="Courier New" color=blue size=2>; regEDX</FONT><FONT face="Courier New" size=2>
+        mov    dword ptr [context+A8h], eax         </FONT><FONT face="Courier New" color=blue size=2>; regEAX</FONT><FONT face="Courier New" size=2>
+        incoke SetThreadContext, dword ptr [hThread], addr context
+        popad
+ret
+contexte2 endp
+
+;=========================================================================
+;                         supprime le BreakPoint posé
+;========================================================================= 
+
+contexte3 proc
+        pushad
+        mov    dword ptr [context], CONTEXT_i486 \
+        or CONTEXT_DEBUG_REGISTERS
+        invoke GetThreadContext, dword ptr [hThread], addr context
+        mov    dword ptr [context+04h], 00000000h     </FONT><FONT face="Courier New" color=blue size=2> ; DR0</FONT><FONT face="Courier New" size=2>
+        and    dword ptr [context+18h], FFFFFFF0h     </FONT><FONT face="Courier New" color=blue size=2> ; DR7</FONT><FONT face="Courier New" size=2>
+        invoke SetThreadContext, dword ptr [hThread], addr context
+        popad
+ret
+contexte3 endp</FONT></PRE></TD></TR></TBODY></TABLE></P></CENTER>
+      <P><B><U><FONT face=Arial size=4>Debug Registers</FONT></U></B></P>
+      <P><FONT face=Arial size=2>Pour compléter un peu ce texte, voici un 
+      morceau de voile à lever sur les DebugRegister.</FONT></P>
+      <P><FONT face=Arial size=2>Vous vous êtes déjà demandé pourquoi les BPM 
+      (BreakPoint on Memory) n'étaient limités qu'à quatre?</FONT></P>
+      <P><FONT face=Arial size=2>Tout simplement parce qu'il n'existe, dans 
+      l'architecture Win32, que quatre endroit où stocker les adresses lineaires 
+      de ces breakpoint: DR0, DR1, DR2, DR3. Les DR4 et DR5 sont réservés, le 
+      DR7 "configure" le type de Break à exécuter à une adresse donnée, le DR6 
+      sert aux debuggeurs.</FONT></P>
+      <P><FONT face=Arial size=2>Reprennont l'exemple du source ci dessus: 
+      </FONT><I><FONT face=Arial size=2>activation du BreakPoint</FONT></I></P><PRE><FONT face="Courier New" size=2>        mov    dword ptr [context+B8h], 004014E1h      </FONT><FONT face="Courier New" color=blue size=2>; regEIP</FONT><FONT face="Courier New" size=2>
+        or     dword ptr [context+18h], 00000003h     </FONT><FONT face="Courier New" color=blue size=2> ; DR7</FONT><FONT face="Courier New" size=2>
+        and    dword ptr [context+18h], FFF0FFFFh      </FONT><FONT face="Courier New" color=blue size=2>; DR7</FONT></PRE>
+      <P><FONT face=Arial size=2>Pour être exact, il faudrait l'écrire 
+      ainsi:</FONT></P><PRE><FONT face="Courier New" size=2>        mov    dword ptr [context+B8h], 004014E1h                         </FONT><FONT face="Courier New" color=blue size=2>; regEIP</FONT><FONT face="Courier New" size=2>
+        or     dword ptr [context+18h], 00000000000000000000000000000011b </FONT><FONT face="Courier New" color=blue size=2>; DR7</FONT><FONT face="Courier New" size=2>
+        and    dword ptr [context+18h], 11111111111100001111111111111111b </FONT><FONT face="Courier New" color=blue size=2>; DR7</FONT></PRE>
+      <P><FONT face=Arial size=2>La représentation en binaire va permettre de 
+      mieux comprendre le fonctionnement global.</FONT></P>
+      <P><FONT face=Arial size=2>Dans une architecte 32 bytes, le tableau 
+      général des Debug Registers est le suivant:</FONT></P>
+      <CENTER>
+      <P>
+      <TABLE cellSpacing=0 cellPadding=8 width="71%" border=0>
+        <TBODY>
+        <TR>
+          <TD width="100%" bgColor=#ffffcc><PRE><FONT face="Courier New" size=2>      31  29  27  25  23  21  19  17  15    12    9 8 7 6 5 4 3 2 1 0
+     |---+---+---+---+---+---+---+---+---+-+-----+-+-+-+-+-+-+-+-+-+-|
+     |LEN|R/W|LEN|R/W|LEN|R/W|LEN|R/W|   | |     |G|L|G|L|G|L|G|L|G|L|
+     |   |   |   |   |   |   |   |   |0 0|0|0 0 0| | | | | | | | | | | DR7
+     | 3 | 3 | 2 | 2 | 1 | 1 | 0 | 0 |   | |     |E|E|3|3|2|2|1|1|0|0|
+     |              (10 à 12 et 14 à 15 sont reserved)               |
+     |---+---+---+---+---+---+---+---+-+-+-+-----+-+-+-+-+-+-+-+-+-+-|
+     |                               |B|B|B|                 |B|B|B|B|
+     |0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0| | | |0 0 0 0 0 0 0 0 0| | | | | DR6
+     |                               |T|S|D|                 |3|2|1|0|
+     |---------------+---------------+-+-+-+---------+-------+-+-+-+-|
+     |                            RESERVED                           | DR5
+     |---------------+---------------+---------------+---------------|
+     |                            RESERVED                           | DR4
+     |---------------+---------------+---------------+---------------|
+     |                 BREAKPOINT 3 LINEAR ADDRESS                   | DR3
+     |---------------+---------------+---------------+---------------|
+     |                 BREAKPOINT 2 LINEAR ADDRESS                   | DR2
+     |---------------+---------------+---------------+---------------|
+     |                 BREAKPOINT 1 LINEAR ADDRESS                   | DR1
+     |---------------+---------------+---------------+---------------|
+     |                 BREAKPOINT 0 LINEAR ADDRESS                   | DR0
+     |---------------+---------------+----------------+--------------|</FONT></PRE></TD></TR></TBODY></TABLE></P></CENTER><PRE><FONT face=Arial size=2>Les bytes 10 à 15 (reserved):</FONT></PRE>
+      <BLOCKQUOTE>
+        <BLOCKQUOTE>
+          <BLOCKQUOTE>
+            <BLOCKQUOTE><PRE><FONT face="Courier New" size=2>31                  15 14 13 12 11 10         0
++------------------+--+--+--+--+--+--+--------+
+|                  | T| T| G| I|  |  |        |
+|                  | 2| R| D| R|  |  |        |
++------------------+--+--+--+--+--+--+--------+
+                     |  |  |  |
+                     |  |  |  +- IceBp    1=INT01 causes emulator
+                     |  |  |              to break emulation
+                     |  |  |              0=CPU handles INT01
+                     |  |  +---- Global   Debug 
+                     |  +------- Trace1   1=Generate special address
+                     |                    cycles after code dis-
+                     |                    continuities.  On Pentium,
+                     |                    these cycles are called
+                     |                    Branch Trace Messages.
+                     +---------- Trace2   1=Unknown.</FONT></PRE></BLOCKQUOTE></BLOCKQUOTE></BLOCKQUOTE></BLOCKQUOTE>
+      <P><FONT face=Arial size=2>Dans l'exemple utilisé, les OR et AND vont 
+      servir à conserver les informations du DR7 (d'éventuels autres BPM), et à 
+      ne modifier que celles qui vont directement concerner le DR0 dans lequel 
+      le BreakPoint attendu (en 004014E1) va être posé. Si aucun BreakPoint nest 
+      posé, les bits sont tous à 0.</FONT></P>
+      <CENTER>
+      <P>
+      <TABLE cellSpacing=0 cellPadding=8 width="67%" border=0>
+        <TBODY>
+        <TR>
+          <TD width="100%" bgColor=#ffffcc><PRE><FONT face="Courier New" size=2>      31  29  27  25  23  21  19  17  15    12    9 8 7 6 5 4 3 2 1 0
+     |---+---+---+---+---+---+---+---+---+-+-----+-+-+-+-+-+-+-+-+-+-|
+     |LEN|R/W|LEN|R/W|LEN|R/W|LEN|R/W|   | |     |G|L|G|L|G|L|G|L|G|L|
+       00  00  00  00  00  00  00  00 </FONT><FONT face="Courier New" color=blue size=2> </FONT><FONT face="Courier New" size=2>00 0  0 00 0 0 0 0 0 0 0 0 1 1
+</FONT><FONT face="Courier New" color=red size=2> +</FONT><FONT face="Courier New" size=2>     11  11  11  11  11  11  00  00  11 1  1 11 1 1 1 1 1 1 1 1 1 1
+</FONT><FONT face="Courier New" color=red size=2> =    -----------------------------------------------------------------</FONT><FONT face="Courier New" size=2>
+       00  00  00  00   00  00 11  11  00 0  0 00 0 0 0 0 0 0 0 0 1 1
+</FONT><FONT face="Courier New" color=blue size=2>                               ------                             ---
+                                  |                                | 
+                                  +---------------DR0--------------+</FONT></PRE></TD></TR></TBODY></TABLE></P></CENTER>
+      <P><B><FONT face=Arial size=2>Quelques explications:</FONT></B><FONT 
+      face=Arial size=2><BR><BR></FONT><U><FONT face=Arial size=2>Debug Address 
+      Registers (DR0-DR3)</FONT></U><FONT face=Arial size=2><BR><BR>Chacun de 
+      ces registres contient l'adresse lineaire (par exemple 00401000) associée 
+      avec l'une des quatre conditions possibles. Ces conditions sont définies 
+      dans le DR7.<BR><BR></FONT><U><FONT face=Arial size=2>Debug Control 
+      Register (DR7)</FONT></U><FONT face=Arial size=2><BR><BR>A chaque adresse 
+      lineaire des registres DR0 à DR3, correspond un champ R/W. Le processeur 
+      interprète ces bits ainsi:<BR><BR></FONT><FONT face="Courier New" 
+      color=blue size=2>00 -- </FONT><FONT face=Arial color=blue size=2>Break on 
+      instruction execution only<BR></FONT><FONT face="Courier New" color=blue 
+      size=2>01 -- </FONT><FONT face=Arial color=blue size=2>Break on data 
+      writes only<BR></FONT><FONT face="Courier New" color=blue size=2>10 -- 
+      </FONT><FONT face=Arial color=blue size=2>undefined<BR></FONT><FONT 
+      face="Courier New" color=blue size=2>11 -- </FONT><FONT face=Arial 
+      color=blue size=2>Break on data reads or writes but not instruction 
+      fetches</FONT><FONT face=Arial size=2><BR><BR>Les champs LEN0 à LEN3 
+      précisent, quant à eux, la longeur des items à monitorer.<BR>Les valeurs 
+      des champs sont interprétés de cette façon:<BR><BR></FONT><FONT 
+      face="Courier New" color=blue size=2>00 -- </FONT><FONT face=Arial 
+      color=blue size=2>one-byte length<BR></FONT><FONT face="Courier New" 
+      color=blue size=2>01 -- </FONT><FONT face=Arial color=blue size=2>two-byte 
+      length<BR></FONT><FONT face="Courier New" color=blue size=2>10 -- 
+      </FONT><FONT face=Arial color=blue size=2>undefined<BR></FONT><FONT 
+      face="Courier New" color=blue size=2>11 -- </FONT><FONT face=Arial 
+      color=blue size=2>four-byte length</FONT><FONT face=Arial 
+      size=2><BR><BR>Si RWn est egal à 00 (instruction execution), alors LENn 
+      doit aussi être égal à 00. Toute autre valeur est ignorée.<BR><BR>Les 
+      champs L0 à L3 (Local) et G0 à G3 (Global), également lié à l'un des 
+      quatre DR0-DR3, activent (ou désactivent suivant l'état) l'adresse du 
+      breakpoint selectionné.<BR><BR></FONT><U><FONT face=Arial size=2>Debug 
+      Status Register (DR6)</FONT></U><FONT face=Arial size=2><BR><BR>Le DR6 
+      sert principalement aux débuggeurs pour déterminer quelle "debug 
+      condition" est arrivée. Dans le source ci dessus, il n'est pas nécessaire 
+      de s'en occuper.<BR><BR></FONT><U><B><FONT face=Arial>Liste des Debug 
+      Api's</FONT></B></U></P>
+      <CENTER>
+      <P>
+      <TABLE cellSpacing=0 cellPadding=5 width=378 border=0>
+        <TBODY>
+        <TR>
+          <TD width="49%" bgColor=#ffffcc><A 
+            href="http://christal.suidzer0.org/DAdossier9/Debug_Apis/API/ContinueDebugEvent.html" 
+            target=_blank><FONT face=Arial 
+            size=2>ContinueDebugEvent</FONT></A><FONT face=Arial 
+            size=2><BR></FONT><A 
+            href="http://christal.suidzer0.org/DAdossier9/Debug_Apis/API/DebugActiveProcess.html" 
+            target=_blank><FONT face=Arial 
+            size=2>DebugActiveProcess</FONT></A><FONT face=Arial size=2> 
+            <BR>DebugBreak <BR>FatalExit <BR>FlushInstructionCache <BR></FONT><A 
+            href="http://christal.suidzer0.org/DAdossier9/Debug_Apis/API/GetThreadContext.html" 
+            target=_blank><FONT face=Arial 
+            size=2>GetThreadContext</FONT></A><FONT face=Arial size=2> 
+            <BR>GetThreadSelectorEntry</FONT></TD>
+          <TD width="51%" bgColor=#ffffcc>
+            <P align=right><FONT face=Arial size=2>IsDebuggerPresent 
+            <BR>OutputDebugString <BR>ReadProcessMemory <BR>IsDebuggerPresent 
+            <BR>SetThreadContext <BR></FONT><A 
+            href="http://christal.suidzer0.org/DAdossier9/Debug_Apis/API/WaitForDebugEvent.html" 
+            target=_blank><FONT face=Arial 
+            size=2>WaitForDebugEvent</FONT></A><FONT face=Arial size=2> 
+            <BR></FONT><A 
+            href="http://christal.suidzer0.org/DAdossier9/Debug_Apis/API/WriteProcessMemory.html" 
+            target=_blank><FONT face=Arial size=2>WriteProcessMemory</FONT></A> 
+            </P></TD></TR></TBODY></TABLE></CENTER></P></TD></TR></TBODY></TABLE></P></CENTER>
+<BLOCKQUOTE>
+  <P><FONT face=Arial color=white size=2>Bonne Journée</FONT></P>
+  <P><FONT face=Arial color=white size=2>Christal</FONT> 
+</P></BLOCKQUOTE></BODY></HTML>

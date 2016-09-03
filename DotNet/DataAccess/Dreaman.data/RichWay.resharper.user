@@ -1,0 +1,80 @@
+<Configuration>
+  <CompletionStatisticsManager>
+    <ItemStatistics item="Qualified:System.Data.OleDb.OleDbDataAdapter">
+      <Item value="SelectCommand" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Data.StateChangeEventArgs">
+      <Item value="CurrentState" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Data.Odbc.OdbcConnection">
+      <Item value="Dispose" priority="8" />
+      <Item value="StateChange" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Data.OracleClient.OracleDataAdapter">
+      <Item value="SelectCommand" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Data.IDataReader">
+      <Item value="Close" priority="3" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Data.Odbc.OdbcDataAdapter">
+      <Item value="SelectCommand" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Data.SqlClient.SqlCommand">
+      <Item value="Dispose" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Data.OleDb.OleDbCommand">
+      <Item value="Dispose" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Data.OracleClient.OracleConnection">
+      <Item value="Dispose" priority="0" />
+      <Item value="StateChange" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Data.OleDb.OleDbConnection">
+      <Item value="Database" priority="0" />
+      <Item value="Dispose" priority="7" />
+      <Item value="StateChange" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Data.OracleClient.OracleCommand">
+      <Item value="Dispose" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Data.SqlClient.SqlDataAdapter">
+      <Item value="SelectCommand" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Data.Odbc.OdbcCommand">
+      <Item value="Dispose" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Data.SqlClient.SqlConnection">
+      <Item value="StateChange" priority="0" />
+    </ItemStatistics>
+  </CompletionStatisticsManager>
+  <EditorManager>
+    <RecentFiles>
+      <File id="0D4D9E53-98A9-4800-A2EF-685962BE2E76/f:Form1.cs" caret="10131" visual-x="0" visual-y="3133" />
+      <File id="E5B0BF49-3782-4016-BD38-28C790956166/f:DataAccessFactory.cs" caret="0" visual-x="0" visual-y="0" />
+      <File id="E5B0BF49-3782-4016-BD38-28C790956166/f:SQLDataAccess.cs" caret="245" visual-x="0" visual-y="1443" />
+      <File id="E5B0BF49-3782-4016-BD38-28C790956166/f:OracleDataAccess.cs" caret="1486" visual-x="0" visual-y="1248" />
+      <File id="E5B0BF49-3782-4016-BD38-28C790956166/f:OleDbDataAccess.cs" caret="644" visual-x="0" visual-y="1482" />
+      <File id="E5B0BF49-3782-4016-BD38-28C790956166/f:OdbcDataAccess.cs" caret="3595" visual-x="0" visual-y="1599" />
+      <File id="E5B0BF49-3782-4016-BD38-28C790956166/f:IDataAccess.cs" caret="1516" visual-x="0" visual-y="468" />
+    </RecentFiles>
+  </EditorManager>
+  <FileStructureView>
+    <AutoScrollToSource>False</AutoScrollToSource>
+    <TrackCaretLocation>False</TrackCaretLocation>
+  </FileStructureView>
+  <NAntValidationSettings>
+    <NAntPath value="" />
+  </NAntValidationSettings>
+  <ReFormatCode>
+    <OptimizeUsings>False</OptimizeUsings>
+    <RemoveRedundantThis>False</RemoveRedundantThis>
+    <ShortenReferences>False</ShortenReferences>
+    <DecorateModifiers>False</DecorateModifiers>
+  </ReFormatCode>
+  <SharedSolutionDisabledTemplatesManager>
+    <DisabledTemplates />
+  </SharedSolutionDisabledTemplatesManager>
+  <UserSolutionDisabledTemplatesManager>
+    <DisabledTemplates />
+  </UserSolutionDisabledTemplatesManager>
+</Configuration>

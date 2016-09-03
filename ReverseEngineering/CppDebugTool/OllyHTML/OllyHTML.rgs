@@ -1,0 +1,11 @@
+HKCR
+{
+	NoRemove AppID
+	{
+		'%APPID%' = s 'OllyHTML'
+		'OllyHTML.DLL'
+		{
+			val AppID = s '%APPID%'
+		}
+	}
+}

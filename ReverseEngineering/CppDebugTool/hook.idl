@@ -1,0 +1,18 @@
+// hook.idl : IDL source for hook.dll
+//
+
+// This file will be processed by the MIDL tool to
+// produce the type library (hook.tlb) and marshalling code.
+
+import "oaidl.idl";
+import "ocidl.idl";
+[
+	uuid(1C1E0527-B607-4F22-8F9F-820B4B3E2FD6),
+	version(1.0),
+	helpstring("hook 1.0 Type Library")
+]
+library HOOKLib
+{
+	importlib("stdole32.tlb");
+	importlib("stdole2.tlb");
+};

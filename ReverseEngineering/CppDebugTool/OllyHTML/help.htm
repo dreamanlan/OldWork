@@ -1,0 +1,1802 @@
+<html>
+	<head>
+		<title>OllyHTML帮助</title>
+		<meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5">
+		<META http-equiv="Content-Type" content="text/html; charset=gb2312">
+	</head>
+	<body>
+		<P>Ollydbg确实是一款非常不错的调试工具，不过目前好象没有一个比较强大的脚本引擎，因为我使用IE作应用界面已经有几年了，相关的技术比较成熟，近来因为需要分析一个程序在不同时段的过程调用关系，需要为Ollydbg写一段脚本来控制它的运行，看了一下目前的几个脚本工具，感觉太过底层了，不是汇编就是SOFTICE似的命令，这样子感觉很是不爽，并不是说做逆向工程的人就只能与汇编交谈吧，看了一下Ollydbg的插件开发文档，感觉工作量不大，所以便写了这个东东。</P>
+		<P><STRONG>一、运行机制简介</STRONG></P>
+		<P>OllyHTML插件实际上是一个IE浏览器，我们利用IE对象模型的扩展能力扩充了DOM(文档对象模型)，也就是加入了许多Ollydbg提供的功能，这样一来，我们可以用网页里的脚本操作扩展DOM，也就是可以用脚本调用Ollydbg的功能了。 
+			IE对象模型的扩充主要是通过window.external来引入，所以OllyHTML提供的功能都通过window.external来引入，我们将主要的功能封装成对象，并使用一个根对象作为这些对象的容器，这个根对象通过window.external.Application来访问。在脚本的包含文件 
+			const.js中我们定义了一个全局变量app: var app=window.external.Application; 
+			这样只要我们包含了这个文件，我们在脚本中就可以用app来访问插件提供的功能了。</P>
+		<P>&nbsp;一般说来，我们写的OllyHTML脚本有两种工作情形：</P>
+		<P>一、一种情形是脚本提供一个UI，当用户点击上面的功能按钮时执行对应的脚本，脚本再调用插件提供的API，操纵Ollydbg执行某种行为或者从Ollydbg读取信息，这种方式一般用于静态分析;
+		</P>
+		<P>二、另一种情形是Ollydbg调试程序时产生了调试事件，由插件调用脚本里的事件处理，在事件处理中操纵Ollydbg执行某种行为或者从Ollydbg读取信息，这种方式用于动态调试，此时脚本所做的就像我们用快捷键或菜单命令控制Ollydbg设断点、单步执行、单步跟进等等，而调试事件的产生相当于Ollydbg 
+			执行完了我们前面的一个操作。</P>
+		<P>几个事件为：OnStep,OnPaused,OnReset.</P>
+		<P><font><STRONG><FONT face="宋体">二、更新历史</FONT></STRONG></P>
+		<P><FONT size="2">0.7~0.8(2011.2.24):</FONT></P>
+		<P><FONT size="2">1、增加内存布局描述脚本支持及基于此脚本的内存操作，类似于c结构体功能;</FONT></P>
+		<P><FONT size="2">2、开发环境升级到vs.net 2010，依赖vc100运行时库;</FONT></P>
+		<P><FONT size="2">3、增加一个内嵌脚本，用于即时编写与执行脚本，不连网即可;</FONT></P>
+		<P><FONT size="2">4、关联网站错误修正。</FONT></P>
+		<P><FONT size="2">0.6~0.7(2006.9.21):</FONT></P>
+		<P><FONT size="2">1、帮助文档细化;</FONT></P>
+		<P><FONT size="2">2、增加一个非HTML控件：脚本编辑控件，用于在线编辑HTML脚本;</FONT></P>
+		<P><FONT size="2">3、增加LAMBDA表达式字符串字段的正则表达式匹配操作;</FONT></P>
+		<P><FONT size="2">4、BUG修正与基础API（window.external上的，非OD相关功能）的一些改变。</FONT></P>
+		<P><FONT size="2">0.5~0.6(2006.8.1):</FONT></P>
+		<P><FONT size="2">1、增加了Analyser.FindDisasm与Analyser.FindDisasm2来快速查找反汇编代码;</FONT></P>
+		<P><FONT size="2">2、增加了IntegerFields与StringFields对象，采用lambda表达式来构造FindDisasm2的条件;</FONT></P>
+		<P><FONT size="2">3、扩充了Register对象与DisasmInfo对象的成员，以返回Ollydbg提供的完整信息。</FONT></P>
+		<P><FONT size="2">0.4~0.5 (2006.5.16):</FONT></P>
+		<P><FONT size="2">1、网站脚本列表服务器端代码改为动态代码，允许自由发表脚本；</FONT></P>
+		<P><FONT size="2">2、DisasmInfo对象添加了一些成员以便于更好的分析反汇编代码;</FONT></P>
+		<P><FONT size="2">3、BUG修正。</FONT></P>
+		<P><FONT size="2">0.3~0.4 (2006.4.7):</FONT></P>
+		<P><FONT size="2">1、简化界面操作，去掉了菜单OnCall,Run =&gt; OnStart，Run =&gt; 
+				OnStop，相应功能直接在HTML界面上作按钮写对应处理即可；</FONT></P>
+		<P><FONT size="2">2、事件处理减少到3个，其它功能均可直接在HTML中实现，无需写回调函数；</FONT></P>
+		<P><FONT size="2">3、增加脚本界面显示热键Alt+F12；</FONT></P>
+		<P><FONT size="2">4、缺省HTML脚本通过访问网站获取已有脚本列表，以共享公用的脚本。</FONT></P>
+		<P><FONT size="2">0.2~0.3&nbsp;(2006.4.7):</FONT></P>
+		<P><FONT size="2">1、改写程序从而可以win98与win2000系统上运行；</FONT></P>
+		<P><FONT size="2">2、测试后确认插件API不单可在事件处理函数中调用。</FONT></P>
+		</FONT><PRE>0.1~0.2 (2006.4.5):</PRE>
+		<PRE>1、解决了IE窗口部分快捷键工作不正常的问题。</PRE>
+		<PRE>0.1 (2006.3.28):</PRE>
+		<PRE>1、初始版本，参照OllyScript与OllyMachine的命令与Ollydbg的插件文档实现了主要的API；</PRE>
+		<PRE>2、试验了配合HitTrace发现过程的功能与用DHTML+VML绘制流程图的功能。</PRE>
+		<P><FONT face="宋体"><STRONG>三、插件菜单功能</STRONG></FONT></P>
+		<P><STRONG><FONT face="宋体">1、Scripts菜单</FONT></STRONG></P>
+		<P><FONT face="宋体">链接已有脚本列表，简单点击某项目即装入该脚本。</FONT></P>
+		<P><FONT face="宋体"><STRONG>2、Load菜单</STRONG></FONT></P>
+		<P><FONT face="宋体">a、Html子菜单，装入指定的HTML文件。</FONT></P>
+		<P><FONT face="宋体">b、Url子菜单，装入指定URL的HTML内容。</FONT></P>
+		<P><FONT face="宋体">执行Load菜单各命令时会停止再调用脚本中的任何回调函数。</FONT></P>
+		<P><FONT face="宋体"><STRONG>3、Show</STRONG></FONT><FONT face="宋体"><STRONG>UI菜单(快捷键Alt+F12)</STRONG></FONT></P>
+		<P><FONT face="宋体">显示插件浏览器窗口。</FONT></P>
+		<P><FONT face="宋体">Ollydbg主窗口为插件浏览器窗口的Owner，因此插件浏览器窗口总是会覆盖Ollydbg的主窗口，不需要使用插件时可以最小化或隐藏插件浏览器窗口，点击插件浏览器窗口上的关闭图标便是隐藏插件浏览器窗口。</FONT></P>
+		<P><FONT face="宋体"><STRONG>4、Help菜单与About菜单</STRONG></FONT></P>
+		<P><FONT face="宋体">这两个就不用解释了吧:)</FONT></P>
+		<P><FONT face="宋体"><STRONG>四、插件回调函数</STRONG></FONT></P>
+		<P><FONT face="宋体"><STRONG>1、定义</STRONG></FONT></P>
+		<P><FONT face="宋体">插件回调函数也就是事件处理的定义方法如下：</FONT></P>
+		<P><FONT face="宋体">function 事件函数名称(参数名列表)</FONT></P>
+		<P><FONT face="宋体">{</FONT></P>
+		<P><FONT face="宋体">//事件处理代码</FONT></P>
+		<P><FONT face="宋体">}</FONT></P>
+		<P><FONT face="宋体">OnReset事件没有参数，也不需要返回值，其事件处理定义如下：</FONT></P>
+		<P><FONT face="宋体" color="#0066ff">function window.OnReset()</FONT></P>
+		<P><FONT face="宋体" color="#0066ff">{</FONT></P>
+		<P><FONT face="宋体" color="#0066ff">//事件处理代码</FONT></P>
+		<P><FONT face="宋体" color="#0066ff">}</FONT></P>
+		<P><FONT face="宋体">OnStep,OnPaused事件处理包括参数，OnPaused还需要返回值给插件，它们的定义如下：</FONT></P>
+		<P><FONT face="宋体" color="#0066ff">function window.OnStep(debugEvent)</FONT></P>
+		<P><FONT face="宋体" color="#0066ff">{</FONT></P>
+		<P><FONT face="宋体" color="#0066ff">//参数debugEvent是对应windows API 
+				DEBUG_EVENT结构的对象，它有许多属性指示调试事件相关的信息。</FONT></P>
+		<P><FONT face="宋体" color="#0066ff">//处理代码</FONT></P>
+		<P><FONT face="宋体" color="#0066ff">...</FONT></P>
+		<P><FONT face="宋体" color="#0066ff">}</FONT></P>
+		<P><FONT face="宋体" color="#0066ff">function 
+				window.OnPaused(reason,extdata,reg,debugEvent)</FONT></P>
+		<P><FONT face="宋体" color="#0066ff">{</FONT></P>
+		<P><FONT face="宋体" color="#0066ff">//参数reason，extdata参见Ollydgb插件文档关于ODBG_Pausedex回调函数的说明(见后一小节)</FONT></P>
+		<P><FONT face="宋体" color="#0066ff">//reg是对应t_reg结构的对象，它有许多属性指示了t_reg相关的信息，debugEvent同前述。</FONT></P>
+		<P><FONT face="宋体" color="#0066ff">//事件处理代码</FONT></P>
+		<P><FONT face="宋体" color="#0066ff">...</FONT></P>
+		<P><FONT face="宋体" color="#0066ff">//处理结束后返回1或者0,具体返回值参见Ollydgb插件文档关于ODBG_Pausedex回调函数的说明（见后一小节）。</FONT></P>
+		<P><FONT face="宋体" color="#0066ff">return 1;</FONT></P>
+		<P><FONT face="宋体" color="#0066ff">}</FONT></P>
+		<P><FONT face="宋体"><STRONG>2、说明</STRONG></FONT></P>
+		<P><FONT face="宋体">OnReset事件对应Ollydbg插件API回调函数ODBG_Pluginreset,Ollydbg插件API中的说明如下：</FONT></P>
+		<P><FONT face="宋体">/*</FONT></P>
+		<P><FONT color="#0066ff">Optional callback function. If present, OllyDbg calls 
+				ODBG_Pluginreset when user opens new or restarts current application. Plugin 
+				should reset internal variables and data structures to initial state. </FONT>
+		</P>
+		<P><FONT color="#3300ff"><FONT color="#0066ff">void ODBG_Pluginreset(void);</FONT> </FONT>
+		</P>
+		<P>*/</P>
+		<P>OnPaused对应Ollydbg插件API回调函数ODBG_Pausedex,Ollydbg插件API中的说明如下：</P>
+		<P><FONT face="宋体">/*</FONT></P>
+		<P><FONT color="#0066ff">Optional callback function. If present, OllyDbg will call it 
+				each time the debugged application is paused and after all internal processing 
+				is finished. Plugin may, for example, make some modifications and immediately 
+				continue execution by caling Go. In this case it may return 1, disabling 
+				time-consuming redrawing of windows. In any other case it must return 0. </FONT>
+		</P>
+		<P><FONT color="#0066ff">Note that if plugin exports both ODBG_Pausedex and 
+				ODBG_Paused, the second function will not be called. </FONT>
+		</P>
+		<P><FONT color="#0066ff">int ODBG_Pausedex(int reason, int extdata, t_reg *reg, 
+				DEBUG_EVENT *debugevent); </FONT>
+		</P>
+		<P><FONT color="#0066ff">Parameters: </FONT>
+		</P>
+		<P><FONT color="#0066ff">reason - reason why application was paused, use PP_MAIN to 
+				extract: </FONT>
+		</P>
+		<P><FONT color="#0066ff">PP_EVENT Paused on debugging event </FONT>
+		</P>
+		<P><FONT color="#0066ff">PP_PAUSE Paused on user's request </FONT>
+		</P>
+		<P><FONT color="#0066ff">PP_TERMINATED Application terminated </FONT>
+		</P>
+		<P><FONT color="#0066ff">The reason may be ORed with one or several of the following 
+				clarifiers: </FONT>
+		</P>
+		<P><FONT color="#0066ff">PP_BYPROGRAM Debugging event caused by program </FONT>
+		</P>
+		<P><FONT color="#0066ff">PP_INT3BREAK INT3 breakpoint </FONT>
+		</P>
+		<P><FONT color="#0066ff">PP_MEMBREAK Memory breakpoint </FONT>
+		</P>
+		<P><FONT color="#0066ff">PP_HWBREAK Hardware breakpoint </FONT>
+		</P>
+		<P><FONT color="#0066ff">PP_SINGLESTEP Single-step trap </FONT>
+		</P>
+		<P><FONT color="#0066ff">PP_EXCEPTION Exception, like division by 0 </FONT>
+		</P>
+		<P><FONT color="#0066ff">PP_ACCESS Access violation, like writing to NULL pointer </FONT>
+		</P>
+		<P><FONT color="#0066ff">PP_GUARDED Guarded page </FONT>
+		</P>
+		<P><FONT color="#0066ff">extdata - reserved, currently always 0; </FONT>
+		</P>
+		<P><FONT color="#0066ff">reg - pointer to registers of thread that caused application 
+				to pause, may be NULL; </FONT>
+		</P>
+		<P><FONT color="#0066ff">debugevent - pointer to debug event that caused pause, or NULL 
+				if there was no event. </FONT>
+		</P>
+		<P><FONT face="宋体">*/</FONT>
+		<P>
+		OnStep对应Ollydbg插件API回调函数ODBG_Pluginmainloop,Ollydbg插件API中的说明如下：</FONT>
+		<P>/*</P>
+		<P><FONT color="#0066ff">Optional callback function. If present, OllyDbg will call it 
+				on each pass of main loop. Here you can do all your periodical tasks. Don't 
+				assume that calls are equidistant; they aren't. Do not export this function 
+				unnecessarily, as this may negatively influence the overall speed! </FONT>
+		</P>
+		<P><FONT color="#0066ff">void ODBG_Pluginmainloop(DEBUG_EVENT *debugevent); </FONT>
+		</P>
+		<P><FONT color="#0066ff">Parameters: </FONT>
+		</P>
+		<P><FONT color="#0066ff">debugevent - pointer to debug event received by call to 
+				Windows API function WaitForDebugEvent, or NULL if there was no event. </FONT>
+		</P>
+		<P>*/</P>
+		<P><STRONG><FONT face="宋体">五、插件API</FONT></STRONG></P>
+		<P><STRONG><FONT face="宋体" color="#ff0000">插件API中所有返回ARRAY的API，ARRAY指SAFEARRAY，在js里需要转换成js的Array对象，方法如下：
+				</FONT></STRONG>
+		</P>
+		<P><STRONG><FONT face="宋体" color="#ff0000">假设API返回的ARRAY我们赋值给了变量apiArray,则下面语句将它转为javascript 
+					Array对象：</FONT></STRONG></P>
+		<BLOCKQUOTE dir="ltr" style="MARGIN-RIGHT: 0px"> <BLOCKQUOTE dir="ltr" style="MARGIN-RIGHT: 0px">
+				<P><STRONG><FONT face="宋体" color="#ff0000">var jsArray=new VBArray(apiArray).toArray();</FONT></STRONG></P>
+			</BLOCKQUOTE></BLOCKQUOTE>
+		<P><STRONG><FONT face="宋体">插件API的功能从它们的名字（或者结合它所属的对象名）应该可以看出来，参数的涵义请参考OllyScript的命令与Ollydbg的插件开发文档说明,DebugEvent对象参考MSDN里关于DEBUG_EVENT结构的说明，这里就不详述了。</FONT></STRONG></P>
+		<P><STRONG><FONT face="宋体">1、app (也就是window.external.Application)</FONT></STRONG></P>
+		<pre>方法：
+<FONT color=#0066ff>
+void EnableDebug(void) 
+//允许插件调用脚本的事件处理 
+void DisableDebug(void)
+//禁止插件调用脚本的事件处理 
+void SendShortcut(int where,DWORD addr,int msg,int ctrl,int shift,int vkcode)
+	//模拟OD的快捷键操作，这个直接对应到OD的同名插件API：
+	模拟一个全局快捷键或CPU子窗口的快捷键
+	参数:						
+		where - 指明模拟哪一类快捷键:						
+		PM_MAIN				主窗口(全局快捷键)
+		PM_DISASM			CPU 反汇编窗口
+		PM_CPUDUMP		CPU Dump窗口（数据窗口）
+		PM_CPUSTACK		CPU 堆栈窗口
+		PM_CPUREGS		CPU 寄存器窗口
+		
+		addr - 快捷键操作需要一个地址时由此提供，对where=PM_MAIN 或 PM_CPUREGS时忽略;
+		
+		msg - 要模拟的键盘消息: WM_KEYDOWN, WM_SYSKEYDOWN 或 WM_CHAR;
+		
+		ctrl - Ctrl键的状态 (0 - 释放, 1 - 按下);
+		
+		shift - Shift键的状态 (0 - 释放, 1 - 按下);
+		
+		vkcode - 按下的字符键，一个 VK_xxx 值(比如, VK_F1 代表 F1 键，参见后面列出的常量名称).
+		
+void Log(long addr,int highlight, STRING mess)
+	//往LOG窗口写一行信息：
+	参数：（地址，是否高亮，信息）
+DWORD AskAddr(STRING title,DWORD defval) 
+	//提示用户输入一个地址
+	参数：（提示信息，缺省值）
+STRING AskStr(STRING title,STRING defval) 
+	//提示用户输入一个字符串
+	参数：（提示信息，缺省值）
+STRING AskFile(BOOL isOpen,BSTR title,BSTR name,BSTR defext) 
+	//由用户选择一个文件，这个对应到插件API：Browsefilename
+	参数：（打开对话框/保存对话框，提示信息，文件名[带扩展]，扩展名）
+DWORD ShowLogWindow()
+DWORD ShowWinWindow()
+DWORD ShowThreadWindow()
+DWORD ShowPatchWindow()  
+</FONT>
+属性（只读）：
+<FONT color=#0066ff>
+int Hwnd //主窗口句柄
+int Status //被调试程序状态
+	STAT_NONE			没有程序被调试
+	STAT_STOPPED	进程挂起
+	STAT_EVENT		进程被暂停，处理调试事件
+	STAT_RUNNING	进程在运行中
+	STAT_FINISHED	进程已经终止
+	STAT_CLOSING	等待进程终止 
+int HBPEnabled //是否允许硬件断点
+int ProcessId //被调试程序的进程ID，其它API里需要它作为参数
+int ProcessHandle(void) //被调试程序的进程句柄，其它API里需要它作为参数
+int MainThreadId //被调试程序的主线程ID
+int MainThreadHandle //被调试程序的主线程句柄
+DWORD CpuThreadId //CPU窗口显示的代码的线程ID，其它API里需要它作为参数
+DWORD CpuThreadHandle //CPU窗口显示的代码的线程句柄
+Module SelModule //当前选中的模块，Module是我们后面要介始的一个对象
+int ModuleNumber //模块总数
+Module GetModule(int ix) //取第ix个模块，从0开始计数，Module是我们后面要介始的一个对象
+MemoryInfo SelMemory //当前选中的内存块,MemoryInfo是我们后面要介绍的一个对象
+int MemoryNumber //内存块的总数
+MemoryInfo GetMemory(int ix) //取第ix个内存块，从0开始计数，MemoryInfo是我们后面要介绍的一个对象
+Thread SelThread //选中的线程，Thread是我们后面要介绍的一个对象
+int ThreadNumber //线程总数
+Thread GetThread(int ix) //取第ix个线程，从0开始计数,Thread是我们后面要介绍的一个对象
+</FONT>
+下面的属性返回另外几个对象
+<FONT color=#0066ff>
+Analyser 分析功能对象（稍后介绍）
+BreakPoint 断点功能对象（稍后介绍）
+Execution 执行控制功能对象（稍后介绍）
+Tracer 跟踪功能对象（稍后介绍）
+Memory 内存访问功能对象（稍后介绍）
+</FONT>
+</pre>
+		<p><STRONG>2、Analyser</STRONG></p>
+		<pre>方法:
+<FONT color=#0066ff>
+BOOL AnalyseCode (DWORD addr) //从指定地址分析代码
+AsmInfo Asm(DWORD addr, STRING cmd) 
+	//汇编一段汇编代码到指定地址，这个功能与我们在OD中某条指令上按空格写汇编
+	//是一样的
+DisasmInfo Disasm(DWORD addr) 
+	//反汇编指定地址的指令，返回的DisasmInfo是后面我们要说明的对象，这个方法是分析
+	//的关键，由此我们可以得到OD反汇编出的指令的详细信息
+DisasmInfo FindDisasm(DWORD addr,INT cmdType,BOOL onlyConstAddr)
+	//从指定地址指令的下一条指令开始搜索指定的指令类型，onlyConstAddr指出是否仅搜索包含
+	//常量地址的指令，cmdType的值可以是：
+	C_CMD // 常规指令
+	C_PSH // PUSH 指令
+	C_POP // POP 指令
+	C_MMX // MMX 指令
+	C_FLT // FPU 指令
+	C_JMP // JUMP 指令
+	C_JMC // 条件 JUMP 指令
+	C_CAL // CALL 指令
+	C_RET // RET 指令
+	C_FLG // 改变FLAGS标志的指令
+	C_RTF // C_JMP 与 C_FLG 同时
+	C_REP // 带 REPxx 前缀的指令
+	C_PRI // 特权指令
+	C_SSE // SSE 指令
+	C_NOW // 3DNow! 指令
+
+DisasmInfo FindDisasm2(DWORD addr,Condition condition)
+	//从指定地址指令的下一条指令开始搜索符合指定LAMBDA表达式的指令，condition是我们使用
+	//后面的API对象构造的LAMBDA表达式对象
+															
+BOOL Cpu (DWORD dasmaddr, DWORD dumpaddr, DWORD stackaddr)
+	//设定CPU窗口的反汇编子窗口、DUMP窗口、栈窗口的地址，某个参数为0表明不改变该子窗口
+	//的地址
+															
+BOOL CpuWithThread (DWORD tid, DWORD dumpaddr)
+	//指定CPU窗口与指定线程关联，并改变DUMP窗口地址为指定地址（为0则不改变）
+															
+BOOL CpuWithRuntrace (DWORD back)
+	//指定CPU窗口显示Runtrace里的某条指令相关的信息，这个方法主要用于Runtrace跟踪
+															
+DWORD Dump (STRING title, DWORD addr, DWORD len, DWORD type) 
+	//打开一个新的DUMP窗口，参数为（标题，内存起始地址，显示内存块的长度，显示类型），返回值为
+	//窗口句柄，可用作下一方法的参数从而更新内存地址与长度
+	//显示类型的可能值如下：
+	（combination of dump type (one of DU_xxx), number of items per line ((n&lt;&lt;8) &amp; DU_COUNT) 
+	and size of single item (l &amp; DU_SIZE). For variable-length types size is 1. ）
+	
+	0x01101	Hex/ASCII (16 bytes)
+	0x01081	Hex/ASCII (8 bytes)
+	0x0A101	Hex/UNICODE (16 bytes)
+	0x0A081	Hex/UNICODE (8 bytes)
+	0x02401	ASCII (64 chars)
+	0x02201	ASCII (32 chars)
+	0x03402	UNICODE (64 chars)
+	0x03202	UNICODE (32 chars)
+	0x04082	Signed short decimal
+	0x05082	Unsigned short decimal
+	0x06082	Short hex
+	0x04044	Signed long decimal
+	0x05044	Unsigned long decimal
+	0x06044	Long hex
+	0x08014	Address
+	0x0B041	Address with ASCII dump
+	0x0C041	Address with UNICODE dump
+	0x07044	32-bit float
+	0x07028	64-bit double
+	0x0701A	80-bit long double
+	0x09011	Disassemble
+	0x0D001	PE header
+
+BOOL UpdateDump (DWORD hwnd, DWORD addr, DWORD len, DWORD type) 
+	//更新指定DUMP窗口的内存起始地址与内存块长度，采用指定的显示类型type
+															
+BOOL Comment (DWORD addr, STRING cmd) 
+	//为指定地址添加注释
+															
+DWORD DumpToFile (DWORD addr, DWORD size, STRING file) 
+	//将指定地址开始的size长度的内存转储到指定文件
+
+DWORD DumpToFileAppended (DWORD addr, DWORD size, STRING file) 
+	//将指定地址开始的size长度的内存追加到指定文件尾
+
+BOOL DumpPE (DWORD addr, STRING file) 
+	//指定OEP为addr转储PE映像到指定文件
+															
+DWORD Find (DWORD addr, STRING target) 
+	//从指定地址开始搜索指定内容，这个方法来源于OllyScript
+	//命令FIND，支持通配符??
+	//比如app.Analyser.Find(0x00401000,"60??99");
+															
+DWORD FindOP (DWORD addr, STRING target) 
+	//从指定地址指令的下一条指令开始搜索指定指令，这个方法来源于OllyScript
+	//命令FINDOP，支持通配符??
+	//比如app.Analyser.FindOP(0x00401000,"60??99");
+															
+BOOL Fill (DWORD addr, DWORD len, DWORD v) 
+	//用指定值v（一个字节0~255）填充addr开始的长度为len的内存
+
+BOOL Replace (DWORD addr, STRING src, STRING dest, DWORD len) 
+	//在指定地址开始，在指定长度字节内，用“替换字符串”替换“查找字符串”。
+	//允许使用通配符??
+															
+STRING GetLabel (DWORD addr) //对应OD API：Findlabel
+STRING GetSymbolicName (DWORD addr) //对应OD API：Findsymbolicname
+ARRAY DecodeAddress (DWORD addr) //对应OD API：Decodeaddress，返回数组由两个元素组成[sym，comment]
+Thread GetThreadInfo (DWORD id) //取指定线程ID的线程信息，返回对象为我们稍后介始的Thread对象
+MemoryInfo GetMemoryInfo (DWORD addr) //取指定地址的内存信息，返回对象为我们稍后介绍的MemoryInfo对象
+Module GetModuleInfo (DWORD addr) //取指定地址所属的模块信息，返回对象为我们稍后介绍的Module对象
+DWORD GetFileOffset (DWORD addr) //得到指定内存地址对应的PE文件偏移
+DWORD GetPrevOPAddr (DWORD addr, DWORD n) //取指定地址对应的指令的前n条指令（似乎不太准确）
+DWORD GetNextOPAddr (DWORD addr, DWORD n) //取指定地址对应的指令的后n条指令（较前一个准确些）
+DWORD FindProcBegin (DWORD addr) //取指定地址所在的过程的开始地址
+DWORD FindProcEnd (DWORD addr) //取指定地址所在的过程的结束地址
+DWORD FindPrevProc (DWORD addr) //取指定过程的前一个过程
+DWORD FindNextProc (DWORD addr) //取指定过程的后一个过程
+DWORD FollowCall (DWORD addr) //跟踪指定地址的CALL或JMP，与OD里按Enter的功能一样
+BOOL SelectDisasm(DWORD addr,DWORD size) //在OD CPU反汇编窗口选中指定地址开始的指定大小的指令
+STRING DemangleName(STRING name,int type) //对应OD API：Demanglename，主要用于处理C++换名
+DWORD FindImportByName(STRING name,DWORD addr0,DWORD addr1) //对应OD API：Findimportbyname
+DWORD FindLabelByName(STRING name,DWORD addr0,DWORD addr1) //对应OD API：Findlabelbyname
+STRING FindName(DWORD addr,int type) //对应OD API：Findname
+ARRAY FindNextName() //对应OD API：Findnextname，返回数组由两个元素组成[name,addr]
+属性：
+DumpInfo DisasmPane //返回当前CPU反汇编窗口的一些信息，参见DumpInfo对象
+DumpInfo DumpPane //返回当前CPU数据窗口的一些信息，参见DumpInfo对象
+DumpInfo StackPane //返回当前CPU栈窗口的一些信息，参见DumpInfo对象
+</FONT> 
+</pre>
+		<p><STRONG>3、BreakPoint</STRONG></p>
+		<pre>方法：
+<FONT color=#0066ff>
+BOOL Clear (DWORD addr) //清除指定地址的断点
+BOOL TempOn (DWORD addr) //在指定地址设置一个临时断点（OneShot）
+BOOL On (DWORD addr) //在指定地址设置一个Int3断点
+BOOL OnCond (DWORD addr, STRING cond, DWORD passcount)  
+	//在指定地址设置条件断点，其中cond字符串的写法与OD里设条件断点时弹出界面里的条件写法一样，passcount是断点被跳过的次数
+BOOL OnLog (DWORD addr, STRING explanation, STRING expression, DWORD passcount, BOOL noBreak) 
+	//设置LOG，explanation,expression,passcount与OD中设置条件LOG时的相关设置一样，noBreak指出是否中断程序执行
+BOOL OnCondLog (DWORD addr, STRING condition, STRING explanation, STRING expression, DWORD passcount, BOOL noBreak)
+	//设置条件LOG，condition,explanation,expression,passcount与OD中设置条件LOG时的相关设置一样，noBreak指出是否中断程序执行 
+BOOL HardwareClear (DWORD addr) //清除指定地址的硬件断点
+BOOL HardwareOnCode (DWORD addr, DWORD size) //在指定地址addr大小size设置硬件执行断点
+BOOL HardwareOnAccess (DWORD addr, DWORD size) //在指定地址addr大小size设置硬件访问断点
+BOOL HardwareOnWrite (DWORD addr, DWORD size) //在指定地址addr大小size设置硬件写断点
+BOOL DeleteHardware(int index) //删除指定索引的硬件断点，索引值0~3
+BOOL MemoryClear (void) //清除内存断点
+BOOL OnMemoryRead (DWORD addr, DWORD size) //在指定地址addr大小size设置内存读断点
+BOOL OnMemoryWrite (DWORD addr, DWORD size) //在指定地址addr大小size设置内存写断点
+BOOL OnMemoryAccess (DWORD addr, DWORD size) //在指定地址addr大小size设置内存读写断点
+STRING GetType (DWORD addr) //得到指定地址的断点类型
+DWORD GetPassCount (DWORD addr) //得到指定地址的断点PassCount值
+</FONT> 
+</pre>
+		<p><STRONG>4、Execution</STRONG></p>
+		<pre>方法：
+<FONT color=#0066ff>
+BOOL Run (void) //运行程序，等同于OD中F9
+BOOL ToReturn (void) //运行直到返回，等同于OD中CTRL+F9
+BOOL ToUserCode (void) //运行直到用户代码，等同于OD中ALT+F9
+BOOL StepInto (void) //单步跟进，等同于OD中F7
+BOOL StepOver (void) //单步执行，等同于OD中F8
+BOOL AnimateInto (void) //单步跟进，等同于OD中CTRL+F7
+BOOL AnimateOver (void) //单步执行，等同于OD中CTRL+F8
+BOOL ExceptionStepInto (void) //异常跟进，等同于OD中SHIFT+F7
+BOOL ExceptionContinue (void) //异常继续，等同于OD中SHIFT+F9
+BOOL OpenExeFile (STRING file) //打开一个被调试程序，相当于OD中的FILE=》OPEN
+BOOL AttachToActiveProcess (int pid) //关联到指定ID的进程，相当于OD中的FILE=》ATTACH
+BOOL SuspendProcess (int processevents) //挂起被调试进程，processevents为1表示在挂起前先处理完调试事件，否则为0
+DWORD RunSingleThread (DWORD tid) //运行指定ID的线程并挂起所有其它线程，如果tid=0则挂起所有线程
+void RestoreAllThreads (void) //恢复所有线程的状态到调用RunSingleThread之前的状态
+</FONT> 
+</pre>
+		<p><STRONG>5、Tracer</STRONG></p>
+		<pre>方法：
+<FONT color=#0066ff>
+BOOL SetCondition (STRING cond, int onsuspicious, DWORD in0, DWORD in1, DWORD out0, DWORD out1, DWORD ct) 
+	//设置一个RUNTRACE的条件，与OD菜单set condition相似
+	cond - 条件
+	onsuspicious - 1 (激活) / 0 （不激活），是否在遇到可疑指令（好象就是分析的不对的指令）时暂停
+	in0，in1 - 指令指针出现在此范围时记录，均为0则不使用此条件
+	out0，out1 - 指令指针不在此范围时记录，均为0则不使用此条件
+	ct - 当记录的指令数目达到这个值时暂停，为0则不使用此条件
+BOOL Into (void) //Trace Into，等同于OD中CTRL+F11	
+BOOL Over (void) //Trace Over，等同于OD中CTRL+F12
+int FindPrev (DWORD addr, int startback) 
+	//在Runtrace记录中向前搜索EIP=addr的记录，startback + 1为开始搜索的记录，为startback = 0从最新的记录开始搜索
+int FindNext (DWORD addr, int startback) 
+	//在Runtrace记录中向后搜索EIP=addr的记录，startback + 1为开始搜索的记录，为startback = 0从最新的记录开始搜索
+RuntraceInfo GetRegisterInfo (int nback) //读取Runtrace记录中指定步数的指令的寄存器信息
+DWORD GetProfile (DWORD addr) //得到指定地址的指令在Runtrace记录中出现的次数
+BOOL Close (void) //关闭Runtrace(清空记录)
+BOOL Hit (DWORD addr0, DWORD addr1, int mode)
+	//设定一个Hit跟踪，对应于OD插件API：Modifyhittrace
+	参数：
+	addr0 - 起始地址;
+
+	addr1 - 结束地址 (此地址不包含在范围中);
+
+	mode - 采取的行为:
+
+		ATR_ADD			添加一个HIT TRACE
+		ATR_ADDPROC		仅仅对指定范围内识别出的过程添加HIT TRACE
+		ATR_RESET		将范围标识为非跟踪
+		ATR_REMOVE		移除范围与断点
+		ATR_REMOVEALL	清除范围与断点
+		ATR_RESTORE		恢复内存中的断点
+		ATR_RTRADD		对指定范围添加HIT TRACE并启动run trace
+		ATR_RTRJUMPS	对指定范围添加HIT TRACE，仅对跳转记录run trace
+		ATR_RTRENTRY	对指定范围添加HIT TRACE，仅对函数入口记录run trace
+		ATR_RTREMOVE	移除指定范围的跟踪
+		ATR_RTSKIP		在run trace里跳过指定范围
+
+BOOL IsHit (DWORD addr) //指定地址是否设置了HIT TRACE
+int InsertWatch(int index,STRING exp) //插入一个监视表达式
+int DeleteWatch(int index) //删除监视表达式
+STRING GetWatch(int index) //得到监视表达式的值
+ResultInfo CalcExpression(STRING expression,int a,int b,DWORD threadid)
+DWORD ShowWatchWindow(void) //显示监视窗口
+DWORD ShowRuntraceWindow(void) //显示Runtrace窗口
+BOOL ScrollRuntraceWindow(int back) //让指定Runtrace记录显示在Runtrace窗口
+DWORD ShowProfileWindow(DWORD base,DWORD size) //显示Runtrace统计信息窗口,对指定地址addr开始的大小为size的代码进行统计
+</FONT> 
+属性（只读）：
+<FONT color=#0066ff>
+int Size //得到Runtrace的大小
+</FONT>
+</pre>
+		<p>下面是用作API返回对象或事件处理参数的对象</p>
+		<p><STRONG>6、Register</STRONG></p>
+		<pre>属性：
+<FONT color=#0066ff>
+int Modified 
+	//在调试事件处理中，如果我们需要修改寄存器的值，则在改变相应寄存器值后将此属性置1，这样OD会将修改值写入被调
+	//试进程上下文
+int SingleStep [只读] //单步的类型，SS_xxx
+unsigned long SegGs //GS段寄存器
+unsigned long SegFs //FS段寄存器
+unsigned long SegEs //ES段寄存器
+unsigned long SegDs //DS段寄存器
+unsigned long Edi //EDI寄存器
+unsigned long Esi //ESI寄存器
+unsigned long Ebx //EBX寄存器
+unsigned long Edx //EDX寄存器
+unsigned long Ecx //ECX寄存器
+unsigned long Eax //EAX寄存器
+unsigned long Ebp //EBP寄存器
+unsigned long Eip //EIP寄存器
+unsigned long SegCs //CS段寄存器
+unsigned long EFlags //EFLAGS标志寄存器
+unsigned long Esp //ESP寄存器
+unsigned long SegSs //SS段寄存器
+unsigned long Dr0 //DR0控制寄存器
+unsigned long Dr1 //DR1控制寄存器
+unsigned long Dr2 //DR2控制寄存器
+unsigned long Dr3 //DR3控制寄存器
+unsigned long Dr6 //DR6控制寄存器
+unsigned long Dr7 //DR7控制寄存器
+unsigned long ThreadId [只读]  //线程ID
+unsigned long LastError [只读] //最近一次的线程错误号
+int FpuTop //浮点栈顶
+void SetFpuReg(int ix,double v) //设置浮点寄存器值，ix (0~7) - 寄存器索引
+double GetFpuReg(int ix) //读浮点寄存器值，ix (0~7) - 寄存器索引
+void SetFpuTag(int ix,unsigned char v)  //设置浮点寄存器TAG，ix (0~7) - 寄存器索引
+unsigned char GetFpuTag(int ix) //读浮点寄存器TAG，ix (0~7) - 寄存器索引
+unsigned int FpuStatusWord //浮点处理器状态字
+unsigned int FpuCtrlWord //浮点处理器控制字
+UINT GetSegBase(int ix) //读取段基址，ix(0~5) - 段寄存器索引，对应ES,CS,SS,DS,FS,GS
+	//const.js有寄存器索引的常量定义，SEG_xx
+UINT GetSegLimit(int ix) //读取段限制，ix(0~5) - 段寄存器索引，对应ES,CS,SS,DS,FS,GS
+	//const.js有寄存器索引的常量定义，SEG_xx
+UCHAR GetSegBig(int ix) //读取段缺省尺寸，ix(0~5) - 段寄存器索引，对应ES,CS,SS,DS,FS,GS
+	//const.js有寄存器索引的常量定义，SEG_xx
+int SSEValid [只读] //是否SSE寄存器有效
+int SSEModified //是否SSE寄存器被修改
+void SetSSEReg(int i,int j,char v) //设置SSE寄存器值，i (0~7) j (0~15) - SSE寄存器值，i
+	//代表寄存器索引，j是128位中的第j个字节
+char GetSSEReg(int i,int j) //读取SSE寄存器值，i (0~7) j (0~15) - SSE寄存器值，i
+	//代表寄存器索引，j是128位中的第j个字节
+int Mxcsr //SSE控制与状态寄存器
+int Selected [只读] //报告选中的寄存器，插件文档说明：currently selected register, defined only if t_reg 
+	is passed to one of ODBG_Plugin... callback functions, otherwise undefined. AND this 
+	value with RS_GROUP to obtain the group of registers RS_xxx; to get index of register 
+	within the group, AND it with RS_INDEX. For example, code 0013 is a general-purpose 
+	register EBX (0013 &amp; RS_GROUP = RS_INT, 0013 &amp; RS_INDEX = REG_EBX);
+
+</FONT>
+</pre>
+		<p><STRONG>7、DebugEvent</STRONG></p>
+		<pre>属性（只读）：（部分属性只对特定的调试事件有效，参见MSDN的详细描述）
+<FONT color=#0066ff>
+DWORD Code //调试代码 
+DWORD ProcessId //进程ID
+DWORD ThreadId //线程ID
+DWORD ExceptionFirstChance //异常信息，是否第一次产生 
+DWORD ExceptionCode //异常代码
+DWORD ExceptionFlags //异常标志
+DWORD ExceptionAddress //异常地址
+DWORD ProcessHandle //进程句柄
+DWORD ThreadHandle //线程句柄
+STRING ImageName //PE映像名
+DWORD BaseOfImage //PE映像基址
+DWORD StartAddress //开始地址
+DWORD ExitCode //退出代码
+STRING NameOfDll //DLL名字
+DWORD BaseOfDll //DLL基地址
+STRING DebugString //调试信息串
+</FONT> 
+</pre>
+		<p><STRONG>8、Module</STRONG></p>
+		<pre>属性（只读）：（参见t_module结构的相关信息）
+<FONT color=#0066ff>
+DWORD Base //模块基地址
+DWORD Size //模块大小
+DWORD CodeBase //代码段基地址
+DWORD CodeSize //代码段大小
+DWORD DataBase //数据段基地址
+DWORD IDataTable //移入数据表的基地址
+DWORD IDataSize //移入数据表的大小
+DWORD EDataTable //移出数据表的基地址
+DWORD EDataSize //移出数据表的大小
+DWORD ResBase //资源的基地址
+DWORD ResSize //资源的大小
+DWORD RelocTable //重定位表的基地址
+DWORD RelocSize //重定位表的大小
+DWORD SFXBase //内存SFX的基地址
+DWORD SFXSize //内存SFX的大小
+int IsSysDll //是否系统DLL
+int XRefCount //未分类的交叉引用数目
+ARRAY GetXRef(int ix) //得到指定序号的未分类交叉引用
+	//返回数组[跳转类型，跳转起始地址，跳转目的地址]
+	//跳转类型：
+	JT_JUMP       = 0	//无条件跳转
+	JT_COND       = 1	//条件跳转
+	JT_SWITCH     = 2	//SWITCH表跳转
+	3					//过程调用
+	
+DWORD Entry //模块入口点
+STRING Name //模块名
+STRING Path //模块路径
+void ClearXRefs(void) //清除由BuildXRefs构造的分类交叉引用信息，前面的XRefCount与GetXRef与此信息无关
+void BuildXRefs(DWORD start,DWORD num) //构造分类的交叉引用信息，供后面四个函数查询
+	//start指定开始索引，num指定构造数目，start与num应在XRefCount的范围内。
+ARRAY GetProcToRefs(DWORD addr) //取调用指定过程的分类交叉引用信息，返回数组为
+	//字符串数组，每个字符串格式为："调用语句地址-&gt;被调用过程地址"
+ARRAY GetProcFromRefs(DWORD addr) //取由指定过程调用的过程的分类交叉引用信息，返回数组为
+	//字符串数组，每个字符串格式为："调用过程:调用语句地址"
+DWORD GetAddrXRefCount(DWORD addr) //得到指定地址的所有分类的交叉引用个数
+ARRAY GetAddrXRef(DWORD addr,DWORD index) //得到指定地址的指定序号的交叉引用个数，返回数组为
+	//[跳转类型，跳转起始地址，跳转目的地址]
+	//跳转类型：
+	JT_JUMP       = 0	//无条件跳转
+	JT_COND       = 1	//条件跳转
+	JT_SWITCH     = 2	//SWITCH表跳转
+	3					//过程调用
+</FONT>
+</pre>
+		<p><STRONG>9、AsmInfo</STRONG></p>
+		<pre>app.Analyser.Asm方法的返回对象（参见t_asmmodel结构的相关信息）
+<FONT color=#0066ff>
+int CodeLength //只读属性，汇编出的结果代码长度（0：空）
+int GetByte (int ix) //取汇编结果的某个字节
+int GetMask (int ix) //取汇编结果的某个字节的位掩码（0：忽略）
+int JumpSize //只读属性，如果是相对跳转则为跳转偏移在指令中的尺寸
+int JumpOffset //只读属性，相对于IP的跳转偏移值
+int JumpPosition //只读属性，跳转偏移在指令中位置（字节）
+STRING Error //只读属性，错误信息，如不为空字符串则为获取AsmInfo时的出错信息
+</FONT>
+</pre>
+		<p><STRONG>10、DisasmInfo</STRONG></p>
+		<pre>app.Analyser.Disasm/FindDisasm/FindDisasm2方法的返回对象（参见t_disasm结构的相关信息）
+<FONT color=#0066ff>
+DWORD IP  //只读属性，指令指针
+STRING Dump  //只读属性，对应机器码的16进制串显示
+STRING Disasm  //只读属性，反汇编代码
+STRING Comment  //只读属性，注释
+STRING GetOPComment (int ix) //取指令操作数注释
+int CmdType //指令类型，C_xxx
+int MemType //内存类型，DEC_xxx
+int PrefixNum //前缀个数
+int Indexed  //只读属性，地址索引寄存器的scale值或0（不使用索引寄存器）
+DWORD JumpConst  //只读属性，常量跳转地址
+DWORD JumpTable  //只读属性，跳转表的可能地址
+DWORD AddrConst  //只读属性，地址的常量部分
+DWORD ImmConst  //只读属性，立即数常量
+BOOL ZeroImm  //只读属性，是否包含0立即数常量（主要指明ImmConst=0是否有意义）
+int FixupOffset  //只读属性，32位fixups的可能偏移（不太明白）
+int FixupSize  //只读属性，fixups的总大小或0
+DWORD JumpAddr  //只读属性，跳转/调用/返回的目标地址（如果无法计算则为0）
+int Condition  //只读属性，-1不是条件跳转指令，0：未跳转，1：跳转，这个仅对调试时当前EIP==IP时有效
+int Error  //只读属性，反汇编命令时的错误，DAE_xxx
+int Warnings  //只读属性，命令可疑或无意义，DAW_xxx
+int GetOPType (int ix) //取操作数类型，ix (0~2) 索引，DEC_xxx 或 DECR_xxx
+int GetOPSize (int ix) //取操作数尺寸，ix (0~2) 索引
+int GetOPGood (int ix) //取对应索引的GetOPAddr/GetOPData是否有效，这些数据仅在当前EIP==IP时生效，ix (0~2) 索引
+DWORD GetOPAddr (int ix) //操作数内存地址或寄存器索引，这些数据仅在当前EIP==IP时生效，ix (0~2) 索引
+DWORD GetOPData (int ix) //操作数值（仅整数寄存器值有效），这些数据仅在当前EIP==IP时生效，ix (0~2) 索引
+OperandInfo GetOPInfo (int ix) //取操作数完整信息，ix (0~2) 索引，返回对象见后面描述
+DWORD GetRegData(int ix) //取指令执行后的寄存器值，ix (0~7) 索引（符号常量REG_xxx），应仅在调试时有效
+int GetRegStatus(int ix) //取寄存器状态，ix (0~7) 索引（符号常量REG_xxx），返回值为一个RST_xxx值，应仅在调试时有效
+DWORD AddrData //跟踪指令中引用的内存地址的数据
+int AddrStatus //取AddrData数据的状态，一个RST_xxx值
+DWORD GetRegStack(int ix) //栈跟踪信息
+int GetRegStackStatus(int ix) //栈跟踪信息的状态
+int RegStackNum //栈跟踪信息的个数
+</FONT>
+</pre>
+		<p><STRONG>11、Memory</STRONG></p>
+		<pre><FONT color=#0066ff>
+DWORD OpenProcess(DWORD id) //打开指定ID的进程，获取一个完整权限的进程句柄
+BOOL  CloseHandle(DWORD hProcess) //关闭进程句柄
+DWORD VirtualAllocEx(DWORD hProcess,DWORD size) //在指定进程（句柄hProcess）空间分配size大小的内存，返回分配的地址
+BOOL VirtualFreeEx(DWORD hProcess,DWORD addr,DWORD size) //释放指定进程（句柄hProcess）空间的从addr开始的size大小的内存
+ARRAY VirtualQueryEx(DWORD hProcess,DWORD addr) 
+	//查询指定进程（句柄hProcess）空间的addr开始的内存块的信息，返回数组内容为
+	MEMORY_BASIC_INFORMATION结构（参见MSDN说明）的下列字段值：
+		[BaseAddress,AllocationBase,AllocationProtect,RegionSize,State,Protect,Type]
+		
+DWORD VirtualProtectEx(DWORD hProcess,DWORD base,DWORD flag)
+	//改变指定进程（句柄hProcess）空间的base开始的内存块的保护属性，flag值为下列值的或：
+		PAGE_NOACCESS          = 0x01	不可访问    
+		PAGE_READONLY          = 0x02   只读
+		PAGE_READWRITE         = 0x04   可读写
+		PAGE_WRITECOPY         = 0x08   COPY写
+		PAGE_EXECUTE           = 0x10   执行
+		PAGE_EXECUTE_READ      = 0x20   执行/读
+		PAGE_EXECUTE_READWRITE = 0x40   执行/读/写  
+		PAGE_EXECUTE_WRITECOPY = 0x80   执行/COPY写
+		PAGE_GUARD             = 0x100  GUARD，OD中的访问断点使用此属性   
+		PAGE_NOCACHE           = 0x200  
+		PAGE_WRITECOMBINE      = 0x400  
+	//返回值为内存的原保护属性
+	
+void  WriteProcessBstr (DWORD hProcess, DWORD base, STRING val) 
+	//写UNICODE字符串val到指定进程（句柄hProcess）空间的base开始的内存
+void  WriteProcessCstr (DWORD hProcess, DWORD base, STRING val) 
+	//写C字符串字符串val到指定进程（句柄hProcess）空间的base开始的内存
+void  WriteProcessDword (DWORD hProcess, DWORD base, DWORD val) 
+	//写双字（32位）val到指定进程（句柄hProcess）空间的base开始的内存
+void  WriteProcessWord (DWORD hProcess, DWORD base, unsigned short val) 
+	//写字（16位）val到指定进程（句柄hProcess）空间的base开始的内存
+void  WriteProcessByte (DWORD hProcess, DWORD base, unsigned char val) 
+	//写字节（8位）val到指定进程（句柄hProcess）空间的base开始的内存
+STRING  ReadProcessBstr (DWORD hProcess, DWORD base) 
+	//从指定进程（句柄hProcess）空间的base开始的内存读UNICODE字符串
+STRING  ReadProcessCstr (DWORD hProcess, DWORD base) 
+	//从指定进程（句柄hProcess）空间的base开始的内存读C字符串
+UINT  ReadProcessDword (DWORD hProcess, DWORD base) 
+	//从指定进程（句柄hProcess）空间的base开始的内存读一个双字（32位）
+unsigned short  ReadProcessWord (DWORD hProcess, DWORD base)
+	//从指定进程（句柄hProcess）空间的base开始的内存读一个字 （16位）
+unsigned char  ReadProcessByte (DWORD hProcess, DWORD base)
+	//从指定进程（句柄hProcess）空间的base开始的内存读一个字节 （8位）
+BOOL  ParseLayout (BSTR layoutScript)
+	//解析字符串表示的内存布局脚本，用于创建内存布局实例（下一函数）：
+    脚本格式：
+    layout1Id
+    {
+        member1Name(type/size,num);
+        member2Name(type/size,num);
+        ...
+    };
+    layout2Id
+    {
+        member1Name(type/size,num);
+        member2Name(type/size,num);
+        ...
+    };
+    ...
+MemoryLayoutObj  CreateLayout (BSTR layoutId)
+	//创建指定实例的内存布局实例，此对象类似c语言里的结构。以上一函数说明中脚本为例：
+    app.Memory.ParseLayout(scpStr);//解析布局定义
+    var obj=app.Memory.CreateLayout("layout1Id");//实例化一个布局
+    obj.addr=0x00401000;//关联内存，亦即此布局解释此内存开始的一定长度的内存
+    obj.value=obj2;//内存拷贝，将obj2的内存数据拷到obj内存里。等价于memcpy(obj.addr,obj2.addr,obj.size),obj与obj2是相同id的内存布局的不同实例。
+    alert(obj.size);//布局占用内存大小
+    alert(obj.member1Name);//成员1数据，总是取成员1的第0索引数据
+    obj.member1Name=val;//改写
+    alert(obj._member1Name);//取成员1地址
+    alert(obj.$member1Name);//取成员1大小（即定义中type/size表示的字节数，不乘num）
+    alert(obj.$$member1Name);//取成员1的num值（num类似结构里的成员是个数组，num=1就是普通结构成员）
+    alert(obj.get_member1Name(ix));//取成员1第ix索引数据(定义中必须num>ix)
+    obj.set_member1Name(ix,val);//改写
+</FONT>
+</pre>
+		<p><STRONG>12、ResultInfo</STRONG></p>
+		<pre>app.Tracer.CalcExpression方法的返回对象（参见t_result结构的相关信息）
+<FONT color=#0066ff>
+int Type					//表达式类型，DEC(R)_xxx
+int DataType				//值的类型，DEC_xxx
+int GetBinaryValue(int ix)	//取二进制值的第ix字节，ix (0~9)
+DWORD UintValue				//无符号整数值
+long IntValue				//带符号整数值
+double FloatValue			//双精度浮点值
+STRING CstrValue			//C字符串值
+STRING BstrValue			//Unicode字符串值
+DWORD LValueAddr			//左值的地址或NULL
+int RetIndex				//成功时为表达式长度，若Type==DEC_UNKNOWN，则为出错位置，此时CstrValue为出错信息
+</FONT>
+</pre>
+		<p><STRONG>13、RuntraceInfo</STRONG></p>
+		<pre>app.Tracer.GetRegisterInfo方法的返回对象(参见GetRuntraceRegisters函数的参数)
+<FONT color=#0066ff>
+Register NewReg //指令执行后的寄存器情况（Register对象见前面说明）
+Register OldReg //指令执行前的寄存器情况（Register对象见前面说明）
+int GetCmd(int ix) //取原始指令字节，ix (0~15)字节偏移
+STRING Comment //注释
+int RetValue //-1 - 方法失败，0 - 原始指令无效，&gt;0 - 原始指令字节数
+</FONT>
+</pre>
+		<p><STRONG>14、MemoryInfo</STRONG></p>
+		<pre>app.Analyser.GetMemoryInfo方法的返回对象(参见t_memory结构的相关信息)
+<FONT color=#0066ff>
+DWORD Base //内存基地址
+DWORD Size //内存大小
+DWORD Type //内存类型（下面这些标志的或）：
+			TY_CODE		代码段占用的内存块
+			TY_DATA		数据段占用的内存块
+			TY_IMPDATA	移入数据表占用的内存块
+			TY_EXPDATA	输出数据表点用的内存块
+			TY_RSRC		资源占用的内存块
+			TY_RELOC	重定位表占用的内存块
+			TY_STACK	包含线程堆栈的内存块
+			TY_THREAD	包含线程数据块的内存块
+			TY_HEADER	包含COFF头
+			TY_DEFHEAP	包含缺省堆
+			TY_HEAP		包含缺省堆
+			TY_SFX		包含SFX
+			TY_GUARDED	NT only: guarded memory block
+
+DWORD Owner //内存属主的地址
+DWORD InitAccess //初始访问属性，一个或多个PAGE_xxx值的或
+DWORD Access //访问属性，一个或多个PAGE_xxx值的或
+DWORD ThreadID //线程ID
+STRING Section //段名
+</FONT>
+</pre>
+		<p><STRONG>15、Thread</STRONG></p>
+		<pre>app.Analyser.GetThreadInfo方法的返回对象(参见t_thread结构的相关信息)
+<FONT color=#0066ff>
+DWORD ID				//线程ID
+DWORD Type				//类型，TY_xxx值的或，如果设置了TY_MAIN表明是主线程
+DWORD Handle			//线程句柄
+DWORD DataBlock			//线程数据块
+DWORD Entry				//线程入口
+DWORD StackTop			//栈顶
+DWORD StackBottom		//栈底
+Register Reg			//线程寄存器值（当前的寄存器值）
+int RegValid			//指示Reg是否有效
+Register OldReg			//旧的线程寄存器内容（亦即没被用户修改过的）
+int OldRegValid			//指示OldRef是否有效
+int SuspendCount		//线程被OD挂起的次数
+long UserTime			//线程在用户模式下耗费的时间
+long SysTime			//线程在系统模式下耗费的时间
+</FONT>
+</pre>
+		<p><STRONG>16、OperandInfo</STRONG></p>
+		<pre>DisasmInfo.GetOPInfo方法的返回对象(参见t_operand结构的相关信息)
+<FONT color=#0066ff>
+int Type				//操作数类型，值：DEC_xxx (内存) 或 DECR_xxx (寄存器,常量等)
+int Size				//操作数大小
+int GetRegScale(int ix)	//Scales of registers，ix (0~7) 也可以用符号常量 REG_xxx，表示取指定寄存器的scale值
+int Seg					//Segment register，（0~5） 或符号常量 SEG_xx，表示参照的段寄存器
+DWORD Const				//Constant，常量值
+</FONT>
+</pre>
+		<p><STRONG>17、DumpInfo</STRONG></p>
+		<pre>app.DisasmPane/DumpPane/StackPane属性的返回对象(参见t_dump结构的相关信息)
+<FONT color=#0066ff>
+STRING FileName		//文件名
+DWORD Base			//内存块或文件基地址
+DWORD Size			//内存块或文件大小
+DWORD Addr			//显示的第一个字节的地址
+DWORD LastAddr		//显示的最后一个字节的地址+1
+DWORD Sel0			//选中的第一个字节的地址
+DWORD Sel1			//选中的最后一个字节的地址+1
+DWORD StartSel		//上次选择区的开始
+DWORD RelAddr		//Addresses relative to this
+STRING RelName		//Symbol for relative zero address base
+int RuntraceOffset	//Offset back in run trace
+</FONT>
+</pre>
+		<p><STRONG>18、IntegerFields</STRONG></p>
+		<pre><FONT color=#0066ff>
+		Condition EQ(INT v) //判断等于v，返回一个条件对象
+		Condition GE(INT v) //判断大于等于v，返回一个条件对象
+		Condition LE(INT v) //判断小于等于v，返回一个条件对象
+		//下面是对应t_disasm结构的field表示，它们用于构造FindDisasm2的条件表达式。
+		IntegerFields IP				//对应DisasmInfo.IP
+		IntegerFields CmdType			//对应DisasmInfo.CmdType
+		IntegerFields MemType			//对应DisasmInfo.MemType
+		IntegerFields PrefixNum			//对应DisasmInfo.PrefixNum
+		IntegerFields Indexed			//对应DisasmInfo.Indexed
+		IntegerFields JumpConst			//对应DisasmInfo.JumpConst
+		IntegerFields JumpTable			//对应DisasmInfo.JumpTable
+		IntegerFields AddrConst			//对应DisasmInfo.AddrConst
+		IntegerFields ImmConst			//对应DisasmInfo.ImmConst
+		IntegerFields ZeroImm			//对应DisasmInfo.ZeroImm
+		IntegerFields FixupOffset		//对应DisasmInfo.FixupOffset
+		IntegerFields FixupSize			//对应DisasmInfo.FixupSize
+		IntegerFields JumpAddr			//对应DisasmInfo.JumpAddr
+		IntegerFields Error				//对应DisasmInfo.Error
+		IntegerFields Warnings			//对应DisasmInfo.Warnings
+		IntegerFields OPType1			//对应DisasmInfo.GetOPType(0)
+		IntegerFields OPType2			//对应DisasmInfo.GetOPType(1)
+		IntegerFields OPType3			//对应DisasmInfo.GetOPType(2)
+		IntegerFields OPSize1			//对应DisasmInfo.GetOPSize(0)
+		IntegerFields OPSize2			//对应DisasmInfo.GetOPSize(1)
+		IntegerFields OPSize3			//对应DisasmInfo.GetOPSize(2)
+		IntegerFields OPSeg1			//对应DisasmInfo.GetOPInfo(0).Seg
+		IntegerFields OPSeg2			//对应DisasmInfo.GetOPInfo(1).Seg
+		IntegerFields OPSeg3			//对应DisasmInfo.GetOPInfo(2).Seg
+		IntegerFields OPConst1			//对应DisasmInfo.GetOPInfo(0).Const
+		IntegerFields OPConst2			//对应DisasmInfo.GetOPInfo(1).Const
+		IntegerFields OPConst3			//对应DisasmInfo.GetOPInfo(2).Const
+		IntegerFields OPEaxScale1		//对应DisasmInfo.GetOPInfo(0).GetRegScale(REG_EAX)
+		IntegerFields OPEcxScale1		//对应DisasmInfo.GetOPInfo(0).GetRegScale(REG_ECX)
+		IntegerFields OPEdxScale1		//对应DisasmInfo.GetOPInfo(0).GetRegScale(REG_EDX)
+		IntegerFields OPEbxScale1		//对应DisasmInfo.GetOPInfo(0).GetRegScale(REG_EBX)
+		IntegerFields OPEspScale1		//对应DisasmInfo.GetOPInfo(0).GetRegScale(REG_ESP)
+		IntegerFields OPEbpScale1		//对应DisasmInfo.GetOPInfo(0).GetRegScale(REG_EBP)
+		IntegerFields OPEsiScale1		//对应DisasmInfo.GetOPInfo(0).GetRegScale(REG_ESI)
+		IntegerFields OPEdiScale1		//对应DisasmInfo.GetOPInfo(0).GetRegScale(REG_EDI)
+		IntegerFields OPEaxScale2		//对应DisasmInfo.GetOPInfo(1).GetRegScale(REG_EAX)
+		IntegerFields OPEcxScale2		//对应DisasmInfo.GetOPInfo(1).GetRegScale(REG_ECX)
+		IntegerFields OPEdxScale2		//对应DisasmInfo.GetOPInfo(1).GetRegScale(REG_EDX)
+		IntegerFields OPEbxScale2		//对应DisasmInfo.GetOPInfo(1).GetRegScale(REG_EBX)
+		IntegerFields OPEspScale2		//对应DisasmInfo.GetOPInfo(1).GetRegScale(REG_ESP)
+		IntegerFields OPEbpScale2		//对应DisasmInfo.GetOPInfo(1).GetRegScale(REG_EBP)
+		IntegerFields OPEsiScale2		//对应DisasmInfo.GetOPInfo(1).GetRegScale(REG_ESI)
+		IntegerFields OPEdiScale2		//对应DisasmInfo.GetOPInfo(1).GetRegScale(REG_EDI)
+		IntegerFields OPEaxScale3		//对应DisasmInfo.GetOPInfo(2).GetRegScale(REG_EAX)
+		IntegerFields OPEcxScale3		//对应DisasmInfo.GetOPInfo(2).GetRegScale(REG_ECX)
+		IntegerFields OPEdxScale3		//对应DisasmInfo.GetOPInfo(2).GetRegScale(REG_EDX)
+		IntegerFields OPEbxScale3		//对应DisasmInfo.GetOPInfo(2).GetRegScale(REG_EBX)
+		IntegerFields OPEspScale3		//对应DisasmInfo.GetOPInfo(2).GetRegScale(REG_ESP)
+		IntegerFields OPEbpScale3		//对应DisasmInfo.GetOPInfo(2).GetRegScale(REG_EBP)
+		IntegerFields OPEsiScale3		//对应DisasmInfo.GetOPInfo(2).GetRegScale(REG_ESI)
+		IntegerFields OPEdiScale3		//对应DisasmInfo.GetOPInfo(2).GetRegScale(REG_EDI)
+</FONT>
+</pre>
+		<p><STRONG>19、StringFields</STRONG></p>
+		<pre><FONT color=#0066ff>
+		Condition 
+		Like(STRING str,BOOL ignoreCase) //判断字符串匹配，str中用'%'或' '分隔多个匹配项目，只要字符串字段的值中有符合str指定模式的子串
+			//结果便为真，返回一个条件对象，ignoreCases参数指示是否忽略大小写
+		Condition Match(STRING regex,BOOL ignoreCase) //用正则表达式判断字符串匹配，regex语法为ECMA-262脚本语言的正则表达式语法，也就是
+			//javascript语言的正则表达式语法，只要字符串字段的值中有符合正则表达式regex指定模式的子串结果便为真，返回一个条件对象，ignoreCase
+			//参数指示是否忽略大小写（与前面的简单字符串匹配不一样，正则表达式可以通过^与$来指定完整的匹配一个串，而不仅仅是子串）
+		BSTR RegExpError //在Match返回值为空时，这个属性记录了正则表达式的语法错误信息
+		//下面是对应t_disasm结构的field表示，它们用于构造FindDisasm2的条件表达式。
+		StringFields Dump				//对应DisasmInfo.Dump
+		StringFields Disasm				//对应DisasmInfo.Disasm
+		StringFields Comment			//对应DisasmInfo.Comment
+		StringFields OPComment1			//对应DisasmInfo.GetOPComment(0)
+		StringFields OPComment2			//对应DisasmInfo.GetOPComment(1)
+		StringFields OPComment3			//对应DisasmInfo.GetOPComment(2)
+</FONT>
+</pre>
+		<p><STRONG>20、Condition</STRONG></p>
+		<pre><FONT color=#0066ff>
+		BOOL IsCondition //判断是否为条件对象，如果无此属性或此属性为FALSE则不是条件对象
+		Condition And(Condition c) //由当前条件与指定条件对象c按AND逻辑合成新的条件，亦即，新的条件对象为真仅当当前条件对象为真且c为真
+		Condition Or(Condition c) //由当前条件与指定条件对象c按OR逻辑合成新的条件，亦即，新的条件对象为真仅当当前条件对象与c中有一个为真
+		Condition Not() //对当前条件对象求NOT，返回新的条件对象，新条件对真仅当当前条件不为真
+</FONT>
+</pre>
+<P><FONT face="宋体"><STRONG>六、</STRONG></FONT><STRONG><FONT face="宋体">基础API（非ollydbg功能相关）</FONT></STRONG></P>
+<pre><FONT color=#ff0000>
+	本部分API这里只列出函数原型与简要说明。
+	注：所有put_与get_开头的函数是对象特性，js中的写法是obj.attr=val或obj.attr，attr是特性名，即put_/get_开头的函数名除去put_/get_的部分。
+</FONT></pre>
+<p><STRONG>1、window.external</STRONG></p>
+<pre><FONT color=#0066ff>
+		void put_Title (BSTR c)
+		BSTR get_Title (void) 
+		BOOL Close (void) 
+		BOOL Maximize (void) 
+		BOOL Minimize (void) 
+		BOOL Normal (void) 
+		BOOL Show (void) 
+		BOOL Hide (void) 
+		BOOL IsZoomed (void) 
+		BOOL IsIconic (void) 
+		VARIANT GetWindowRect (void) 
+		VARIANT GetClientRect (void) 
+		VARIANT ScreenToClient (int x, int y) 
+		VARIANT ClientToScreen (int x, int y) 
+		BOOL Center (void) 
+		BOOL Move (int x, int y, int w, int h) 
+		BOOL MoveBy (int dx, int dy, int dw, int dh) 
+		BSTR SelFile (int isOpen, BSTR defExt, BSTR defFileName, BSTR filter) 显示打开文件对话框
+		BSTR SelFolder (BSTR title, BSTR path) 显示文件夹选择对话框
+		unsigned int SelColor (unsigned int initColor) 显示颜色选择对话框
+		IDispatch*  SelFont (BSTR fontName, unsigned int size, unsigned int weight, unsigned int onlyTrueType) 显示字体选择对话框
+		IDispatch*  CreateObject (BSTR progId) 创建一个activex对象
+		IDispatch*  CreateVector (void) 
+		IDispatch*  CreateDeque (void) 
+		IDispatch*  CreateList (void) 
+		IDispatch*  CreateSet (void) 
+		IDispatch*  CreateMaxPriorityQueue (void) 
+		IDispatch*  CreateMinPriorityQueue (void)  
+		int get_ControlNumber (void) 脚本编辑控件数目
+		IDispatch*  GetControl (int ix) 获取脚本编辑控件
+		IDispatch*  CreateScriptEditor (UINT id, BSTR placeHolderID) 创建脚本编辑控件,id用于CreateWindow，placeHolderID是html里用于提供布局的元素ID
+		void EraseControl (IDispatch*pCtrl) 删除脚本编辑控件
+		void ClearControls (void) 删除所有脚本编辑控件
+		BSTR IntToHex (unsigned int val) 整数转16进制字符
+		unsigned int HexToInt (BSTR val) 16进制字串转整数（不要带0x）
+		BSTR StrToUTF8 (BSTR str) 
+		BSTR UTF8ToStr (BSTR str) 
+		unsigned int SetLong (unsigned int index, unsigned int newVal) 
+		unsigned int GetLong (unsigned int index) 
+		unsigned int GetMessageHwnd (void) 
+		unsigned int GetWebBrowserHwnd (void) 
+		IDispatch *GetWebBrowser (void) 
+		IDispatch *GetNewWebBrowser (int index) 
+		IDispatch *GetFrameWebBrowser (VARIANT wbObj, VARIANT item) 
+		VARIANT ExecCommand (unsigned int cmdId, unsigned int opt, VARIANT arg1, VARIANT arg2) 
+		VARIANT QueryCmdStatus (unsigned int cmdId, unsigned int statusTextFlag) 
+		void RegisterScriptHandler (unsigned int id, BSTR scp) 
+		void UnregisterScriptHandler (unsigned int id) 	
+		void SetWildcardsSecurityPolicy (unsigned int dwAction, unsigned int policy) 
+		unsigned int GetCurrentSecurityPolicy (BSTR url, unsigned int dwAction) 
+		void SetDispatchOption (unsigned int dispid, VARIANT option) 
+		VARIANT GetDispatchOption (unsigned int dispid) 
+		void SetMenuMask (unsigned int mask)	 
+		IDispatch*  get_Rgn (void) 
+		IDispatch*  get_Menu (void) 
+		IDispatch*  get_Map (void) 
+		IDispatch*  get_Shell (void) 
+		IDispatch*  get_Inet (void) 
+</FONT></pre>
+<p><STRONG>2、window.external.Shell</STRONG></p>
+<pre><FONT color=#0066ff>
+		VARIANT RegRead (BSTR key, int isNumber) 注册表
+		int RegWrite (BSTR key, VARIANT value) 
+		int RegDelete (BSTR key) 
+		DWORD ShellExecute (BSTR op, BSTR file, BSTR param, BSTR dir, int showCmd, int wait) 执行
+		int CopyFile (BSTR src, BSTR dest, int failIfExists) 
+		int MoveFile (BSTR src, BSTR dest, int flags) 
+		int DeleteFile (BSTR file) 
+		int CreateDirectory (BSTR path) 
+		int RemoveDirectory (BSTR path) 
+		void DirectoryIterate (BSTR path, int maxLevel, BSTR scpCallback) 遍历一个目录结构，scpCallback是回调的js函数名
+		int PathFileExists (BSTR path) 
+		BOOL ProcessIterate (BSTR findKey, BSTR scpCallback) 
+		BOOL ThreadIterate (DWORD pid, BSTR scpCallback) 
+		BOOL ModuleIterate (DWORD pid, BSTR scpCallback) 
+		BOOL TerminateProcess (DWORD id) 
+		DWORD get_ProcessId (void) 
+		DWORD get_ThreadId (void) 
+		BOOL ProcessExists (DWORD id) 
+		BOOL ThreadExists (DWORD id) 
+		void ClearExportInfo (void) 
+		BOOL ParseExportInfo (DWORD pid, DWORD mbase, DWORD msize) 
+		void BuildExportInfo (void) 
+		VARIANT GetExportFunctionInfo (DWORD addr) 
+		VARIANT get_ExportInfo (void) 
+		void ClearImportInfo (void) 
+		BOOL ParseImportInfo (DWORD pid, DWORD mbase, DWORD msize) 
+		void BuildImportInfo (void) 
+		VARIANT GetImportFunctionInfo (DWORD addr) 
+		VARIANT get_ImportInfo (void) 
+		BSTR GetError (int error) 
+		int GetFileSize (BSTR fileName) 
+		BSTR GetFileTime (BSTR fileName) 
+		BSTR GetFileVersion (BSTR fileName) 
+		BSTR GetProductVersion (BSTR fileName) 
+		BSTR CallConsoleApp (BSTR cmd, BSTR curDir, BSTR envString) 
+		BSTR GetTxtFileFormat (BSTR filePath) 
+		BOOL TxtFileReplace (BSTR filePath, BSTR src, BSTR dest) 
+		UINT CountTxtFileLines (BSTR filePath) 
+		BSTR ReadTxtFile (BSTR filePath) 
+		BOOL WriteTxtFile (BSTR filePath, BSTR format, BSTR content) 
+		BOOL AppendTxtFile (BSTR filePath, BSTR content) 
+		BSTR GetComputerName (void) 
+		BSTR GetUserName (void) 
+		unsigned int FindWindow (UINT hwndParent, UINT hwndFirstChild, BSTR className, BSTR windowTitle) 
+		UINT SendMessage (unsigned int hwnd, unsigned int msg, unsigned int wParam, unsigned int lParam) 
+		UINT PostMessage (unsigned int hwnd, unsigned int msg, unsigned int wParam, unsigned int lParam) 
+		UINT SendNotifyMessage (unsigned int hwnd, unsigned int msg, unsigned int wParam, unsigned int lParam) 
+		UINT SendMessageTimeout (unsigned int hwnd, unsigned int msg, unsigned int wParam, unsigned int lParam, UINT uFlag, UINT timeout) 
+		UINT SendCopyDataMsg (unsigned int hwnd, DWORD cmd, BSTR msg) 
+		BOOL IsWindow (UINT hwnd) 
+		BOOL IsWindowEnabled (UINT hwnd) 
+		BOOL IsWindowUnicode (UINT hwnd) 
+		BOOL IsWindowVisible (UINT hwnd) 
+		BOOL IsWindowZoomed (UINT hwnd) 
+		BOOL IsWindowIconic (UINT hwnd) 
+		DWORD GetWindowProcessId (UINT hwnd) 
+		DWORD GetWindowThreadId (UINT hwnd) 
+		UINT GetParent (UINT hwnd) 
+		UINT GetAncestor (UINT hwnd, UINT flag) 
+		BOOL IsChild (UINT hwndParent, UINT hwnd) 
+		UINT GetLastActivePopup (UINT hwnd) 
+		BOOL WindowIterate (BSTR scp) 
+		BOOL ThreadWindowIterate (DWORD tid, BSTR scp) 
+		BOOL ChildWindowIterate (UINT hwnd, BSTR scp) 
+		BSTR GetWindowModuleFileName (UINT hwnd) 
+		BOOL EnableWindow (UINT hwnd, BOOL bEnable) 
+		BOOL ShowWindow (UINT hwnd, int cmd) 
+		UINT WindowFromPoint (LONG x, LONG y) 
+		UINT ChildWindowFromPoint (UINT hwnd, LONG x, LONG y, UINT flag) 
+		BOOL MinimizeWindow (UINT hwnd) 
+		BOOL MaximizeWindow (UINT hwnd) 
+		BOOL NormalWindow (UINT hwnd_) 
+		BOOL SysCloseWindow (UINT hwnd_) 
+		BOOL SetWindowText (UINT hwnd, BSTR txt) 
+		BSTR GetWindowText (UINT hwnd) 
+		int MoveWindow (UINT hwnd, int x, int y, int w, int h, BOOL bRepaint) 
+		int SetWindowLong (UINT hwnd, int ix, int val) 
+		int GetWindowLong (UINT hwnd, int ix) 
+		int ModifyStyle (UINT hwnd, UINT remove, UINT add, UINT flag) 
+		int ModifyStyleEx (UINT hwnd, UINT remove, UINT add, UINT flag) 
+		int GetStyle (UINT hwnd) 
+		int GetExStyle (UINT hwnd) 
+		int SetWindowPos (UINT hwnd, UINT hwndInsertAfter, int x, int y, int w, int h, UINT flag) 
+		IDispatch *GetWBDocument (UINT hwnd) 
+		int GetIECount (void) 
+		IDispatch *GetIEDocument (long ix) 
+		void put_Clipboard (BSTR text) 
+		BSTR get_Clipboard (void) 
+		UINT GetApi (VARIANT dllOrHandle, BSTR api) 取API函数地址
+		UINT CallApi (UINT api, VARIANT vals) 调用API函数
+		UINT LoadApi (BSTR dll) 加载DLL
+		UINT FreeApi (BSTR dll) 释放DLL
+		BOOL IsBadCodePtr (UINT addr) 
+		BOOL IsBadReadPtr (UINT addr, UINT size) 
+		BOOL IsBadStringPtr (UINT addr, UINT size) 
+		BOOL IsBadWritePtr (UINT addr, UINT size) 
+		BSTR get_CmdLine (void) 
+		BSTR get_ExePath (void) 
+		BSTR get_CmdArgs (void) 
+		BSTR get_FullPath (void) 
+		BSTR PathGetDirectory (BSTR path) 
+		BSTR ExpandEnvironmentStrings (BSTR str) 
+		BSTR EnumEventIntfCLSID (VARIANT obj, unsigned int num) 
+		void Advise (VARIANT objptr, BSTR clsid, unsigned int dispID, BSTR name, BSTR scriptFunc) 
+		void Unadvise (VARIANT objptr, BSTR clsid) 
+		IDispatch *ScriptQueryInterface (VARIANT objptr, BSTR clsid) 
+</FONT></pre>
+<p><STRONG>3、window.external.Inet</STRONG></p>
+<pre><FONT color=#0066ff>
+		void MpdPlaceNameValue (BSTR name, BSTR value) 
+		void MpdPlaceFile (BSTR name, BSTR filePath, BSTR contentType) 
+		void MpdClear (void) 
+		BSTR MpdPost (BSTR targetObj, BSTR server, UINT port, BSTR boundstr, unsigned int isUnicode, UINT useProgress) 
+		void HttpPlaceFile (BSTR localFile, BSTR remoteFile) 
+		void HttpClear (void) 
+		BSTR HttpPut (BSTR server, UINT port, BSTR user, BSTR pass, UINT useProgress) 
+		BSTR HttpDelete (BSTR server, UINT port, BSTR user, BSTR pass, UINT useProgress) 
+		void FtpPlaceFile (BSTR localFile, BSTR targetPath) 
+		void FtpClear (void) 
+		BSTR FtpPut (BSTR server, UINT port, BSTR user, BSTR pass, UINT useProgress) 
+		BSTR FtpDelete (BSTR server, UINT port, BSTR user, BSTR pass, UINT useProgress) 
+		BSTR DownloadFile (BSTR url, BSTR saveAs, unsigned int useProgress) 
+		BSTR DownloadFileToCache (BSTR url, unsigned int useProgress) 
+		unsigned int InternetGetConnectedState (void)
+</FONT></pre>
+<p><STRONG>4、window.external.Map</STRONG></p>
+<pre><FONT color=#0066ff>
+		unsigned int get_Count (void) 
+		VARIANT Get (VARIANT key) 
+		void Set (VARIANT key, VARIANT value) 
+		void Erase (VARIANT key) 
+		void Clear (void) 
+</FONT></pre>
+<p><STRONG>5、Vector=window.external.CreateVector()</STRONG></p>
+		<pre><FONT color=#0066ff>
+		void Set (UINT pos, VARIANT v) 
+		VARIANT Get (UINT pos) 
+		void Insert (VARIANT key, VARIANT v) 
+		void Erase (VARIANT key) 
+		void put_Length (int size) 
+		int get_Length (void) 
+		void Push (VARIANT v) 
+		void Pop (void) 
+		VARIANT get_Front (void) 
+		VARIANT get_Back (void) 
+		int Find (VARIANT v) 
+		IDispatch *Splice (unsigned int where, IDispatch *pOther, unsigned int start, unsigned int count) 
+		IDispatch *Slice (unsigned int start, unsigned int count) 
+		void Clear (void) 
+		BOOL get_Empty (void) 
+		void Reserve (int count) 
+		IDispatch *Clone (void) 
+		IDispatch *ConcatSibling (IDispatch *other) 
+		IDispatch *ConcatVariant (VARIANT vals) 
+		BSTR ToString (VARIANT s) 
+		VARIANT ToSafeArray (void) 
+</FONT></pre>
+<p><STRONG>6、Deque=window.external.CreateDeque()</STRONG></p>
+<pre><FONT color=#0066ff>
+		void Set (UINT pos, VARIANT v) 
+		VARIANT Get (UINT pos) 
+		void Insert (VARIANT key, VARIANT v) 
+		void Erase (VARIANT key) 
+		void put_Length (int size) 
+		int get_Length (void) 
+		void Unshift (VARIANT v) 
+		void Shift (void) 
+		void Push (VARIANT v) 
+		void Pop (void) 
+		VARIANT get_Front (void) 
+		VARIANT get_Back (void) 
+		int Find (VARIANT v) 
+		IDispatch *Splice (unsigned int where, IDispatch *pOther, unsigned int start, unsigned int count) 
+		IDispatch *Slice (unsigned int start, unsigned int count) 
+		void Clear (void) 
+		BOOL get_Empty (void) 
+		IDispatch *Clone (void) 
+		IDispatch *ConcatSibling (IDispatch *other) 
+		IDispatch *ConcatVariant (VARIANT vals) 
+		BSTR ToString (VARIANT s) 
+		VARIANT ToSafeArray (void) 
+</FONT></pre>
+<p><STRONG>7、List=window.external.CreateList()</STRONG></p>
+<pre><FONT color=#0066ff>
+		void Set (UINT pos, VARIANT v) 
+		VARIANT Get (UINT pos) 
+		void Insert (VARIANT key, VARIANT v) 
+		void Erase (VARIANT key) 
+		void put_Length (int size) 
+		int get_Length (void) 
+		void Unshift (VARIANT v) 
+		void Shift (void) 
+		void Push (VARIANT v) 
+		void Pop (void) 
+		VARIANT get_Front (void) 
+		VARIANT get_Back (void) 
+		int Find (VARIANT v) 
+		IDispatch *Splice (unsigned int where, IDispatch *pOther, unsigned int start, unsigned int count) 
+		IDispatch *Slice (unsigned int start, unsigned int count) 
+		void Remove (VARIANT v) 
+		void Clear (void) 
+		BOOL get_Empty (void) 
+		void Resize (int size, VARIANT v) 
+		IDispatch *Clone (void) 
+		IDispatch *ConcatSibling (IDispatch *other) 
+		IDispatch *ConcatVariant (VARIANT vals) 
+		BSTR ToString (VARIANT s) 
+		VARIANT ToSafeArray (void) 
+</FONT></pre>
+<p><STRONG>8、Set=window.external.CreateSet()</STRONG></p>
+<pre><FONT color=#0066ff>
+		VARIANT Get (UINT pos) 
+		void Insert (VARIANT v) 
+		void Erase (VARIANT v) 
+		void Clear (void) 
+		int get_Length (void) 
+		BOOL get_Empty (void) 
+		BOOL Exist (VARIANT v) 
+		IDispatch* Clone (void) 克隆一个Set 
+		IDispatch* ConcatSibling (IDispatch *other) 合并2个Set
+		IDispatch* ConcatVariant (VARIANT vals) 合并数组到Set
+		BSTR ToString (VARIANT s) 用s作分隔，连接所有元素为一个串
+		VARIANT ToSafeArray (void) 将集合转成VBArray
+</FONT></pre>
+<p><STRONG>9、MaxPriorityQueue=window.external.CreateMaxPriorityQueue()</STRONG></p>
+<pre><FONT color=#0066ff>
+		void push (VARIANT v) 
+		void pop (void) 
+		VARIANT top (void) 
+		int get_length (void) 
+		BOOL get_empty (void) 	
+</FONT></pre>
+<p><STRONG>10、MinPriorityQueue=window.external.CreateMinPriorityQueue()</STRONG></p>
+<pre><FONT color=#0066ff>
+		void push (VARIANT v) 
+		void pop (void) 
+		VARIANT top (void) 
+		int get_length (void) 
+		BOOL get_empty (void) 
+</FONT></pre>
+<p><STRONG>11、ScriptEditor</STRONG></p>
+<pre><FONT color=#0066ff>
+		int SendCommand (UINT msg, VARIANT wparam, VARIANT lparam) 
+		void put_Text (BSTR txt) 
+		BSTR get_Text (void) 
+		BOOL get_IsDirty (void) 
+		BOOL get_Visible (void) 
+		void Show (void) 
+		void Hide (void) 
+		DWORD get_Hwnd (void) 
+</FONT></pre>
+<p><STRONG>12、window.external.Menu</STRONG></p>
+<pre><FONT color=#0066ff>
+		int CreatePopupMenu (void) 
+		void DestroyPopupMenu (int hMenu) 
+		int TrackPopupMenu (int hMenu, int x, int y, int hWnd) 
+		int TrackPopupMenu2 (int hMenu, int x, int y, int hWnd) 
+		void InsertSubMenu (int hMenu, int id, int hSubMenu, BSTR title, int byCommand) 
+		void InsertMenuItem (int hMenu, int id, int itemId, BSTR title, int enabled, int checked, int byCommand) 
+		void EnableMenuItem (int hMenu, int id, int enabled, int byCommand) 
+		void CheckMenuItem (int hMenu, int id, int checked, int byCommand) 
+		void CheckMenuRadioItem (int hMenu, int idFirst, int idLast, int idCheck, int byCommand) 
+		int MenuItemIsEnabled (int hMenu, int id, int byCommand) 
+		int MenuItemIsChecked (int hMenu, int id, int byCommand) 
+		void InsertSeparator (int hMenu, int id, int itemId, int byCommand) 
+		void DeleteMenu (int hMenu, int id, int byCommand) 
+		int GetMenuItemCount (int hMenu) 
+		int GetMenuItemId (int hMenu, int position) 
+		BSTR GetMenuString (int hMenu, int id, int byCommand) 
+		int GetSubMenu (int hMenu, int position) 
+		int CreateMainMenu (void) 
+		void DestroyMainMenu (int hMenu) 
+		void put_MainMenu (int hMenu) 
+		int get_MainMenu (void) 
+		UINT Id2Menu (UINT id) 
+</FONT></pre>
+<p><STRONG>13、window.external.Rgn</STRONG></p>
+<pre><FONT color=#0066ff>
+		void SetXForm (double eM11, double eM12, double eM21, double eM22, double eDx, double eDy) 
+		void InitBMPRgn (BSTR file, unsigned int colorKey) 
+		void CombineBMPRgn (BSTR file, unsigned int colorKey, int mode) 
+		void InitFileRgn (BSTR file) 
+		void CombineFileRgn (BSTR file, int mode) 
+		void SaveAsFileRgn (BSTR file) 
+		void PushRgn (void) 
+		void PeepRgn (unsigned int pos) 
+		void ClearRgnBuffer (void) 
+		void InitRgn (unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2) 
+		void CombineRectRgn (unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2, int mode) 
+		void CombineEllipticRgn (unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2, int mode) 
+		void CombineRoundRectRgn (unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2, unsigned int x3, unsigned int y3, int mode) 
+		void CombinePolygonRgn (VARIANT points, int rgnMode, int mode) 
+		void CombinePolyPolygonRgn (VARIANT points, VARIANT polyCounts, int rgnMode, int mode) 
+		void SetRgn (void) 
+</FONT></pre>
+		<P><FONT face="宋体"><STRONG>七、</STRONG></FONT><STRONG><FONT face="宋体">常量包含文件</FONT></STRONG></P>
+		<pre>在HTML中可以用包含常量定义文件,代码如下(98系统请用<A href="http://dreaman.haolinju.net/OllyHTML/const.js">http://dreaman.haolinju.net/OllyHTML/const.js</A>或者下载后本地使用):
+
+<FONT color=#0066ff>&lt;script src="res://OllyHTML.dll/const.js"&gt;&lt;/script&gt;</FONT>
+
+调试事件代码定义如下:
+</pre>
+		<PRE><FONT color=#0066ff>var EXCEPTION_DEBUG_EVENT      = 1;
+var CREATE_THREAD_DEBUG_EVENT  = 2;
+var CREATE_PROCESS_DEBUG_EVENT = 3;
+var EXIT_THREAD_DEBUG_EVENT    = 4;
+var EXIT_PROCESS_DEBUG_EVENT   = 5;
+var LOAD_DLL_DEBUG_EVENT       = 6;
+var UNLOAD_DLL_DEBUG_EVENT     = 7;
+var OUTPUT_DEBUG_STRING_EVENT  = 8;
+var RIP_EVENT                  = 9;</FONT>
+</PRE>
+		<PRE>异常代码定义如下:
+</PRE>
+		<PRE><FONT color=#0066ff>var EXCEPTION_ACCESS_VIOLATION          = (0xC0000005);    
+var EXCEPTION_DATATYPE_MISALIGNMENT     = (0x80000002);
+var EXCEPTION_BREAKPOINT                = (0x80000003);
+var EXCEPTION_SINGLE_STEP               = (0x80000004);   
+var EXCEPTION_ARRAY_BOUNDS_EXCEEDED     = (0xC000008C);    
+var EXCEPTION_FLT_DENORMAL_OPERAND      = (0xC000008D);    
+var EXCEPTION_FLT_DIVIDE_BY_ZERO        = (0xC000008E);  
+var EXCEPTION_FLT_INEXACT_RESULT        = (0xC000008F);
+var EXCEPTION_FLT_INVALID_OPERATION     = (0xC0000090); 
+var EXCEPTION_FLT_OVERFLOW              = (0xC0000091); 
+var EXCEPTION_FLT_STACK_CHECK           = (0xC0000092);
+var EXCEPTION_FLT_UNDERFLOW             = (0xC0000093);  
+var EXCEPTION_INT_DIVIDE_BY_ZERO        = (0xC0000094);   
+var EXCEPTION_INT_OVERFLOW              = (0xC0000095); 
+var EXCEPTION_PRIV_INSTRUCTION          = (0xC0000096);   
+var EXCEPTION_IN_PAGE_ERROR             = (0xC0000006);
+var EXCEPTION_ILLEGAL_INSTRUCTION       = (0xC000001D); 
+var EXCEPTION_NONCONTINUABLE_EXCEPTION  = (0xC0000025);  
+var EXCEPTION_STACK_OVERFLOW            = (0xC00000FD); 
+var EXCEPTION_INVALID_DISPOSITION       = (0xC0000026);
+var EXCEPTION_GUARD_PAGE                = (0x80000001);   
+var EXCEPTION_INVALID_HANDLE            = (0xC0000008);
+var CONTROL_C_EXIT                      = (0xC000013A);
+</FONT>
+</PRE>
+		<pre>app.Status值常量：</pre>
+		<pre><font color=#0066ff>
+var STAT_NONE							= 0;                     // Thread/process is empty
+var STAT_STOPPED						= 1;                     // Thread/process suspended
+var STAT_EVENT							= 2;                     // Processing debug event, process paused
+var STAT_RUNNING						= 3;                     // Thread/process running
+var STAT_FINISHED						= 4;                     // Process finished
+var STAT_CLOSING						= 5;                     // Process is requested to terminate
+</font>
+</pre>
+		<pre>用于OnPaused回调的参数reason的常量:
+</pre>
+		<pre><FONT color=#0066ff>
+var PP_MAIN								= 0x0003;
+var PP_EVENT							= 0x0000;
+var PP_PAUSE							= 0x0001;
+var PP_TERMINATED						= 0x0002;
+
+var PP_BYPROGRAM						= 0x0004;
+var PP_INT3BREAK						= 0x0010;
+var PP_MEMBREAK							= 0x0020;
+var PP_HWBREAK							= 0x0040;
+var PP_SINGLESTEP						= 0x0080;
+var PP_EXCEPTION						= 0x0100;
+var PP_ACCESS							= 0x0200;
+var PP_GUARDED							= 0x0400;
+</FONT>
+</pre>
+		<pre>用于SendShortcut参数where的常量:</pre>
+		<pre><font color=#0066ff>
+var PM_MAIN        = 0;               // Main window
+var PM_DISASM      = 31;              // CPU Disassembler   
+var PM_CPUDUMP     = 32;              // CPU Dump          
+var PM_CPUSTACK    = 33;              // CPU Stack          
+var PM_CPUREGS     = 34;              // CPU Registers      
+</font>
+</pre>
+		<pre>用于API ModifyHitTrace的mode参数的常量:
+</pre>
+		<pre><FONT color=#0066ff>
+var ATR_ADD								= 1;
+var ATR_ADDPROC							= 2;
+var ATR_RESET							= 3;
+var ATR_REMOVE							= 4;
+var ATR_REMOVEALL						= 5;
+var ATR_RESTORE							= 6;
+var ATR_RTRADD							= 7;
+var ATR_RTRJUMPS						= 8;
+var ATR_RTRENTRY						= 9;
+var ATR_RTREMOVE						= 10;
+var ATR_RTSKIP							= 11;
+
+</FONT>
+</pre>
+		<pre>用于DisasmInfo对象的几个属性值的常量:</pre>
+		<pre><font color=#0066ff>
+var REG_EAX       = 0;               // Indexes of general-purpose registers
+var REG_ECX       = 1;               // in t_reg.
+var REG_EDX       = 2;
+var REG_EBX       = 3;
+var REG_ESP       = 4;
+var REG_EBP       = 5;
+var REG_ESI       = 6;
+var REG_EDI       = 7;
+
+var SEG_UNDEF     =-1;
+var SEG_ES        = 0;               // Indexes of segment/selector registers
+var SEG_CS        = 1;               // in t_reg.
+var SEG_SS        = 2;
+var SEG_DS        = 3;
+var SEG_FS        = 4;
+var SEG_GS        = 5;
+
+// Selected items in register window.
+var RS_NONE       = 0x0000;          // No selection
+var RS_INT        = 0x0010;          // General-purpose 32-bit registers
+var RS_EIP        = 0x0020;          // EIP (instruction pointer)
+var RS_FLG        = 0x0030;          // 1-bit decoded flags
+var RS_SEG        = 0x0040;          // Segment (selector) registers
+var RS_EFL        = 0x0050;          // 32-bit flag register
+var RS_TAG        = 0x0060;          // FPU register tag
+var RS_FPU        = 0x0070;          // 80-bit FPU registers
+var RS_FST        = 0x0080;          // FPU status
+var RS_FCO        = 0x0090;          // FPU condition bits
+var RS_FER        = 0x00A0;          // FPU error bits
+var RS_FCW        = 0x00B0;          // FPU control word
+var RS_FPR        = 0x00C0;          // FPU precision fields
+var RS_FEM        = 0x00D0;          // FPU error mask bits
+var RS_MMX        = 0x00E0;          // MMX registers
+var RS_3DN        = 0x00F0;          // 3DNow! registers
+var RS_SSE        = 0x0100;          // SSE registers
+var RS_CSR        = 0x0110;          // SSE MXCSR register
+var RS_CSB        = 0x0120;          // SSE MXCSR bits
+var RS_CPR        = 0x0130;          // SSE rounding control
+var RS_ERR        = 0x0140;          // Last thread error
+
+var RS_GROUP      = 0x01F0;          // Mask to extract group of registers
+var RS_INDEX      = 0x000F;          // Mask to extract index of register
+
+var NREGSTACK     = 32;              // Length of stack trace buffer
+var MAXCALSIZE    = 8;               // Max length of CALL without prefixes
+
+var INT3          = 0xCC;            // Code of 1-byte breakpoint
+var NOP           = 0x90;            // Code of 1-byte NOP command
+var TRAPFLAG      = 0x00000100;      // Trap flag in CPU flag register
+
+var C_TYPEMASK    = 0xF0;            // Mask for command type
+var   C_CMD       = 0x00;            // Ordinary instruction
+var   C_PSH       = 0x10;            // PUSH instruction
+var   C_POP       = 0x20;            // POP instruction
+var   C_MMX       = 0x30;            // MMX instruction
+var   C_FLT       = 0x40;            // FPU instruction
+var   C_JMP       = 0x50;            // JUMP instruction
+var   C_JMC       = 0x60;            // Conditional JUMP instruction
+var   C_CAL       = 0x70;            // CALL instruction
+var   C_RET       = 0x80;            // RET instruction
+var   C_FLG       = 0x90;            // Changes system flags
+var   C_RTF       = 0xA0;            // C_JMP and C_FLG simultaneously
+var   C_REP       = 0xB0;            // Instruction with REPxx prefix
+var   C_PRI       = 0xC0;            // Privileged instruction
+var   C_SSE       = 0xD0;            // SSE instruction
+var   C_NOW       = 0xE0;            // 3DNow! instruction
+var   C_BAD       = 0xF0;            // Unrecognized command
+var C_RARE        = 0x08;            // Rare command, seldom used in programs
+var C_SIZEMASK    = 0x07;            // MMX data size or special flag
+var   C_EXPL      = 0x01;            // (non-MMX) Specify explicit memory size
+
+var C_DANGER95    = 0x01;            // Command is dangerous under Win95/98
+var C_DANGER      = 0x03;            // Command is dangerous everywhere
+var C_DANGERLOCK  = 0x07;            // Dangerous with LOCK prefix
+
+var DEC_TYPEMASK  = 0x1F;            // Type of memory byte
+var   DEC_UNKNOWN = 0x00;            // Unknown type
+var   DEC_BYTE    = 0x01;            // Accessed as byte
+var   DEC_WORD    = 0x02;            // Accessed as short
+var   DEC_NEXTDATA = 0x03;            // Subsequent byte of data
+var   DEC_DWORD   = 0x04;            // Accessed as long
+var   DEC_FLOAT4  = 0x05;            // Accessed as float
+var   DEC_FWORD   = 0x06;            // Accessed as descriptor/long pointer
+var   DEC_FLOAT8  = 0x07;            // Accessed as double
+var   DEC_QWORD   = 0x08;            // Accessed as 8-byte integer
+var   DEC_FLOAT10 = 0x09;            // Accessed as long double
+var   DEC_TBYTE   = 0x0A;            // Accessed as 10-byte integer
+var   DEC_STRING  = 0x0B;            // Zero-terminated ASCII string
+var   DEC_UNICODE = 0x0C;            // Zero-terminated UNICODE string
+var   DEC_3DNOW   = 0x0D;            // Accessed as 3Dnow operand
+var   DEC_SSE     = 0x0E;            // Accessed as SSE operand
+var   DEC_TEXT    = 0x10;            // For use in t_result only
+var   DEC_BYTESW  = 0x11;            // Accessed as byte index to switch
+var   DEC_NEXTCODE = 0x13;            // Subsequent byte of command
+var   DEC_COMMAND = 0x1D;            // First byte of command
+var   DEC_JMPDEST = 0x1E;            // Jump destination
+var   DEC_CALLDEST = 0x1F;            // Call (and maybe jump) destination
+var DEC_PROCMASK  = 0x60;            // Procedure analysis
+var   DEC_PROC    = 0x20;            // Start of procedure
+var   DEC_PBODY   = 0x40;            // Body of procedure
+var   DEC_PEND    = 0x60;            // End of procedure
+var DEC_CHECKED   = 0x80;            // Byte was analysed
+var DEC_SIGNED    = 0x100;           // For use in t_result only
+
+var DAW_FARADDR   = 0x0001;          // Command is a far jump, call or return
+var DAW_SEGMENT   = 0x0002;          // Command loads segment register
+var DAW_PRIV      = 0x0004;          // Privileged command
+var DAW_IO        = 0x0008;          // I/O command
+var DAW_SHIFT     = 0x0010;          // Shift constant out of range 1..31
+var DAW_PREFIX    = 0x0020;          // Superfluous prefix
+var DAW_LOCK      = 0x0040;          // Command has LOCK prefix
+var DAW_STACK     = 0x0080;          // Unaligned stack operation
+var DAW_DANGER95  = 0x1000;          // May mess up Win95/98 if executed
+var DAW_DANGEROUS = 0x3000;          // May mess up any OS if executed
+
+</font>
+</pre>
+		<pre>用于Module.Type、Thread.Type、MemoryInfo.Type、InitAccess、Access的常量:</pre>
+		<pre><font color=#0066ff>
+// General item types:
+var TY_NEW        = 0x00000001;      // Item is new
+var TY_CONFIRMED  = 0x00000002;      // Item still exists
+var TY_MAIN       = 0x00000004;      // Main item (thread or module)
+var TY_INVALID    = 0x00000008;      // Invalid type (item does not exist)
+var TY_SELECTED   = 0x80000000;      // Reserved for multiple selection
+// Module-specific types:
+var TY_REPORTED   = 0x00000010;      // Stop on module was reported
+// Reference-specific types:
+var TY_REFERENCE  = 0x00000020;      // Item is a real reference
+var TY_ORIGIN     = 0x00000040;      // Item is a search origin
+// Breakpoint-specific types:
+var TY_STOPAN     = 0x00000080;      // Stop animation if TY_ONESHOT
+var TY_SET        = 0x00000100;      // Code INT3 is in memory
+var TY_ACTIVE     = 0x00000200;      // Permanent breakpoint
+var TY_DISABLED   = 0x00000400;      // Permanent disabled breakpoint
+var TY_ONESHOT    = 0x00000800;      // Temporary stop
+var TY_TEMP       = 0x00001000;      // Temporary breakpoint
+var TY_KEEPCODE   = 0x00002000;      // Set and keep command code
+var TY_KEEPCOND   = 0x00004000;      // Keep condition unchanged (0: remove)
+var TY_NOUPDATE   = 0x00008000;      // Don't redraw breakpoint window
+var TY_RTRACE     = 0x00010000;      // Pseudotype of run trace breakpoint
+// Namelist-specific types:
+var TY_EXPORT     = 0x00010000;      // Exported name
+var TY_IMPORT     = 0x00020000;      // Imported name
+var TY_LIBRARY    = 0x00040000;      // Name extracted from object file
+var TY_LABEL      = 0x00080000;      // User-defined name
+var TY_ANYNAME    = 0x000F0000;      // Any of the namelist flags above
+var TY_KNOWN      = 0x00100000;      // Name of known function
+// Memory-specific types:
+var TY_DEFHEAP    = 0x00020000;      // Contains default heap
+var TY_HEAP       = 0x00040000;      // Contains non-default heap
+var TY_SFX        = 0x00080000;      // Contains self-extractor
+var TY_CODE       = 0x00100000;      // Contains image of code section
+var TY_DATA       = 0x00200000;      // Contains image of data section
+var TY_IMPDATA    = 0x00400000;      // Memory block includes import data
+var TY_EXPDATA    = 0x00800000;      // Memory block includes export data
+var TY_RSRC       = 0x01000000;      // Memory block includes resources
+var TY_RELOC      = 0x02000000;      // Memory block includes relocation data
+var TY_STACK      = 0x04000000;      // Contains stack of some thread
+var TY_THREAD     = 0x08000000;      // Contains data block of some thread
+var TY_HEADER     = 0x10000000;      // COFF header
+var TY_ANYMEM     = 0x1FFE0000;      // Any of the memory flags above
+var TY_GUARDED    = 0x20000000;      // NT only: guarded memory block
+// Procedure data-specific types:
+var TY_PURE       = 0x00004000;      // No side effects except in stack
+var TY_PASCAL     = 0x00010000;      // Procedure ends with RET nnn
+var TY_C          = 0x00020000;      // ADD ESP,nnn after call to procedure
+var TY_NOTENTRY   = 0x00100000;      // Not necessarily entry point
+// Switch data-specific types.
+var TY_CHARSW     = 0x00100000;      // ASCII switch
+var TY_WMSW       = 0x00200000;      // Window message switch
+var TY_EXCEPTSW   = 0x00400000;      // Exception switch
+// Stack walk data-specific types.
+var TY_RELIABLE   = 0x01000000;      // Reliable call
+var TY_GUESSED    = 0x02000000;      // Not a real entry, just guessed
+var TY_BELONGS    = 0x04000000;      // Not a real entry, just belongs to proc
+// Call tree-specific types.
+var TY_RECURSIVE  = 0x00000100;      // Routine calls self
+var TY_TERMINAL   = 0x00000200;      // Leaf function, doesn't call others
+var TY_SYSTEM     = 0x00000400;      // Function resides in system DLL
+var TY_DIRECT     = 0x00000800;      // Called directly
+var TY_NODATA     = 0x00001000;      // Not analyzed or outside procedure
+var TY_DUMMY      = 0x00002000;      // Consists of single RET command
+var TY_NOSIDE     = 0x00004000;      // No side effects except in stack
+
+// Types of recognized jumps.
+var JT_JUMP       = 0;               // Unconditional jump
+var JT_COND       = 1;               // Conditional jump
+var JT_SWITCH     = 2;               // Jump via switch table
+
+// Types of names used in name functions. Note that higher-priority types have
+// smaller identifiers!
+var NM_NONAME     = 0x00;            // Undefined name
+var NM_ANYNAME    = 0xFF;            // Name of any type
+// Names saved in the data file of module they appear.
+var NM_PLUGCMD    = 0x30;            // Plugin commands to execute at break
+var NM_LABEL      = 0x31;            // User-defined label
+var NM_EXPORT     = 0x32;            // Exported (global) name
+var NM_IMPORT     = 0x33;            // Imported name
+var NM_LIBRARY    = 0x34;            // Name from library or object file
+var NM_CONST      = 0x35;            // User-defined constant
+var NM_COMMENT    = 0x36;            // User-defined comment
+var NM_LIBCOMM    = 0x37;            // Comment from library or object file
+var NM_BREAK      = 0x38;            // Condition related with breakpoint
+var NM_ARG        = 0x39;            // Arguments decoded by analyzer
+var NM_ANALYSE    = 0x3A;            // Comment added by analyzer
+var NM_BREAKEXPR  = 0x3B;            // Expression related with breakpoint
+var NM_BREAKEXPL  = 0x3C;            // Explanation related with breakpoint
+var NM_ASSUME     = 0x3D;            // Assume function with known arguments
+var NM_STRUCT     = 0x3E;            // Code structure decoded by analyzer
+var NM_CASE       = 0x3F;            // Case description decoded by analyzer
+// Names saved in the data file of main module.
+var NM_INSPECT    = 0x40;            // Several last inspect expressions
+var NM_WATCH      = 0x41;            // Watch expressions
+var NM_ASM        = 0x42;            // Several last assembled strings
+var NM_FINDASM    = 0x43;            // Several last find assembler strings
+var NM_LASTWATCH  = 0x48;            // Several last watch expressions
+var NM_SOURCE     = 0x49;            // Several last source search strings
+var NM_REFTXT     = 0x4A;            // Several last ref text search strings
+var NM_GOTO       = 0x4B;            // Several last expressions to follow
+var NM_GOTODUMP   = 0x4C;            // Several expressions to follow in Dump
+var NM_TRPAUSE    = 0x4D;            // Several expressions to pause trace
+// Pseudonames.
+var NM_IMCALL     = 0xFE;            // Intermodular call
+
+var NMHISTORY     = 0x40;            // Converts NM_xxx to type of init list
+
+var PAGE_NOACCESS          = 0x01;     
+var PAGE_READONLY          = 0x02;     
+var PAGE_READWRITE         = 0x04;     
+var PAGE_WRITECOPY         = 0x08;     
+var PAGE_EXECUTE           = 0x10;     
+var PAGE_EXECUTE_READ      = 0x20;     
+var PAGE_EXECUTE_READWRITE = 0x40;     
+var PAGE_EXECUTE_WRITECOPY = 0x80;     
+var PAGE_GUARD             = 0x100;     
+var PAGE_NOCACHE           = 0x200;     
+var PAGE_WRITECOMBINE      = 0x400;  
+</font>
+</pre>
+		<pre>用于API SendShortcut的常量:</pre>
+		<pre><font color=#0066ff>
+var WM_KEYDOWN							= 0x0100;
+var WM_CHAR								= 0x0102;
+var WM_SYSKEYDOWN						= 0x0104;
+
+var VK_LBUTTON        = 0x01;
+var VK_RBUTTON        = 0x02;
+var VK_CANCEL         = 0x03;
+var VK_MBUTTON        = 0x04;   /* NOT contiguous with L &amp; RBUTTON */
+
+var VK_XBUTTON1       = 0x05;   /* NOT contiguous with L &amp; RBUTTON */
+var VK_XBUTTON2       = 0x06;   /* NOT contiguous with L &amp; RBUTTON */
+
+var VK_BACK           = 0x08;
+var VK_TAB            = 0x09;
+
+var VK_CLEAR          = 0x0C;
+var VK_RETURN         = 0x0D;
+
+var VK_SHIFT          = 0x10;
+var VK_CONTROL        = 0x11;
+var VK_MENU           = 0x12;
+var VK_PAUSE          = 0x13;
+var VK_CAPITAL        = 0x14;
+
+var VK_KANA           = 0x15;
+var VK_JUNJA          = 0x17;
+var VK_FINAL          = 0x18;
+var VK_HANJA          = 0x19;
+var VK_KANJI          = 0x19;
+
+var VK_ESCAPE         = 0x1B;
+
+var VK_CONVERT        = 0x1C;
+var VK_NONCONVERT     = 0x1D;
+var VK_ACCEPT         = 0x1E;
+var VK_MODECHANGE     = 0x1F;
+
+var VK_SPACE          = 0x20;
+var VK_PRIOR          = 0x21;
+var VK_NEXT           = 0x22;
+var VK_END            = 0x23;
+var VK_HOME           = 0x24;
+var VK_LEFT           = 0x25;
+var VK_UP             = 0x26;
+var VK_RIGHT          = 0x27;
+var VK_DOWN           = 0x28;
+var VK_SELECT         = 0x29;
+var VK_PRINT          = 0x2A;
+var VK_EXECUTE        = 0x2B;
+var VK_SNAPSHOT       = 0x2C;
+var VK_INSERT         = 0x2D;
+var VK_DELETE         = 0x2E;
+var VK_HELP           = 0x2F;
+
+/*
+ * VK_0 - VK_9 are the same as ASCII '0' - '9' (0x30 - 0x39)
+ * 0x40 : unassigned
+ * VK_A - VK_Z are the same as ASCII 'A' - 'Z' (0x41 - 0x5A)
+ */
+ 
+var VK_LWIN           = 0x5B;
+var VK_RWIN           = 0x5C;
+var VK_APPS           = 0x5D;
+
+var VK_SLEEP          = 0x5F;
+
+var VK_NUMPAD0        = 0x60;
+var VK_NUMPAD1        = 0x61;
+var VK_NUMPAD2        = 0x62;
+var VK_NUMPAD3        = 0x63;
+var VK_NUMPAD4        = 0x64;
+var VK_NUMPAD5        = 0x65;
+var VK_NUMPAD6        = 0x66;
+var VK_NUMPAD7        = 0x67;
+var VK_NUMPAD8        = 0x68;
+var VK_NUMPAD9        = 0x69;
+var VK_MULTIPLY       = 0x6A;
+var VK_ADD            = 0x6B;
+var VK_SEPARATOR      = 0x6C;
+var VK_SUBTRACT       = 0x6D;
+var VK_DECIMAL        = 0x6E;
+var VK_DIVIDE         = 0x6F;
+var VK_F1             = 0x70;
+var VK_F2             = 0x71;
+var VK_F3             = 0x72;
+var VK_F4             = 0x73;
+var VK_F5             = 0x74;
+var VK_F6             = 0x75;
+var VK_F7             = 0x76;
+var VK_F8             = 0x77;
+var VK_F9             = 0x78;
+var VK_F10            = 0x79;
+var VK_F11            = 0x7A;
+var VK_F12            = 0x7B;
+var VK_F13            = 0x7C;
+var VK_F14            = 0x7D;
+var VK_F15            = 0x7E;
+var VK_F16            = 0x7F;
+var VK_F17            = 0x80;
+var VK_F18            = 0x81;
+var VK_F19            = 0x82;
+var VK_F20            = 0x83;
+var VK_F21            = 0x84;
+var VK_F22            = 0x85;
+var VK_F23            = 0x86;
+var VK_F24            = 0x87;
+
+var VK_NUMLOCK        = 0x90;
+var VK_SCROLL         = 0x91;
+
+var VK_LSHIFT         = 0xA0;
+var VK_RSHIFT         = 0xA1;
+var VK_LCONTROL       = 0xA2;
+var VK_RCONTROL       = 0xA3;
+var VK_LMENU          = 0xA4;
+var VK_RMENU          = 0xA5;
+
+var VK_BROWSER_BACK        = 0xA6;
+var VK_BROWSER_FORWARD     = 0xA7;
+var VK_BROWSER_REFRESH     = 0xA8;
+var VK_BROWSER_STOP        = 0xA9;
+var VK_BROWSER_SEARCH      = 0xAA;
+var VK_BROWSER_FAVORITES   = 0xAB;
+var VK_BROWSER_HOME        = 0xAC;
+
+var VK_VOLUME_MUTE         = 0xAD;
+var VK_VOLUME_DOWN         = 0xAE;
+var VK_VOLUME_UP           = 0xAF;
+var VK_MEDIA_NEXT_TRACK    = 0xB0;
+var VK_MEDIA_PREV_TRACK    = 0xB1;
+var VK_MEDIA_STOP          = 0xB2;
+var VK_MEDIA_PLAY_PAUSE    = 0xB3;
+var VK_LAUNCH_MAIL         = 0xB4;
+var VK_LAUNCH_MEDIA_SELECT = 0xB5;
+var VK_LAUNCH_APP1         = 0xB6;
+var VK_LAUNCH_APP2         = 0xB7;
+
+</font>
+</pre>
+		<pre>此外,这个包含文件里还定义了一个全局变量,用来方便访问插件提供的对象模型:
+</pre>
+		<PRE><FONT color=#0066ff>var app=window.external.Application;</FONT>
+</PRE>
+		<p>
+		<P><FONT face="宋体" color="#0066ff"></FONT></P>
+		<STRONG><FONT face="宋体">八、感谢</FONT></STRONG>
+		<P></P>
+		<FONT face="宋体">
+			<PRE>主要API实现参照了OllyScript与OllyMachine的代码,感谢SHaG与罗聪以及Ollydbg的作者。</PRE>
+			<FONT face="宋体">
+				<PRE>-------------------------------------------------------------------------------------------</PRE>
+				<PRE>注：本程序不打算开放源代码（因为功能上是比较直白的，大家可以参照OllyScript与OllyMachine的源代码）及</PRE>
+				<PRE>Ollydbg的插件开发文档，所以请不要向我索取源代码。</PRE>
+			</FONT>
+			<P><FONT face="宋体">------------------------------------------------------------------------------------</FONT><FONT face="宋体">-------</FONT>
+			</P>
+			<P><FONT size="2"><STRONG>作者与联系方式：</STRONG></FONT></P>
+			<P><FONT size="2">兰翔 (alan)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <A href="http://blog.sina.com.cn/u/1403122390">
+						http://blog.sina.com.cn/u/1403122390</A></FONT></P>			
+		<P><A href="mailto:dreaman_163@163.com"><FONT size="2"><EM>dreaman_163@163.com</EM></FONT></A></P>
+		<P><FONT size="2"><EM></EM></FONT></P>
+		</FONT>
+	</body>
+</html>

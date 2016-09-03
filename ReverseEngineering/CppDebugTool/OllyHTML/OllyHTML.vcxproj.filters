@@ -1,0 +1,155 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx</Extensions>
+    </Filter>
+    <Filter Include="生成的文件">
+      <UniqueIdentifier>{cf1b527d-8d65-4e42-8231-a99c6085cafb}</UniqueIdentifier>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="DataScriptParser">
+      <UniqueIdentifier>{2a971cd0-6443-4574-872c-291dd274c349}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="dlldatax.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="dumper.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="HTMLWindow.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="OllyHTML.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Search.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="OllyHTML_i.c">
+      <Filter>生成的文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MemoryLayout.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DataScriptParser\ScriptData.cpp">
+      <Filter>DataScriptParser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DataScriptParser\SDAction.cpp">
+      <Filter>DataScriptParser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DataScriptParser\SDError.cpp">
+      <Filter>DataScriptParser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DataScriptParser\SDLog.cpp">
+      <Filter>DataScriptParser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DataScriptParser\SDParse.cpp">
+      <Filter>DataScriptParser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DataScriptParser\SDString.cpp">
+      <Filter>DataScriptParser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DataScriptParser\SDTable.cpp">
+      <Filter>DataScriptParser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DataScriptParser\SDToken.cpp">
+      <Filter>DataScriptParser</Filter>
+    </ClCompile>
+    <ClCompile Include="Disasm.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="OllyHTML.def">
+      <Filter>源文件</Filter>
+    </None>
+    <None Include="icon1.ico">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="OllyHTML.rgs">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="help.htm" />
+    <None Include="htm00001.htm" />
+    <None Include="html2.htm" />
+    <None Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Midl Include="OllyHTML.idl">
+      <Filter>源文件</Filter>
+    </Midl>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ConditionExpression.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="dlldatax.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="dumper.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="HTMLWindow.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Search.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MemoryLayout.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DataScriptParser\ScriptData.h">
+      <Filter>DataScriptParser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DataScriptParser\SDAction.h">
+      <Filter>DataScriptParser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DataScriptParser\SDError.h">
+      <Filter>DataScriptParser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DataScriptParser\SDLog.h">
+      <Filter>DataScriptParser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DataScriptParser\SDParse.h">
+      <Filter>DataScriptParser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DataScriptParser\SDString.h">
+      <Filter>DataScriptParser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DataScriptParser\SDTable.h">
+      <Filter>DataScriptParser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DataScriptParser\SDToken.h">
+      <Filter>DataScriptParser</Filter>
+    </ClInclude>
+    <ClInclude Include="Disasm.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="OllyHTML.rc">
+      <Filter>资源文件</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

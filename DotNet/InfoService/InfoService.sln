@@ -1,0 +1,30 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InfoService", "InfoService.csproj", "{752470EA-E6E7-44A4-B66E-3EE99D5BD30B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E5B0BF49-3782-4016-BD38-28C790956166} = {E5B0BF49-3782-4016-BD38-28C790956166}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RichWay", "..\DataAccess\Dreaman.data\RichWay.csproj", "{E5B0BF49-3782-4016-BD38-28C790956166}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{752470EA-E6E7-44A4-B66E-3EE99D5BD30B}.Debug.ActiveCfg = Debug|.NET
+		{752470EA-E6E7-44A4-B66E-3EE99D5BD30B}.Debug.Build.0 = Debug|.NET
+		{752470EA-E6E7-44A4-B66E-3EE99D5BD30B}.Release.ActiveCfg = Release|.NET
+		{752470EA-E6E7-44A4-B66E-3EE99D5BD30B}.Release.Build.0 = Release|.NET
+		{E5B0BF49-3782-4016-BD38-28C790956166}.Debug.ActiveCfg = Debug|.NET
+		{E5B0BF49-3782-4016-BD38-28C790956166}.Debug.Build.0 = Debug|.NET
+		{E5B0BF49-3782-4016-BD38-28C790956166}.Release.ActiveCfg = Release|.NET
+		{E5B0BF49-3782-4016-BD38-28C790956166}.Release.Build.0 = Release|.NET
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

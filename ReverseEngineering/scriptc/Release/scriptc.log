@@ -1,0 +1,86 @@
+﻿Build started 2016/9/3 13:16:23.
+     1>Project "E:\work\OpenSource\OldWork\ReverseEngineering\scriptc\scriptc.vcxproj" on node 2 (build target(s)).
+     1>InitializeBuildStatus:
+         Touching "Release\scriptc.unsuccessfulbuild".
+       ClCompile:
+         D:\Program Files\vs2010\VC\bin\CL.exe /c /IE:\work\OpenSource\OldWork\MyInclude /Zi /nologo /W3 /WX- /O2 /Oy- /D WIN32 /D NDEBUG /D _CONSOLE /D _VC80_UPGRADE=0x0710 /D _MBCS /D _ATL_STATIC_REGISTRY /Gm- /EHsc /MT /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yc"StdAfx.h" /Fp"Release\scriptc.pch" /Fo"Release\\" /Fd"Release\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt stdafx.cpp
+         stdafx.cpp
+         D:\Program Files\vs2010\VC\bin\CL.exe /c /IE:\work\OpenSource\OldWork\MyInclude /Zi /nologo /W3 /WX- /O2 /Oy- /D WIN32 /D NDEBUG /D _CONSOLE /D _VC80_UPGRADE=0x0710 /D _MBCS /D _ATL_STATIC_REGISTRY /Gm- /EHsc /MT /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"StdAfx.h" /Fp"Release\scriptc.pch" /Fo"Release\\" /Fd"Release\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt Interpreter.cpp lzari.cpp scriptc.cpp
+         Interpreter.cpp
+     1>e:\work\opensource\oldwork\reverseengineering\scriptc\Interpreter.h(230): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\work\opensource\oldwork\reverseengineering\scriptc\Interpreter.h(239): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\work\opensource\oldwork\reverseengineering\scriptc\Interpreter.h(248): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\work\opensource\oldwork\reverseengineering\scriptc\Interpreter.h(293): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\work\opensource\oldwork\reverseengineering\scriptc\Interpreter.h(301): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\work\opensource\oldwork\reverseengineering\scriptc\Interpreter.h(309): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\work\opensource\oldwork\reverseengineering\scriptc\Interpreter.h(331): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\work\opensource\oldwork\reverseengineering\scriptc\Interpreter.h(351): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\work\opensource\oldwork\reverseengineering\scriptc\Interpreter.h(794): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\work\opensource\oldwork\reverseengineering\scriptc\Interpreter.h(815): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\work\opensource\oldwork\reverseengineering\scriptc\Interpreter.h(824): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\work\opensource\oldwork\reverseengineering\scriptc\Interpreter.h(833): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\work\opensource\oldwork\reverseengineering\scriptc\Interpreter.h(842): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\work\opensource\oldwork\reverseengineering\scriptc\Interpreter.h(864): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\work\opensource\oldwork\reverseengineering\scriptc\Interpreter.h(873): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\work\opensource\oldwork\reverseengineering\scriptc\Interpreter.h(880): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\work\opensource\oldwork\reverseengineering\scriptc\Interpreter.h(887): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\work\opensource\oldwork\reverseengineering\scriptc\Interpreter.h(956): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\work\opensource\oldwork\reverseengineering\scriptc\Interpreter.h(1020): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\work\opensource\oldwork\reverseengineering\scriptc\Interpreter.h(1038): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\work\opensource\oldwork\reverseengineering\scriptc\Interpreter.h(1045): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\work\opensource\oldwork\reverseengineering\scriptc\Interpreter.h(1052): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\work\opensource\oldwork\reverseengineering\scriptc\Interpreter.h(1060): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\work\opensource\oldwork\reverseengineering\scriptc\Interpreter.h(1075): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\work\opensource\oldwork\reverseengineering\scriptc\Interpreter.h(2245): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\work\opensource\oldwork\reverseengineering\scriptc\Interpreter.h(2252): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\work\opensource\oldwork\reverseengineering\scriptc\Interpreter.h(2267): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\work\opensource\oldwork\reverseengineering\scriptc\scriptc_syntax.cpp(1219): warning C4065: switch statement contains 'default' but no 'case' labels
+     1>e:\work\opensource\oldwork\reverseengineering\scriptc\scriptc_syntax.cpp(1246): warning C4065: switch statement contains 'default' but no 'case' labels
+     1>e:\work\opensource\oldwork\reverseengineering\scriptc\scriptc_syntax.cpp(2496): warning C4102: 'yyerrlab1' : unreferenced label
+     1>e:\work\opensource\oldwork\reverseengineering\scriptc\scriptc_compiler.cpp(786): warning C4102: 'find_rule' : unreferenced label
+         lzari.cpp
+         scriptc.cpp
+     1>e:\work\opensource\oldwork\reverseengineering\scriptc\Interpreter.h(230): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\work\opensource\oldwork\reverseengineering\scriptc\Interpreter.h(239): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\work\opensource\oldwork\reverseengineering\scriptc\Interpreter.h(248): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\work\opensource\oldwork\reverseengineering\scriptc\Interpreter.h(293): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\work\opensource\oldwork\reverseengineering\scriptc\Interpreter.h(301): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\work\opensource\oldwork\reverseengineering\scriptc\Interpreter.h(309): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\work\opensource\oldwork\reverseengineering\scriptc\Interpreter.h(331): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\work\opensource\oldwork\reverseengineering\scriptc\Interpreter.h(351): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\work\opensource\oldwork\reverseengineering\scriptc\Interpreter.h(794): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\work\opensource\oldwork\reverseengineering\scriptc\Interpreter.h(815): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\work\opensource\oldwork\reverseengineering\scriptc\Interpreter.h(824): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\work\opensource\oldwork\reverseengineering\scriptc\Interpreter.h(833): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\work\opensource\oldwork\reverseengineering\scriptc\Interpreter.h(842): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\work\opensource\oldwork\reverseengineering\scriptc\Interpreter.h(864): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\work\opensource\oldwork\reverseengineering\scriptc\Interpreter.h(873): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\work\opensource\oldwork\reverseengineering\scriptc\Interpreter.h(880): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\work\opensource\oldwork\reverseengineering\scriptc\Interpreter.h(887): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\work\opensource\oldwork\reverseengineering\scriptc\Interpreter.h(956): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\work\opensource\oldwork\reverseengineering\scriptc\Interpreter.h(1020): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\work\opensource\oldwork\reverseengineering\scriptc\Interpreter.h(1038): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\work\opensource\oldwork\reverseengineering\scriptc\Interpreter.h(1045): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\work\opensource\oldwork\reverseengineering\scriptc\Interpreter.h(1052): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\work\opensource\oldwork\reverseengineering\scriptc\Interpreter.h(1060): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\work\opensource\oldwork\reverseengineering\scriptc\Interpreter.h(1075): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\work\opensource\oldwork\reverseengineering\scriptc\Interpreter.h(2245): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\work\opensource\oldwork\reverseengineering\scriptc\Interpreter.h(2252): warning C4018: '<' : signed/unsigned mismatch
+     1>e:\work\opensource\oldwork\reverseengineering\scriptc\Interpreter.h(2267): warning C4018: '<' : signed/unsigned mismatch
+         Generating Code...
+       Link:
+         D:\Program Files\vs2010\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"Release\scriptc.exe" /INCREMENTAL:NO /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Release\scriptc.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"E:\work\OpenSource\OldWork\ReverseEngineering\scriptc\Release\scriptc.pdb" /SUBSYSTEM:CONSOLE /OPT:REF /OPT:ICF /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"Release\scriptc.lib" /MACHINE:X86 Release\Interpreter.obj
+         Release\lzari.obj
+         Release\scriptc.obj
+         Release\stdafx.obj
+         scriptc.vcxproj -> E:\work\OpenSource\OldWork\ReverseEngineering\scriptc\Release\scriptc.exe
+       Manifest:
+         C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /outputresource:"Release\scriptc.exe;#1" /manifest Release\scriptc.exe.intermediate.manifest
+       FinalizeBuildStatus:
+         Deleting file "Release\scriptc.unsuccessfulbuild".
+         Touching "Release\scriptc.lastbuildstate".
+     1>Done Building Project "E:\work\OpenSource\OldWork\ReverseEngineering\scriptc\scriptc.vcxproj" (build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:17.80

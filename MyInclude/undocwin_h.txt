@@ -1,0 +1,133 @@
+/**********************************************************************/
+/* Undocumented Windows Functions
+/* Copyright (C) 2001, MATCODE Software
+/* http://www.matcode.com
+/* Author: Vitaly Evseenko
+/**********************************************************************/
+
+//
+// WARNING! This file contained the functions for a different
+// platforms (OS).
+// To use these functions in your application you need to comment out 
+// undue functions.
+
+//////////////////////////////////////////////////////////////
+// Function SwitchToThisWindow
+// Import: user32.dll 
+//
+// Descryption: The SwitchToThisWindow function
+// forced switch to the thread that created the specified
+// window into the foreground, activates and focused the window.
+// Keyboard input is directed to the window. 
+// Unlike SetFocus and SetForegroundWindow, SwitchToThisWindow 
+// forced switch anyway even if console application work in
+// full-screen window mode!
+//
+// Arguments: hAppWnd - Identifies the main thread window that
+// should be activated, focused and brought to the foreground.
+//            bSwitch - TRUE - switch to the window;
+//            FALSE - switch back.
+// Result: If the function succeeds, the return value is nonzero.
+// Platform: Windows 95/98/ME/NT/2000/XP
+//
+
+BOOL __stdcall SwitchToThisWindow(HWND hAppWnd, BOOL bSwitch);
+
+
+//////////////////////////////////////////////////////////////
+// Function NtShutdownSystem
+// Import: ntdll.dll 
+//
+// Descryption: The NtShutdownSystem function either shuts down,
+// reboot, or shuts down and restarts the system.
+// The NtShutdownSystem function always forces shutting down the
+// system and does not wait for third level applications.
+//
+// Comment: The calling process must use the
+// AdjustTokenPrivileges function to enable the SE_SHUTDOWN_NAME
+// privilege.
+// Arguments: dwShutDown - Specifies the type of shutdown.
+// This parameter must one of the following values: 
+// 0 - FORCE SHUTDOWN WITHOUT SWITHING OFF THE COMPUTER
+// 1 - FORCE REBOOT
+// 2 - FORCE SHUTDOWN WITH SWITH OFF THE COMPUTER
+//
+// Result: If the function fail, the return value is NTSTATUS.
+// Platform: Windows NT/2000/XP
+
+DWORD __stdcall NtShutdownSystem( DWORD dwShutDown );
+
+
+
+
+//////////////////////////////////////////////////////////////
+// Function LdrLoadDll
+// Import: ntdll.dll 
+//
+// Descryption: The LdrLoadDll function maps the specified
+// executable module into the address space of the calling
+// process. Unlike LoadLibraryA(W) this function loads
+// any modules for any others (i.e. loading DLL from another
+// forein DLL in Win2000).
+//
+// Arguments: szcwPath - Points to a null-terminated
+//       wide character string that containes the "path"
+//       variable where the system will look for the module.
+//       szcwPath should have following format:
+//         L"Path1;Path2;Path3;....;PathN;".
+//       If szcwPath equal NULL, LdrLoadDll function
+//       will perform search as LoadLibrary.
+//
+//            pdwLdrErr - could be NULL;
+//
+//            pUniModuleName - Points to an UNICODE_STRING 
+//       that names a Win32 executable module (either a .DLL
+//       or an .EXE file).
+//
+//            pResultInstance - should point to a variable that receaves
+//       the Identifier of the module.
+//
+// Result: If the function succeeds, the return value is zero (STATUS_SUCCESS).
+// Platform: Windows NT/2000/XP
+
+DWORD __stdcall LdrLoadDll( PWSTR *szcwPath, // Optional
+        PDWORD pdwLdrErr,                    // Optional
+        PUNICODE_STRING pUniModuleName,
+        PHINSTANCE pResultInstance
+);
+
+
+//////////////////////////////////////////////////////////////
+// Function LdrGetProcedureAddress
+// Import: ntdll.dll 
+//
+// Descryption: The LdrGetProcedureAddress  function retrives
+// the address of the specified exported function.
+//
+// Arguments: hModule - Identifies the module that contains
+//   the function.
+//
+//            pAnsiFunctionName - Points to an ANSI_STRING
+//   containing the function name, or specifies
+//   the function's ordinal value.
+//
+//            dwUnknown - Unknown should be zero.
+//
+//            ProcAddress - should point to a variable that receaves
+//       the address of the function.
+//
+// Result: If the function succeeds, the return value is zero (STATUS_SUCCESS).
+// Platform: Windows NT/2000/XP
+
+DWORD __stdcall LdrGetProcedureAddress( HINSTANCE hModule,
+        PANSI_STRING pAnsiFunctionName,
+	DWORD dwUnknown,
+        PFARPROC ProcAddress
+);
+
+
+
+
+
+
+

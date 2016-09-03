@@ -1,0 +1,351 @@
+<html>
+	<head>
+		<meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5">
+		<style>
+		INPUT
+		{
+			width:100%;font-size:12px;
+		}
+		TABLE
+		{
+			font-size:12px;
+		}
+		.Edit
+		{
+			background-color: #F7FFFF;
+			BORDER-RIGHT: #99cccc 1px solid; BORDER-TOP:  #99cccc 1px solid;BORDER-LEFT:  #99cccc 1px solid; BORDER-BOTTOM:  #99cccc 1px solid
+		}
+		.MouseOnEdit
+		{
+			background-color: #F7FFFF;
+			BORDER-RIGHT: #000000 1px solid; BORDER-TOP: #000000 1px solid;BORDER-LEFT: #000000 1px solid; BORDER-BOTTOM: #000000 1px solid
+		}
+		.Result
+		{			
+			position:relative;overflow-y:scroll;
+			left:0px;top:0px;width:100%;height:290px;
+			SCROLLBAR-FACE-COLOR: #DCFFB9;
+			SCROLLBAR-HIGHLIGHT-COLOR: #FFFFFF;
+			SCROLLBAR-SHADOW-COLOR: #DCFFB9;
+			SCROLLBAR-3DLIGHT-COLOR: #58BE1A;
+			SCROLLBAR-ARROW-COLOR: #000000;
+			SCROLLBAR-TRACK-COLOR: #EEEEEE;
+			SCROLLBAR-DARKSHADOW-COLOR: #58BE1A
+			background-color: #DEE7DE;
+			BORDER-RIGHT: #99cccc 1px solid; BORDER-TOP:  #99cccc 1px solid;BORDER-LEFT:  #99cccc 1px solid; BORDER-BOTTOM:  #99cccc 1px solid
+		}
+		.ClickButton1 
+		{ 
+			font-size:12px; 
+			cursor:hand; 
+			background-color:#CEEFFF; 
+			width:54px; height:16px; 
+			BORDER-BOTTOM: buttonshadow 1px solid; BORDER-LEFT: buttonhighlight 1px solid; 
+			BORDER-RIGHT: buttonshadow 1px solid; BORDER-TOP: buttonhighlight 1px solid; 
+		}
+		.ClickButton2 
+		{ 
+			font-size:12px; 
+			cursor:hand; 
+			background-color:#F7E38C; 
+			width:54px; height:16px; 
+			BORDER-BOTTOM: buttonshadow 1px solid; BORDER-LEFT: buttonhighlight 1px solid; 
+			BORDER-RIGHT: buttonshadow 1px solid; BORDER-TOP: buttonhighlight 1px solid; 
+		}
+		</style>
+	</head>
+	<body style="BACKGROUND-COLOR: #F7FFFF" topmargin="0" leftmargin="0" rightmargin="0" scroll="no">
+		<table style="BORDER-COLLAPSE: collapse;width:100%;height:100%" cellpadding="0" cellspacing="0" border="0">
+			<TR height=144>
+				<TD>
+    			<TABLE style="BORDER-COLLAPSE: collapse;width:100%;height:100%" cellpadding="0" cellspacing="0" border="0">
+    				<TR>
+    					<TD>
+								BatchCountInTargetRange
+    					</TD>
+    					<TD>
+								<INPUT class=ClickButton style="WIDTH: 100%" type=text value="000000" id="batchCountInTargetRange">
+    					</TD>
+    				</TR>
+    				<TR>
+    					<TD>
+								TargetCount
+    					</TD>
+    					<TD>
+								<INPUT class=ClickButton style="WIDTH: 100%" type=text value="000000" id="targetCount">
+    					</TD>
+    				</TR>
+    				<TR>
+    					<TD>
+								BatchCount
+    					</TD>
+    					<TD>
+								<INPUT class=ClickButton style="WIDTH: 100%" type=text value="000000" id="batchCount">
+    					</TD>
+    				</TR>
+    				<TR>
+    					<TD>
+								StateCount
+    					</TD>
+    					<TD>
+								<INPUT class=ClickButton style="WIDTH: 100%" type=text value="000000" id="stateCount">
+    					</TD>
+    				</TR>
+    				<TR>
+    					<TD>
+								VertexShaderCountInRange
+    					</TD>
+    					<TD>
+								<INPUT class=ClickButton style="WIDTH: 100%" type=text value="000000" id="vertexShaderCountInRange">
+    					</TD>
+    				</TR>
+    				<TR>
+    					<TD>
+								PixelShaderCountInRange
+    					</TD>
+    					<TD>
+								<INPUT class=ClickButton style="WIDTH: 100%" type=text value="000000" id="pixelShaderCountInRange">
+    					</TD>
+    				</TR>
+    				<TR>
+    					<TD>
+								VertexShaderCount
+    					</TD>
+    					<TD>
+								<INPUT class=ClickButton style="WIDTH: 100%" type=text value="000000" id="vertexShaderCount">
+    					</TD>
+    				</TR>
+    				<TR>
+    					<TD>
+								PixelShaderCount
+    					</TD>
+    					<TD>
+								<INPUT class=ClickButton style="WIDTH: 100%" type=text value="000000" id="pixelShaderCount">
+    					</TD>
+    				</TR>
+    			</TABLE>  
+				</TD>
+			</TR>
+  		<TR>
+    		<TD>
+    			<TEXTAREA id=editArea style="WIDTH: 100%; HEIGHT: 100%; BACKGROUND-COLOR: #f7ffff"></TEXTAREA> 
+    		</TD>
+    	</TR>
+  		<TR height=24>
+    		<TD>
+    			<INPUT class=ClickButton style="WIDTH: 30%" onclick=clickRun() type=button value=执行>  
+					<INPUT class=ClickButton style="WIDTH: 30%" onclick=clickRefresh() type=button value=刷新>
+					<INPUT class=ClickButton style="WIDTH: 30%" onclick=compileScript() type=button value=编译>
+    		</TD>
+    	</TR>
+  		<TR height=24>
+    		<TD>
+    			AVG---FPS:<INPUT class=ClickButton style="WIDTH: 22%" onclick=clickRun() type=text id="avgFPS" value=0>  
+					WORST-FPS:<INPUT class=ClickButton style="WIDTH: 22%" onclick=compileScript() type=text id="worstFPS" value=0>
+				</TD>
+    	</TR>
+  		<TR height=24>
+    		<TD>
+    			LAST--FPS:<INPUT class=ClickButton style="WIDTH: 22%" onclick=clickRefresh() type=text id="lastFPS" value=0>
+					BEST--FPS:<INPUT class=ClickButton style="WIDTH: 22%" onclick=compileScript() type=text id="bestFPS" value=0>					
+    		</TD>
+    	</TR>
+  		<TR height=24>
+    		<TD>
+    			<TABLE style="BORDER-COLLAPSE: collapse;width:100%;height:100%" cellpadding="0" cellspacing="0" border="0">
+    				<TR>
+    					<TD rowspan="2">
+								<INPUT class=ClickButton style="WIDTH: 100%" onclick=clickSetTargetCount() type=button value="设置Target观察范围">
+    					</TD>
+    					<TD rowspan="2">
+								<INPUT class=ClickButton style="WIDTH: 100%" type=text value="000" id="minTargetValCtrl">
+    					</TD>
+    					<TD rowspan="2">
+								<INPUT class=ClickButton style="WIDTH: 100%" type=text value="000" id="maxTargetValCtrl">
+    					</TD>
+    					<TD>
+    						<INPUT style="WIDTH:24px;HEIGHT:14px;font-size:12px" onclick=clickTargetInc() type=button value="+">
+    					</TD>
+    				</TR>
+    				<TR>
+    					<TD>
+    						<INPUT style="WIDTH:24px;HEIGHT:14px;font-size:12px" onclick=clickTargetDec() type=button value="-">
+    					</TD>
+    				</TR>
+    			</TABLE>  
+    		</TD>
+    	</TR>
+  		<TR height=24>
+    		<TD>
+    			<TABLE style="BORDER-COLLAPSE: collapse;width:100%;height:100%" cellpadding="0" cellspacing="0" border="0">
+    				<TR>
+    					<TD rowspan="2">
+								<INPUT class=ClickButton style="WIDTH: 100%" onclick=clickSetBatchCount() type=button value="设置Batch观察范围">
+    					</TD>
+    					<TD rowspan="2">
+								<INPUT class=ClickButton style="WIDTH: 100%" type=text value="000" id="minBatchValCtrl">
+    					</TD>
+    					<TD rowspan="2">
+								<INPUT class=ClickButton style="WIDTH: 100%" type=text value="000" id="maxBatchValCtrl">
+    					</TD>
+    					<TD>
+    						<INPUT style="WIDTH:24px;HEIGHT:14px;font-size:12px" onclick=clickBatchInc() type=button value="+">
+    					</TD>
+    				</TR>
+    				<TR>
+    					<TD>
+    						<INPUT style="WIDTH:24px;HEIGHT:14px;font-size:12px" onclick=clickBatchDec() type=button value="-">
+    					</TD>
+    				</TR>
+    			</TABLE>  
+    		</TD>
+    	</TR>
+  		<TR height=24>
+    		<TD>
+    			<INPUT class=ClickButton style="WIDTH: 30%" onclick=closeAlphaTest() type=button value=关Alpha测试>  
+					<INPUT class=ClickButton style="WIDTH: 30%" onclick=closeAlphaBlend() type=button value=关Alpha混合>
+					<INPUT class=ClickButton style="WIDTH: 30%" onclick=openAlpha() type=button value=开Alpha>
+    		</TD>
+    	</TR>
+  		<TR height=24>
+    		<TD>
+    			<INPUT class=ClickButton style="WIDTH: 30%" onclick=clickPoint() type=button value=点渲染>  
+					<INPUT class=ClickButton style="WIDTH: 30%" onclick=clickLine() type=button value=线渲染>
+					<INPUT class=ClickButton style="WIDTH: 30%" onclick=clickSolid() type=button value=实体渲染>
+    		</TD>
+    	</TR>
+		</table>
+		<script language="javascript">
+			var app=null;
+			var refreshCount=0;
+			function window.onload()
+			{
+				app=window.external.Application;
+				editArea.value=window.external.Shell.ReadTxtFile(window.external.Application.HookPath+"\\testscp.txt");
+				setInterval(readRenderData,1000);
+			}
+			function clickRun()
+			{       				
+				eval(editArea.value);
+			}
+			function clickRefresh()
+			{
+				document.location.reload();
+			}
+			function compileScript()
+			{
+				return window.external.Application.CompileScript(window.external.Application.HookPath+"\\HookScript.sc");
+			}
+			function callScript()
+			{
+				return window.external.Application.CallScript(arguments);
+			}
+			function createHook(func,api,module)
+			{
+				return window.external.Application.CreateHook(func,api,module);
+			}			
+			function removeHook(ix)
+			{
+				window.external.Application.RemoveHook(ix);
+			}
+			function readRenderData()
+			{
+				batchCount.value=""+app.ExtObject.GetTotalBatchCount();
+				targetCount.value=""+app.ExtObject.GetTotalTargetCount();
+				stateCount.value=""+app.ExtObject.GetTotalStateCount();
+				pixelShaderCount.value=""+app.ExtObject.GetTotalPixelShaderCount();
+				vertexShaderCount.value=""+app.ExtObject.GetTotalVertexShaderCount();
+				pixelShaderCountInRange.value=""+app.ExtObject.GetTotalPixelShaderCountInRange();
+				vertexShaderCountInRange.value=""+app.ExtObject.GetTotalVertexShaderCountInRange();
+				batchCountInTargetRange.value=""+app.ExtObject.GetTotalBatchCountInTargetRange();
+							
+				avgFPS.value=(""+app.ExtObject.AvgFPS).substr(0,6);
+				lastFPS.value=(""+app.ExtObject.LastFPS).substr(0,6);
+				bestFPS.value=(""+app.ExtObject.BestFPS).substr(0,6);
+				worstFPS.value=(""+app.ExtObject.WorstFPS).substr(0,6);		
+								
+				if(refreshCount==0)
+				{
+						minTargetValCtrl.value=""+app.ExtObject.GetMinTargetCount();
+						maxTargetValCtrl.value=""+app.ExtObject.GetMaxTargetCount();
+						minBatchValCtrl.value=""+app.ExtObject.GetMinBatchCount();
+						maxBatchValCtrl.value=""+app.ExtObject.GetMaxBatchCount();		
+				}
+				refreshCount=(refreshCount+1)%60;
+			}
+			function clickTotalCount()
+			{
+				valCtrl.value=""+app.ExtObject.GetTotalCount();
+			}
+			function clickSetTargetCount()
+			{
+				var minV=parseInt(minTargetValCtrl.value,10);
+				var maxV=parseInt(maxTargetValCtrl.value,10);
+				app.ExtObject.SetTargetCount(minV,maxV);
+			}
+			function clickTargetInc()
+			{
+				var minV=app.ExtObject.GetMinTargetCount();
+				var maxV=app.ExtObject.GetMaxTargetCount();
+				app.ExtObject.SetTargetCount(minV+1,maxV+1);
+				minTargetValCtrl.value=""+(minV+1);
+				maxTargetValCtrl.value=""+(maxV+1);
+			}
+			function clickTargetDec()
+			{
+				var minV=app.ExtObject.GetMinTargetCount();
+				var maxV=app.ExtObject.GetMaxTargetCount();
+				app.ExtObject.SetTargetCount(minV-1,maxV-1);
+				minTargetValCtrl.value=""+(minV-1);
+				maxTargetValCtrl.value=""+(maxV-1);
+			}
+			function clickSetBatchCount()
+			{
+				var minV=parseInt(minBatchValCtrl.value,10);
+				var maxV=parseInt(maxBatchValCtrl.value,10);
+				app.ExtObject.SetBatchCount(minV,maxV);
+			}
+			function clickBatchInc()
+			{
+				var minV=app.ExtObject.GetMinBatchCount();
+				var maxV=app.ExtObject.GetMaxBatchCount();
+				app.ExtObject.SetBatchCount(minV+1,maxV+1);
+				minBatchValCtrl.value=""+(minV+1);
+				maxBatchValCtrl.value=""+(maxV+1);
+			}
+			function clickBatchDec()
+			{
+				var minV=app.ExtObject.GetMinBatchCount();
+				var maxV=app.ExtObject.GetMaxBatchCount();
+				app.ExtObject.SetBatchCount(minV-1,maxV-1);
+				minBatchValCtrl.value=""+(minV-1);
+				maxBatchValCtrl.value=""+(maxV-1);
+			}
+			function closeAlphaTest()
+			{
+				app.ExtObject.SetAlphaTest(0);
+			}
+			function closeAlphaBlend()
+			{
+				app.ExtObject.SetAlphaBlend(0);
+			}
+			function openAlpha()
+			{
+				app.ExtObject.SetAlphaTest(1);
+				app.ExtObject.SetAlphaBlend(1);
+			}
+			function clickPoint()
+			{
+				app.ExtObject.SetFillMode(1);
+			}
+			function clickLine()
+			{
+				app.ExtObject.SetFillMode(2);
+			}
+			function clickSolid()
+			{
+				app.ExtObject.SetFillMode(3);
+			}
+		</script>
+	</body>
+</html>

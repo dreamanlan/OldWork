@@ -1,0 +1,407 @@
+<HTML XMLNS:sdk>
+	<HEAD>
+		<meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5">
+		<STYLE>
+			sdk\:cacher {behavior:url(#default#userData);}
+		</STYLE>
+		<style>
+			INPUT
+			{
+				width:100%;font-size:14px;
+			}
+			TABLE
+			{
+				font-size:14px;
+			}
+			.Edit
+			{
+				background-color: #FFFFFF;
+				BORDER-RIGHT: #D0D0D0 1px solid; BORDER-TOP:  #D0D0D0 1px solid;BORDER-LEFT:  #D0D0D0 1px solid; BORDER-BOTTOM:  #D0D0D0 1px solid
+			}
+			.MouseOnEdit
+			{
+				background-color: #FFFFFF;
+				BORDER-RIGHT: #A1A1A1 1px solid; BORDER-TOP: #A1A1A1 1px solid;BORDER-LEFT: #A1A1A1 1px solid; BORDER-BOTTOM: #A1A1A1 1px solid
+			}
+			.Result
+			{			
+				position:relative;overflow-y:scroll;
+				left:0px;top:0px;width:100%;height:290px;
+				SCROLLBAR-FACE-COLOR: #E8E8E8;
+				SCROLLBAR-HIGHLIGHT-COLOR: #FFFFFF;
+				SCROLLBAR-SHADOW-COLOR: #DCFFB9;
+				SCROLLBAR-3DLIGHT-COLOR: #58BE1A;
+				SCROLLBAR-ARROW-COLOR: #000000;
+				SCROLLBAR-TRACK-COLOR: #EEEEEE;
+				SCROLLBAR-DARKSHADOW-COLOR: #58BE1A
+				background-color: #EEEEEE;
+				BORDER-RIGHT: #ECC54F 1px solid; BORDER-TOP:  #ECC54F 1px solid;BORDER-LEFT:  #ECC54F 1px solid; BORDER-BOTTOM:  #ECC54F 1px solid
+			}
+			.ClickButton1 
+			{ 
+				font-size:14px; 
+				cursor:hand; 
+				background-color:#E8E8E8; 
+				width:100px; height:24px; 
+				BORDER-BOTTOM: buttonshadow 1px solid; BORDER-LEFT: buttonhighlight 1px solid; 
+				BORDER-RIGHT: buttonshadow 1px solid; BORDER-TOP: buttonhighlight 1px solid; 
+			}
+			.ClickButton2 
+			{ 
+				font-size:14px; 
+				cursor:hand; 
+				background-color:#E8E8E8; 
+				width:100px; height:24px; 
+				BORDER-BOTTOM: buttonshadow 1px solid; BORDER-LEFT: buttonhighlight 1px solid; 
+				BORDER-RIGHT: buttonshadow 1px solid; BORDER-TOP: buttonhighlight 1px solid; 
+			}
+		</style>
+	</head>
+	<body style="BACKGROUND-COLOR: #FFFFFF" topmargin="0" leftmargin="0" rightmargin="0" scroll="no">
+		<sdk:cacher id="cachetag"></sdk:cacher>
+		<table style="BORDER-COLLAPSE: collapse;width:98%;height:100%" cellpadding="0" cellspacing="0" border="0" align="center" ID="Table1">
+			<tr height="24">
+				<td>
+					<table style="table-layout:fixed;BORDER-COLLAPSE: collapse;width:100%;height:100%;font-size:14px" cellpadding="0" cellspacing="0" border="0" ID="Table2">
+						<tr>							
+							<td style="width:90px">
+								启动过程名：
+							</td>
+							<td>
+								<INPUT id="procName" type="text" class="edit" value="Init" title="注入DLL的初始过程名，必须是由DLL输出的无参数的过程" onmouseover="this.className='MouseOnEdit'" onmouseout="this.className='Edit'" onblur="this.className='Edit'" NAME="procName">
+							</td>
+							<td style="width:60px">
+								&nbsp;&nbsp;参数：
+							</td>
+							<td>
+								<INPUT id="procArgs" type="text" class="edit">
+							</td>
+							<td style="width:60px;">
+								&nbsp;&nbsp;调试：
+							</td>
+							<td style="width:20px;border:solid 1px #D0D0D0;">
+								<INPUT id="debugState" type="checkbox">
+							</td>
+							<td style="width:60px;">
+								&nbsp;&nbsp;等待：
+							</td>
+							<td style="width:20px;border:solid 1px #D0D0D0;">
+								<INPUT id="waitState" type="checkbox">
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr height="24">
+				<td>
+					<table style="table-layout:fixed;BORDER-COLLAPSE: collapse;width:100%;height:100%;font-size:14px" cellpadding="0" cellspacing="0" border="0" ID="Table3">
+						<tr>
+							<td style="width:90px">
+								注  入  DLL：
+							</td>
+							<td>
+								<INPUT id="dllPath" type="text" class="edit" readonly tabindex="-1" title="要注入目标进程的DLL文件，双击可选择一个DLL文件" onmouseover="this.className='MouseOnEdit'" onmouseout="this.className='Edit'" onblur="this.className='Edit'" ondblclick="selDll()" NAME="dllPath">
+							</td>
+							<td style="width:90px">
+								&nbsp;&nbsp;选中进程：
+							</td>
+							<td style="width:120px">
+								<INPUT id="procFile" type="text" readonly tabindex="-1" class="edit" NAME="procFile">
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td valign="top">
+					<div class="Result" id="ttt">
+						<table id="procList" style="table-layout:fixed;BORDER-COLLAPSE: collapse;width:100%;display:;" border="1" bordercolor="#D0D0D0" cellpadding="2" cellspacing="0" onmouseover="tableOver()" onmouseout="tableOut()" onmousedown="tableDown()">
+						</table>
+					</div>
+				</td>
+			</tr>
+			<tr height="2px">
+				<td>
+				</td>
+			</tr>
+			<tr height="24">
+				<td>
+					<table style="BORDER-COLLAPSE: collapse;width:100%;height:100%;font-size:14px" cellpadding="0" cellspacing="0" border="0" ID="Table4">
+						<tr>
+							<td style="width:90px">							
+							</td>
+							<td>								
+								<input type="button" class="ClickButton2" onclick="injectHook();" title="向当前选中的进程注入DLL并调用DLL中的启动过程" value="注入DLL并启动" ID="Button1" NAME="Button1">
+							</td>
+							<td>
+								<input type="button" class="ClickButton2" onclick="freeDll();" title="释放当前选中的进程空间里的指定DLL，就是执行一次FreeLibrary" value=" 释 放 DLL " ID="Button2" NAME="Button2">
+							</td>
+							<td>
+								<input type="button" class="ClickButton2" onclick="refreshProcs();" title="刷新进程列表" value="刷 新 进 程" ID="Button3" NAME="Button3">
+							</td>
+							<td>
+								<input type="button" class="ClickButton2" onclick="runProg();" title="启动一个程序，并在程序运行前执行指定库中的函数" value="运 行 程 序" ID="Button4" NAME="Button3">
+							</td>
+							<td>
+								<input type="button" class="ClickButton2" onclick="runProg2();" title="启动一个程序，并在程序运行前执行指定库中的函数" value="运行程序RT" ID="Button5" NAME="Button3">
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>		
+			<tr height="2px">
+				<td>
+				</td>
+			</tr>
+		</table>
+		<script language="javascript">
+			var selProcID=0;
+			function window.onload()
+			{
+				try
+				{					
+					window.external.Move(-1,-1,640,480);
+					window.external.Center();
+					window.external.Application.Initialize();
+				}
+				catch(e)
+				{				
+				}
+				cachetag.load("InjectDll");
+				var v=cachetag.getAttribute("procName");
+				if(v && v.length>0)
+					procName.value=v;
+				v=cachetag.getAttribute("dllPath");
+				if(v && v.length>0)
+					dllPath.value=v;
+			}
+			function selDll()
+			{
+				var r=window.external.SelFile(1,"","*.dll","动态链接库|*.dll||");
+				if(r)
+				{
+					dllPath.value=r;
+				}
+			}						
+			function injectHook()
+			{			
+				if(dllPath.value=="")
+					dllPath.value=window.external.SelFile(1,"","*.dll","动态链接库|*.dll||");
+				if(dllPath.value=="")
+					return;				
+				if(!selProcID)
+				{
+					alert("请选择一个目标进程!");
+					return;	
+				}
+				if(!window.external.Shell.ProcessExists(selProcID))
+				{
+					refreshProcs();
+					selProcID=0;
+					procFile.value="";
+					alert("目标进程已经退出，请重新选择目标进程！");
+					return;
+				}
+				window.external.Application.InjectDll(selProcID,dllPath.value,debugState.checked);
+				var flag=0;
+				if(debugState.checked)
+					flag|=0x01;
+				if(waitState.checked)
+					flag|=0x02;					
+				var addr=window.external.HexToInt(procName.value);
+				if(procName.value.length>0 && (procName.value.charCodeAt(0)<'0'.charCodeAt(0) || procName.value.charCodeAt(0)>'9'.charCodeAt(0)))
+					addr=0;
+				if(procArgs.value.length<=0)
+				{
+					var dllHandle = window.external.Application.GetDll(selProcID,dllPath.value,debugState.checked);
+					if(addr==0)		
+					{			
+						addr=window.external.Application.GetProc(selProcID,dllHandle,procName.value,debugState.checked);
+					}
+					else
+					{
+						addr+=dllHandle;
+					}
+					window.external.Application.CallAddr(selProcID,addr,flag);
+				}
+				else
+				{
+					var args=eval("["+procArgs.value+"]");
+					var dllHandle = window.external.Application.GetDll(selProcID,dllPath.value,debugState.checked);
+					if(addr==0)	
+					{
+						addr=window.external.Application.GetProc(selProcID,dllHandle,procName.value,debugState.checked);
+					}
+					else
+					{
+						addr+=dllHandle;
+					}
+					window.external.Application.CallAddr2(selProcID,addr,flag,args);
+				}
+			}			
+			function freeDll()
+			{
+				if(dllPath.value=="")
+					dllPath.value=window.external.SelFile(1,"","*.dll","动态链接库|*.dll||");
+				if(dllPath.value=="")
+					return;
+				if(!selProcID)
+				{
+					alert("请选择一个目标进程!");
+					return;	
+				}
+				if(!window.external.Shell.ProcessExists(selProcID))
+				{
+					refreshProcs();
+					selProcID=0;
+					procFile.value="";
+					alert("目标进程已经退出，请重新选择目标进程！");
+					return;
+				}
+				window.external.Application.FreeDll(selProcID,dllPath.value,debugState.checked);
+			}
+			function refreshProcs()
+			{
+				while(procList.rows.length>0)
+					procList.deleteRow();
+				window.external.Application.RefreshProcessList();
+			}
+			function runProg()
+			{
+				if(dllPath.value=="")
+					dllPath.value=window.external.SelFile(1,"","*.dll","动态链接库|*.dll||");
+				if(dllPath.value=="")
+					return;
+				var r=window.external.SelFile(1,"","*.exe","可执行程序|*.exe||");
+				if(!r || r=="")
+					return;
+				var addr=window.external.HexToInt(procName.value);
+				if(procName.value.length>0 && (procName.value.charCodeAt(0)<'0'.charCodeAt(0) || procName.value.charCodeAt(0)>'9'.charCodeAt(0)))
+					addr=0;
+				if(procArgs.value.length<=0)
+				{
+					if(addr==0)
+						window.external.Application.RunProgram(r,dllPath.value,procName.value,0,debugState.checked);
+					else
+						window.external.Application.RunProgram(r,dllPath.value,addr,0,debugState.checked);
+				}
+				else
+				{
+					var args=eval("["+procArgs.value+"]");					
+					if(addr==0)
+						window.external.Application.RunProgram2(r,dllPath.value,procName.value,0,debugState.checked,args);
+					else
+						window.external.Application.RunProgram2(r,dllPath.value,addr,0,debugState.checked,args);
+				}
+			}
+			function runProg2()
+			{
+				if(dllPath.value=="")
+					dllPath.value=window.external.SelFile(1,"","*.dll","动态链接库|*.dll||");
+				if(dllPath.value=="")
+					return;
+				var r=window.external.SelFile(1,"","*.exe","可执行程序|*.exe||");
+				if(!r || r=="")
+					return;
+				var flag=0;
+				if(debugState.checked)
+					flag|=0x01;
+				if(waitState.checked)
+					flag|=0x02;	
+				var addr=window.external.HexToInt(procName.value);
+				if(procName.value.length>0 && (procName.value.charCodeAt(0)<'0'.charCodeAt(0) || procName.value.charCodeAt(0)>'9'.charCodeAt(0)))
+					addr=0;
+				if(procArgs.value.length<=0)
+				{
+					if(addr==0)
+						window.external.Application.RunProgramRT(r,dllPath.value,procName.value,0,flag);
+					else
+						window.external.Application.RunProgramRT(r,dllPath.value,addr,0,flag);
+				}
+				else
+				{
+					var args=eval("["+procArgs.value+"]");					
+					if(addr==0)
+						window.external.Application.RunProgramRT2(r,dllPath.value,procName.value,0,flag,args);
+					else
+						window.external.Application.RunProgramRT2(r,dllPath.value,addr,0,flag,args);
+				}
+			}
+		</script>
+		<script>
+			//---------------------------------------------------------------------------
+			var curTR=null;
+			function tableOver()
+			{
+				var srcObj=event.srcElement;
+				if(srcObj.tagName=="TD")
+				{
+					srcObj=srcObj.parentElement;
+					if(srcObj!=curTR)
+					{
+						srcObj.bgColor="#E8E8E8";
+					}
+				}
+			}
+			function tableOut()
+			{
+				var srcObj=event.srcElement;
+				if(srcObj.tagName=="TD")
+				{
+					srcObj=srcObj.parentElement;
+					if(srcObj!=curTR)
+					{
+						srcObj.bgColor="#FFFFFF";
+					}
+				}
+			}
+			function tableDown()
+			{
+				var srcObj=event.srcElement;
+				if(srcObj.tagName=="TD")
+				{
+					srcObj=srcObj.parentElement;
+					if(curTR!=srcObj)
+					{
+						if(curTR)
+							curTR.bgColor="#FFFFFF";
+						curTR=srcObj;
+					}
+					srcObj.bgColor="#EBBD32";
+					selProcID=srcObj.procID;
+					procFile.value=srcObj.procFile;
+				}
+			}
+			//---------------------------------------------------------------------------		
+			function OnClose()
+			{
+				if(procName.value.length>0)
+					cachetag.setAttribute("procName",procName.value);
+				if(dllPath.value.length>0)
+					cachetag.setAttribute("dllPath",dllPath.value);
+				cachetag.save("InjectDll");
+			}	
+			function OnSize()
+			{					
+				ttt.style.height=document.body.clientHeight-76;
+			}
+			function PutProcInfo(pid,file,path)
+			{
+				var tr=procList.insertRow();
+				tr.procID=pid;
+				tr.procFile=file;
+				var cell=tr.insertCell();
+				cell.innerText="ID:"+pid;
+				cell.style.pixelWidth=80;
+				cell.style.color="#E143BF";
+				cell=tr.insertCell();
+				cell.innerText=file;
+				cell.style.pixelWidth=120;
+				cell.style.color="#0343BF";
+				cell=tr.insertCell();
+				cell.innerText=path;
+				cell.style.color="#32C54F";
+			}
+		</script>
+	</body>
+</html>

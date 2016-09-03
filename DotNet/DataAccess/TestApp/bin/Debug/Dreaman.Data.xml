@@ -1,0 +1,174 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Dreaman.Data</name>
+    </assembly>
+    <members>
+        <member name="T:Dreaman.DataAccess.DataAccessFactory">
+            <summary>
+            DataAccessFactory 的摘要说明。
+            </summary>	
+        </member>
+        <member name="M:Dreaman.DataAccess.DataAccessFactory.Produce(Dreaman.DataAccess.DataAccessType,System.String)">
+            <summary>
+            构造一个数据访问对象实例，参数指明了提供者类型与对应的连接串。
+            </summary>
+            <param name="_type"></param>
+            <param name="connstr"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Dreaman.DataAccess.DataAccessFactory.BuildProcSQL(System.String,System.String[])">
+            <summary>
+            构造存储过程调用的SQL语句：exec 过程名 参数列表
+            </summary>
+            <param name="name"></param>
+            <param name="ps"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Dreaman.DataAccess.IDataAccess">
+            <summary>
+            IDataAccess接口，通用的与提供者无关的数据访问接口，在与标准SQL搭配使用时希望能实现
+            与具体数据库无关的数据访问层。
+            </summary>
+        </member>
+        <member name="M:Dreaman.DataAccess.IDataAccess.CreateParameter(System.String,System.Object)">
+            <summary>
+            构造一个参数对象
+            </summary>
+            <param name="name"></param>
+            <param name="val"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Dreaman.DataAccess.IDataAccess.GetSchemaTable(System.String,System.Data.IDbDataParameter[])">
+            <summary>
+            得到SQL语句结果集的描述信息
+            </summary>
+            <param name="sqlstr"></param>
+            <param name="args"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Dreaman.DataAccess.IDataAccess.GetSchemaStruct(System.String,System.Data.IDbDataParameter[])">
+            <summary>
+            得到SQL语句结果集的描述信息
+            </summary>
+            <param name="sqlstr"></param>
+            <param name="args"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Dreaman.DataAccess.IDataAccess.ExecuteDataReader(System.String,System.Data.IDbDataParameter[])">
+            <summary>
+            执行SQL语句返回一个IDataReader
+            </summary>
+            <param name="sqlstr"></param>
+            <param name="args"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Dreaman.DataAccess.IDataAccess.ExecuteDataReader(System.String,System.Data.CommandBehavior,System.Data.IDbDataParameter[])">
+            <summary>
+            执行SQL语句返回一个IDataReader
+            </summary>
+            <param name="sqlstr"></param>
+            <param name="behavior"></param>
+            <param name="args"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Dreaman.DataAccess.IDataAccess.ExecuteDataSet(System.String,System.Data.IDbDataParameter[])">
+            <summary>
+            执行SQL语句返回一个DataSet
+            </summary>
+            <param name="sqlstr"></param>
+            <param name="args"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Dreaman.DataAccess.IDataAccess.ExecuteScalar(System.String,System.Data.IDbDataParameter[])">
+            <summary>
+            执行SQL语句返回一个标量值
+            </summary>
+            <param name="sqlstr"></param>
+            <param name="args"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Dreaman.DataAccess.IDataAccess.ExecuteNonQuery(System.String,System.Data.IDbDataParameter[])">
+            <summary>
+            执行不返回结果集的SQL语句，通常是DDL或非SELECT DML
+            </summary>
+            <param name="sqlstr"></param>
+            <param name="args"></param>
+        </member>
+        <member name="M:Dreaman.DataAccess.IDataAccess.ExecuteNonQuery2(System.String[])">
+            <summary>
+            在同一个事务中执行多条非查询SQL
+            </summary>
+            <param name="sqlstrs"></param>
+        </member>
+        <member name="M:Dreaman.DataAccess.IDataAccess.ExecuteDataSet2(System.String[])">
+            <summary>
+            在同一个事务中执行多条查询SQL，返回一个DataSet
+            </summary>
+            <param name="sqlstrs"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Dreaman.DataAccess.IDataAccess.BeginUpdate(System.String,System.Data.IDbDataParameter[])">
+            <summary>
+            开始一个更新事务，返回供更新的DataSet
+            </summary>
+            <param name="sqlstr"></param>
+            <param name="args"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Dreaman.DataAccess.IDataAccess.BeginUpdate2(System.String[])">
+            <summary>
+            开始一个更新事务，返回供更新的DataSet
+            </summary>
+            <param name="sqlstrs"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Dreaman.DataAccess.IDataAccess.EndUpdate(System.Data.DataSet)">
+            <summary>
+            结束更新事务，与BeginUpdate/BeginUpdate2成对使用，参数必须是前面开始更新事务时返回的DataSet，
+            当然，其中的数据已经被更新过。
+            </summary>
+            <param name="ds"></param>
+        </member>
+        <member name="P:Dreaman.DataAccess.IDataAccess.CommandTimeout">
+            <summary>
+            执行命令的最长等待时间
+            </summary>
+        </member>
+        <member name="P:Dreaman.DataAccess.IDataAccess.Error">
+            <summary>
+            最近一次操作的异常信息
+            </summary>
+        </member>
+        <member name="P:Dreaman.DataAccess.IDataAccess.Driver">
+            <summary>
+            当前的数据库提供者
+            </summary>
+        </member>
+        <member name="T:Dreaman.DataAccess.DataAccessType">
+            <summary>
+            数据访问类型，对应.NET中的几类数据提供者，用于引导数据访问工厂创建对应的数据访问对象
+            </summary>
+        </member>
+        <member name="T:Dreaman.DataAccess.OdbcDataAccess">
+            <summary>
+            OdbcDataAccess 的摘要说明。
+            </summary>
+        </member>
+        <member name="T:Dreaman.DataAccess.OleDbDataAccess">
+            <summary>
+            OleDbDataAccess 的摘要说明。
+            </summary>
+        </member>
+        <member name="T:Dreaman.DataAccess.OracleDataAccess">
+            <summary>
+            OracleDataAccess 的摘要说明。
+            </summary>
+        </member>
+        <member name="T:Dreaman.DataAccess.SQLDataAccess">
+            <summary>
+            SQLDataAccess 的摘要说明。
+            </summary>
+        </member>
+    </members>
+</doc>

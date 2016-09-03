@@ -1,0 +1,446 @@
+var EXCEPTION_DEBUG_EVENT      = 1;
+var CREATE_THREAD_DEBUG_EVENT  = 2;
+var CREATE_PROCESS_DEBUG_EVENT = 3;
+var EXIT_THREAD_DEBUG_EVENT    = 4;
+var EXIT_PROCESS_DEBUG_EVENT   = 5;
+var LOAD_DLL_DEBUG_EVENT       = 6;
+var UNLOAD_DLL_DEBUG_EVENT     = 7;
+var OUTPUT_DEBUG_STRING_EVENT  = 8;
+var RIP_EVENT                  = 9;
+
+var EXCEPTION_ACCESS_VIOLATION          = (0xC0000005);    
+var EXCEPTION_DATATYPE_MISALIGNMENT     = (0x80000002);
+var EXCEPTION_BREAKPOINT                = (0x80000003);
+var EXCEPTION_SINGLE_STEP               = (0x80000004);   
+var EXCEPTION_ARRAY_BOUNDS_EXCEEDED     = (0xC000008C);    
+var EXCEPTION_FLT_DENORMAL_OPERAND      = (0xC000008D);    
+var EXCEPTION_FLT_DIVIDE_BY_ZERO        = (0xC000008E);  
+var EXCEPTION_FLT_INEXACT_RESULT        = (0xC000008F);
+var EXCEPTION_FLT_INVALID_OPERATION     = (0xC0000090); 
+var EXCEPTION_FLT_OVERFLOW              = (0xC0000091); 
+var EXCEPTION_FLT_STACK_CHECK           = (0xC0000092);
+var EXCEPTION_FLT_UNDERFLOW             = (0xC0000093);  
+var EXCEPTION_INT_DIVIDE_BY_ZERO        = (0xC0000094);   
+var EXCEPTION_INT_OVERFLOW              = (0xC0000095); 
+var EXCEPTION_PRIV_INSTRUCTION          = (0xC0000096);   
+var EXCEPTION_IN_PAGE_ERROR             = (0xC0000006);
+var EXCEPTION_ILLEGAL_INSTRUCTION       = (0xC000001D); 
+var EXCEPTION_NONCONTINUABLE_EXCEPTION  = (0xC0000025);  
+var EXCEPTION_STACK_OVERFLOW            = (0xC00000FD); 
+var EXCEPTION_INVALID_DISPOSITION       = (0xC0000026);
+var EXCEPTION_GUARD_PAGE                = (0x80000001);   
+var EXCEPTION_INVALID_HANDLE            = (0xC0000008);
+var CONTROL_C_EXIT                      = (0xC000013A);
+
+var STAT_NONE							= 0;                     // Thread/process is empty
+var STAT_STOPPED						= 1;                     // Thread/process suspended
+var STAT_EVENT							= 2;                     // Processing debug event, process paused
+var STAT_RUNNING						= 3;                     // Thread/process running
+var STAT_FINISHED						= 4;                     // Process finished
+var STAT_CLOSING						= 5;                     // Process is requested to terminate
+
+var PP_MAIN								= 0x0003;
+var PP_EVENT							= 0x0000;
+var PP_PAUSE							= 0x0001;
+var PP_TERMINATED						= 0x0002;
+
+var PP_BYPROGRAM						= 0x0004;
+var PP_INT3BREAK						= 0x0010;
+var PP_MEMBREAK							= 0x0020;
+var PP_HWBREAK							= 0x0040;
+var PP_SINGLESTEP						= 0x0080;
+var PP_EXCEPTION						= 0x0100;
+var PP_ACCESS							= 0x0200;
+var PP_GUARDED							= 0x0400;
+
+var PM_MAIN        = 0;               // Main window
+var PM_DISASM      = 31;              // CPU Disassembler   
+var PM_CPUDUMP     = 32;              // CPU Dump          
+var PM_CPUSTACK    = 33;              // CPU Stack          
+var PM_CPUREGS     = 34;              // CPU Register
+
+var ATR_ADD								= 1;
+var ATR_ADDPROC							= 2;
+var ATR_RESET							= 3;
+var ATR_REMOVE							= 4;
+var ATR_REMOVEALL						= 5;
+var ATR_RESTORE							= 6;
+var ATR_RTRADD							= 7;
+var ATR_RTRJUMPS						= 8;
+var ATR_RTRENTRY						= 9;
+var ATR_RTREMOVE						= 10;
+var ATR_RTSKIP							= 11;
+
+var REG_EAX       = 0;               // Indexes of general-purpose registers
+var REG_ECX       = 1;               // in t_reg.
+var REG_EDX       = 2;
+var REG_EBX       = 3;
+var REG_ESP       = 4;
+var REG_EBP       = 5;
+var REG_ESI       = 6;
+var REG_EDI       = 7;
+
+var SEG_UNDEF     =-1;
+var SEG_ES        = 0;               // Indexes of segment/selector registers
+var SEG_CS        = 1;               // in t_reg.
+var SEG_SS        = 2;
+var SEG_DS        = 3;
+var SEG_FS        = 4;
+var SEG_GS        = 5;
+
+// Selected items in register window.
+var RS_NONE       = 0x0000;          // No selection
+var RS_INT        = 0x0010;          // General-purpose 32-bit registers
+var RS_EIP        = 0x0020;          // EIP (instruction pointer)
+var RS_FLG        = 0x0030;          // 1-bit decoded flags
+var RS_SEG        = 0x0040;          // Segment (selector) registers
+var RS_EFL        = 0x0050;          // 32-bit flag register
+var RS_TAG        = 0x0060;          // FPU register tag
+var RS_FPU        = 0x0070;          // 80-bit FPU registers
+var RS_FST        = 0x0080;          // FPU status
+var RS_FCO        = 0x0090;          // FPU condition bits
+var RS_FER        = 0x00A0;          // FPU error bits
+var RS_FCW        = 0x00B0;          // FPU control word
+var RS_FPR        = 0x00C0;          // FPU precision fields
+var RS_FEM        = 0x00D0;          // FPU error mask bits
+var RS_MMX        = 0x00E0;          // MMX registers
+var RS_3DN        = 0x00F0;          // 3DNow! registers
+var RS_SSE        = 0x0100;          // SSE registers
+var RS_CSR        = 0x0110;          // SSE MXCSR register
+var RS_CSB        = 0x0120;          // SSE MXCSR bits
+var RS_CPR        = 0x0130;          // SSE rounding control
+var RS_ERR        = 0x0140;          // Last thread error
+
+var RS_GROUP      = 0x01F0;          // Mask to extract group of registers
+var RS_INDEX      = 0x000F;          // Mask to extract index of register
+
+var NREGSTACK     = 32;              // Length of stack trace buffer
+var MAXCALSIZE    = 8;               // Max length of CALL without prefixes
+
+var INT3          = 0xCC;            // Code of 1-byte breakpoint
+var NOP           = 0x90;            // Code of 1-byte NOP command
+var TRAPFLAG      = 0x00000100;      // Trap flag in CPU flag register
+
+var C_TYPEMASK    = 0xF0;            // Mask for command type
+var   C_CMD       = 0x00;            // Ordinary instruction
+var   C_PSH       = 0x10;            // PUSH instruction
+var   C_POP       = 0x20;            // POP instruction
+var   C_MMX       = 0x30;            // MMX instruction
+var   C_FLT       = 0x40;            // FPU instruction
+var   C_JMP       = 0x50;            // JUMP instruction
+var   C_JMC       = 0x60;            // Conditional JUMP instruction
+var   C_CAL       = 0x70;            // CALL instruction
+var   C_RET       = 0x80;            // RET instruction
+var   C_FLG       = 0x90;            // Changes system flags
+var   C_RTF       = 0xA0;            // C_JMP and C_FLG simultaneously
+var   C_REP       = 0xB0;            // Instruction with REPxx prefix
+var   C_PRI       = 0xC0;            // Privileged instruction
+var   C_SSE       = 0xD0;            // SSE instruction
+var   C_NOW       = 0xE0;            // 3DNow! instruction
+var   C_BAD       = 0xF0;            // Unrecognized command
+var C_RARE        = 0x08;            // Rare command, seldom used in programs
+var C_SIZEMASK    = 0x07;            // MMX data size or special flag
+var   C_EXPL      = 0x01;            // (non-MMX) Specify explicit memory size
+
+var C_DANGER95    = 0x01;            // Command is dangerous under Win95/98
+var C_DANGER      = 0x03;            // Command is dangerous everywhere
+var C_DANGERLOCK  = 0x07;            // Dangerous with LOCK prefix
+
+var DEC_TYPEMASK  = 0x1F;            // Type of memory byte
+var   DEC_UNKNOWN = 0x00;            // Unknown type
+var   DEC_BYTE    = 0x01;            // Accessed as byte
+var   DEC_WORD    = 0x02;            // Accessed as short
+var   DEC_NEXTDATA = 0x03;            // Subsequent byte of data
+var   DEC_DWORD   = 0x04;            // Accessed as long
+var   DEC_FLOAT4  = 0x05;            // Accessed as float
+var   DEC_FWORD   = 0x06;            // Accessed as descriptor/long pointer
+var   DEC_FLOAT8  = 0x07;            // Accessed as double
+var   DEC_QWORD   = 0x08;            // Accessed as 8-byte integer
+var   DEC_FLOAT10 = 0x09;            // Accessed as long double
+var   DEC_TBYTE   = 0x0A;            // Accessed as 10-byte integer
+var   DEC_STRING  = 0x0B;            // Zero-terminated ASCII string
+var   DEC_UNICODE = 0x0C;            // Zero-terminated UNICODE string
+var   DEC_3DNOW   = 0x0D;            // Accessed as 3Dnow operand
+var   DEC_SSE     = 0x0E;            // Accessed as SSE operand
+var   DEC_TEXT    = 0x10;            // For use in t_result only
+var   DEC_BYTESW  = 0x11;            // Accessed as byte index to switch
+var   DEC_NEXTCODE = 0x13;            // Subsequent byte of command
+var   DEC_COMMAND = 0x1D;            // First byte of command
+var   DEC_JMPDEST = 0x1E;            // Jump destination
+var   DEC_CALLDEST = 0x1F;            // Call (and maybe jump) destination
+var DEC_PROCMASK  = 0x60;            // Procedure analysis
+var   DEC_PROC    = 0x20;            // Start of procedure
+var   DEC_PBODY   = 0x40;            // Body of procedure
+var   DEC_PEND    = 0x60;            // End of procedure
+var DEC_CHECKED   = 0x80;            // Byte was analysed
+var DEC_SIGNED    = 0x100;           // For use in t_result only
+
+var DAW_FARADDR   = 0x0001;          // Command is a far jump, call or return
+var DAW_SEGMENT   = 0x0002;          // Command loads segment register
+var DAW_PRIV      = 0x0004;          // Privileged command
+var DAW_IO        = 0x0008;          // I/O command
+var DAW_SHIFT     = 0x0010;          // Shift constant out of range 1..31
+var DAW_PREFIX    = 0x0020;          // Superfluous prefix
+var DAW_LOCK      = 0x0040;          // Command has LOCK prefix
+var DAW_STACK     = 0x0080;          // Unaligned stack operation
+var DAW_DANGER95  = 0x1000;          // May mess up Win95/98 if executed
+var DAW_DANGEROUS = 0x3000;          // May mess up any OS if executed
+
+// General item types:
+var TY_NEW        = 0x00000001;      // Item is new
+var TY_CONFIRMED  = 0x00000002;      // Item still exists
+var TY_MAIN       = 0x00000004;      // Main item (thread or module)
+var TY_INVALID    = 0x00000008;      // Invalid type (item does not exist)
+var TY_SELECTED   = 0x80000000;      // Reserved for multiple selection
+// Module-specific types:
+var TY_REPORTED   = 0x00000010;      // Stop on module was reported
+// Reference-specific types:
+var TY_REFERENCE  = 0x00000020;      // Item is a real reference
+var TY_ORIGIN     = 0x00000040;      // Item is a search origin
+// Breakpoint-specific types:
+var TY_STOPAN     = 0x00000080;      // Stop animation if TY_ONESHOT
+var TY_SET        = 0x00000100;      // Code INT3 is in memory
+var TY_ACTIVE     = 0x00000200;      // Permanent breakpoint
+var TY_DISABLED   = 0x00000400;      // Permanent disabled breakpoint
+var TY_ONESHOT    = 0x00000800;      // Temporary stop
+var TY_TEMP       = 0x00001000;      // Temporary breakpoint
+var TY_KEEPCODE   = 0x00002000;      // Set and keep command code
+var TY_KEEPCOND   = 0x00004000;      // Keep condition unchanged (0: remove)
+var TY_NOUPDATE   = 0x00008000;      // Don't redraw breakpoint window
+var TY_RTRACE     = 0x00010000;      // Pseudotype of run trace breakpoint
+// Namelist-specific types:
+var TY_EXPORT     = 0x00010000;      // Exported name
+var TY_IMPORT     = 0x00020000;      // Imported name
+var TY_LIBRARY    = 0x00040000;      // Name extracted from object file
+var TY_LABEL      = 0x00080000;      // User-defined name
+var TY_ANYNAME    = 0x000F0000;      // Any of the namelist flags above
+var TY_KNOWN      = 0x00100000;      // Name of known function
+// Memory-specific types:
+var TY_DEFHEAP    = 0x00020000;      // Contains default heap
+var TY_HEAP       = 0x00040000;      // Contains non-default heap
+var TY_SFX        = 0x00080000;      // Contains self-extractor
+var TY_CODE       = 0x00100000;      // Contains image of code section
+var TY_DATA       = 0x00200000;      // Contains image of data section
+var TY_IMPDATA    = 0x00400000;      // Memory block includes import data
+var TY_EXPDATA    = 0x00800000;      // Memory block includes export data
+var TY_RSRC       = 0x01000000;      // Memory block includes resources
+var TY_RELOC      = 0x02000000;      // Memory block includes relocation data
+var TY_STACK      = 0x04000000;      // Contains stack of some thread
+var TY_THREAD     = 0x08000000;      // Contains data block of some thread
+var TY_HEADER     = 0x10000000;      // COFF header
+var TY_ANYMEM     = 0x1FFE0000;      // Any of the memory flags above
+var TY_GUARDED    = 0x20000000;      // NT only: guarded memory block
+// Procedure data-specific types:
+var TY_PURE       = 0x00004000;      // No side effects except in stack
+var TY_PASCAL     = 0x00010000;      // Procedure ends with RET nnn
+var TY_C          = 0x00020000;      // ADD ESP,nnn after call to procedure
+var TY_NOTENTRY   = 0x00100000;      // Not necessarily entry point
+// Switch data-specific types.
+var TY_CHARSW     = 0x00100000;      // ASCII switch
+var TY_WMSW       = 0x00200000;      // Window message switch
+var TY_EXCEPTSW   = 0x00400000;      // Exception switch
+// Stack walk data-specific types.
+var TY_RELIABLE   = 0x01000000;      // Reliable call
+var TY_GUESSED    = 0x02000000;      // Not a real entry, just guessed
+var TY_BELONGS    = 0x04000000;      // Not a real entry, just belongs to proc
+// Call tree-specific types.
+var TY_RECURSIVE  = 0x00000100;      // Routine calls self
+var TY_TERMINAL   = 0x00000200;      // Leaf function, doesn't call others
+var TY_SYSTEM     = 0x00000400;      // Function resides in system DLL
+var TY_DIRECT     = 0x00000800;      // Called directly
+var TY_NODATA     = 0x00001000;      // Not analyzed or outside procedure
+var TY_DUMMY      = 0x00002000;      // Consists of single RET command
+var TY_NOSIDE     = 0x00004000;      // No side effects except in stack
+
+// Types of recognized jumps.
+var JT_JUMP       = 0;               // Unconditional jump
+var JT_COND       = 1;               // Conditional jump
+var JT_SWITCH     = 2;               // Jump via switch table
+
+// Types of names used in name functions. Note that higher-priority types have
+// smaller identifiers!
+var NM_NONAME     = 0x00;            // Undefined name
+var NM_ANYNAME    = 0xFF;            // Name of any type
+// Names saved in the data file of module they appear.
+var NM_PLUGCMD    = 0x30;            // Plugin commands to execute at break
+var NM_LABEL      = 0x31;            // User-defined label
+var NM_EXPORT     = 0x32;            // Exported (global) name
+var NM_IMPORT     = 0x33;            // Imported name
+var NM_LIBRARY    = 0x34;            // Name from library or object file
+var NM_CONST      = 0x35;            // User-defined constant
+var NM_COMMENT    = 0x36;            // User-defined comment
+var NM_LIBCOMM    = 0x37;            // Comment from library or object file
+var NM_BREAK      = 0x38;            // Condition related with breakpoint
+var NM_ARG        = 0x39;            // Arguments decoded by analyzer
+var NM_ANALYSE    = 0x3A;            // Comment added by analyzer
+var NM_BREAKEXPR  = 0x3B;            // Expression related with breakpoint
+var NM_BREAKEXPL  = 0x3C;            // Explanation related with breakpoint
+var NM_ASSUME     = 0x3D;            // Assume function with known arguments
+var NM_STRUCT     = 0x3E;            // Code structure decoded by analyzer
+var NM_CASE       = 0x3F;            // Case description decoded by analyzer
+// Names saved in the data file of main module.
+var NM_INSPECT    = 0x40;            // Several last inspect expressions
+var NM_WATCH      = 0x41;            // Watch expressions
+var NM_ASM        = 0x42;            // Several last assembled strings
+var NM_FINDASM    = 0x43;            // Several last find assembler strings
+var NM_LASTWATCH  = 0x48;            // Several last watch expressions
+var NM_SOURCE     = 0x49;            // Several last source search strings
+var NM_REFTXT     = 0x4A;            // Several last ref text search strings
+var NM_GOTO       = 0x4B;            // Several last expressions to follow
+var NM_GOTODUMP   = 0x4C;            // Several expressions to follow in Dump
+var NM_TRPAUSE    = 0x4D;            // Several expressions to pause trace
+// Pseudonames.
+var NM_IMCALL     = 0xFE;            // Intermodular call
+
+var NMHISTORY     = 0x40;            // Converts NM_xxx to type of init list
+
+var PAGE_NOACCESS          = 0x01;     
+var PAGE_READONLY          = 0x02;     
+var PAGE_READWRITE         = 0x04;     
+var PAGE_WRITECOPY         = 0x08;     
+var PAGE_EXECUTE           = 0x10;     
+var PAGE_EXECUTE_READ      = 0x20;     
+var PAGE_EXECUTE_READWRITE = 0x40;     
+var PAGE_EXECUTE_WRITECOPY = 0x80;     
+var PAGE_GUARD             = 0x100;     
+var PAGE_NOCACHE           = 0x200;     
+var PAGE_WRITECOMBINE      = 0x400;     
+
+var WM_KEYDOWN							= 0x0100;
+var WM_CHAR								= 0x0102;
+var WM_SYSKEYDOWN						= 0x0104;
+
+var VK_LBUTTON        = 0x01;
+var VK_RBUTTON        = 0x02;
+var VK_CANCEL         = 0x03;
+var VK_MBUTTON        = 0x04;   /* NOT contiguous with L & RBUTTON */
+
+var VK_XBUTTON1       = 0x05;   /* NOT contiguous with L & RBUTTON */
+var VK_XBUTTON2       = 0x06;   /* NOT contiguous with L & RBUTTON */
+
+var VK_BACK           = 0x08;
+var VK_TAB            = 0x09;
+
+var VK_CLEAR          = 0x0C;
+var VK_RETURN         = 0x0D;
+
+var VK_SHIFT          = 0x10;
+var VK_CONTROL        = 0x11;
+var VK_MENU           = 0x12;
+var VK_PAUSE          = 0x13;
+var VK_CAPITAL        = 0x14;
+
+var VK_KANA           = 0x15;
+var VK_JUNJA          = 0x17;
+var VK_FINAL          = 0x18;
+var VK_HANJA          = 0x19;
+var VK_KANJI          = 0x19;
+
+var VK_ESCAPE         = 0x1B;
+
+var VK_CONVERT        = 0x1C;
+var VK_NONCONVERT     = 0x1D;
+var VK_ACCEPT         = 0x1E;
+var VK_MODECHANGE     = 0x1F;
+
+var VK_SPACE          = 0x20;
+var VK_PRIOR          = 0x21;
+var VK_NEXT           = 0x22;
+var VK_END            = 0x23;
+var VK_HOME           = 0x24;
+var VK_LEFT           = 0x25;
+var VK_UP             = 0x26;
+var VK_RIGHT          = 0x27;
+var VK_DOWN           = 0x28;
+var VK_SELECT         = 0x29;
+var VK_PRINT          = 0x2A;
+var VK_EXECUTE        = 0x2B;
+var VK_SNAPSHOT       = 0x2C;
+var VK_INSERT         = 0x2D;
+var VK_DELETE         = 0x2E;
+var VK_HELP           = 0x2F;
+
+/*
+ * VK_0 - VK_9 are the same as ASCII '0' - '9' (0x30 - 0x39)
+ * 0x40 : unassigned
+ * VK_A - VK_Z are the same as ASCII 'A' - 'Z' (0x41 - 0x5A)
+ */
+ 
+var VK_LWIN           = 0x5B;
+var VK_RWIN           = 0x5C;
+var VK_APPS           = 0x5D;
+
+var VK_SLEEP          = 0x5F;
+
+var VK_NUMPAD0        = 0x60;
+var VK_NUMPAD1        = 0x61;
+var VK_NUMPAD2        = 0x62;
+var VK_NUMPAD3        = 0x63;
+var VK_NUMPAD4        = 0x64;
+var VK_NUMPAD5        = 0x65;
+var VK_NUMPAD6        = 0x66;
+var VK_NUMPAD7        = 0x67;
+var VK_NUMPAD8        = 0x68;
+var VK_NUMPAD9        = 0x69;
+var VK_MULTIPLY       = 0x6A;
+var VK_ADD            = 0x6B;
+var VK_SEPARATOR      = 0x6C;
+var VK_SUBTRACT       = 0x6D;
+var VK_DECIMAL        = 0x6E;
+var VK_DIVIDE         = 0x6F;
+var VK_F1             = 0x70;
+var VK_F2             = 0x71;
+var VK_F3             = 0x72;
+var VK_F4             = 0x73;
+var VK_F5             = 0x74;
+var VK_F6             = 0x75;
+var VK_F7             = 0x76;
+var VK_F8             = 0x77;
+var VK_F9             = 0x78;
+var VK_F10            = 0x79;
+var VK_F11            = 0x7A;
+var VK_F12            = 0x7B;
+var VK_F13            = 0x7C;
+var VK_F14            = 0x7D;
+var VK_F15            = 0x7E;
+var VK_F16            = 0x7F;
+var VK_F17            = 0x80;
+var VK_F18            = 0x81;
+var VK_F19            = 0x82;
+var VK_F20            = 0x83;
+var VK_F21            = 0x84;
+var VK_F22            = 0x85;
+var VK_F23            = 0x86;
+var VK_F24            = 0x87;
+
+var VK_NUMLOCK        = 0x90;
+var VK_SCROLL         = 0x91;
+
+var VK_LSHIFT         = 0xA0;
+var VK_RSHIFT         = 0xA1;
+var VK_LCONTROL       = 0xA2;
+var VK_RCONTROL       = 0xA3;
+var VK_LMENU          = 0xA4;
+var VK_RMENU          = 0xA5;
+
+var VK_BROWSER_BACK        = 0xA6;
+var VK_BROWSER_FORWARD     = 0xA7;
+var VK_BROWSER_REFRESH     = 0xA8;
+var VK_BROWSER_STOP        = 0xA9;
+var VK_BROWSER_SEARCH      = 0xAA;
+var VK_BROWSER_FAVORITES   = 0xAB;
+var VK_BROWSER_HOME        = 0xAC;
+
+var VK_VOLUME_MUTE         = 0xAD;
+var VK_VOLUME_DOWN         = 0xAE;
+var VK_VOLUME_UP           = 0xAF;
+var VK_MEDIA_NEXT_TRACK    = 0xB0;
+var VK_MEDIA_PREV_TRACK    = 0xB1;
+var VK_MEDIA_STOP          = 0xB2;
+var VK_MEDIA_PLAY_PAUSE    = 0xB3;
+var VK_LAUNCH_MAIL         = 0xB4;
+var VK_LAUNCH_MEDIA_SELECT = 0xB5;
+var VK_LAUNCH_APP1         = 0xB6;
+var VK_LAUNCH_APP2         = 0xB7;
+
+var app=window.external.Application;

@@ -1,0 +1,379 @@
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=zheng)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=ORACLE9)(CID=(PROGRAM=D:\hiss_flood\DataAccess\TestApp\bin\Debug\TestApp.exe)(HOST=LAN)(USER=lan))))
+
+  VERSION INFORMATION:
+	TNS for 32-bit Windows: Version 8.1.6.0.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 32-bit Windows: Version 8.1.6.0.0 - Production
+  Time: 18-8月 -2004 12:33:03
+  Tracing not turned on.
+  Tns error struct:
+    nr err code: 0
+    ns main err code: 12541
+    TNS-12541: TNS：无监听器
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: 无监听器
+    nt secondary err code: 61
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=zheng)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=ORACLE9)(CID=(PROGRAM=D:\hiss_flood\DataAccess\TestApp\bin\Debug\TestApp.exe)(HOST=LAN)(USER=lan))))
+
+  VERSION INFORMATION:
+	TNS for 32-bit Windows: Version 8.1.6.0.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 32-bit Windows: Version 8.1.6.0.0 - Production
+  Time: 18-8月 -2004 12:37:25
+  Tracing not turned on.
+  Tns error struct:
+    nr err code: 0
+    ns main err code: 12541
+    TNS-12541: TNS：无监听器
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: 无监听器
+    nt secondary err code: 61
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=zheng)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=ORACLE9)(CID=(PROGRAM=D:\hiss_flood\DataAccess\TestApp\bin\Debug\TestApp.exe)(HOST=LAN)(USER=lan))))
+
+  VERSION INFORMATION:
+	TNS for 32-bit Windows: Version 8.1.6.0.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 32-bit Windows: Version 8.1.6.0.0 - Production
+  Time: 18-8月 -2004 12:38:01
+  Tracing not turned on.
+  Tns error struct:
+    nr err code: 0
+    ns main err code: 12541
+    TNS-12541: TNS：无监听器
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: 无监听器
+    nt secondary err code: 61
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12560, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=BEQ)(PROGRAM=oracle)(ARGV0=oraclerichway)(ARGS='(DESCRIPTION=(LOCAL=YES)(ADDRESS=(PROTOCOL=beq)))'))(CONNECT_DATA=(SID=richway)(CID=(PROGRAM=D:\hiss_flood\DataAccess\TestApp\bin\Debug\TestApp.exe)(HOST=LAN)(USER=lan))))
+
+  VERSION INFORMATION:
+	TNS for 32-bit Windows: Version 8.1.6.0.0 - Production
+	Oracle Bequeath NT Protocol Adapter for 32-bit Windows: Version 8.1.6.0.0 - Production
+  Time: 18-8月 -2004 12:38:01
+  Tracing not turned on.
+  Tns error struct:
+    nr err code: 0
+    ns main err code: 12560
+    TNS-12560: TNS：协议适配器出现错误
+    ns secondary err code: 0
+    nt main err code: 530
+    TNS-00530: 协议适配器错误
+    nt secondary err code: 2
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=zheng)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=ORACLE9)(CID=(PROGRAM=D:\hiss_flood\DataAccess\TestApp\bin\Debug\TestApp.exe)(HOST=LAN)(USER=lan))))
+
+  VERSION INFORMATION:
+	TNS for 32-bit Windows: Version 8.1.6.0.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 32-bit Windows: Version 8.1.6.0.0 - Production
+  Time: 27-10月-2004 15:12:33
+  Tracing not turned on.
+  Tns error struct:
+    nr err code: 0
+    ns main err code: 12541
+    TNS-12541: TNS：无监听器
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: 无监听器
+    nt secondary err code: 61
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12560, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=BEQ)(PROGRAM=oracle)(ARGV0=oraclerichway)(ARGS='(DESCRIPTION=(LOCAL=YES)(ADDRESS=(PROTOCOL=beq)))'))(CONNECT_DATA=(SID=richway)(CID=(PROGRAM=D:\hiss_flood\DataAccess\TestApp\bin\Debug\TestApp.exe)(HOST=LAN)(USER=lan))))
+
+  VERSION INFORMATION:
+	TNS for 32-bit Windows: Version 8.1.6.0.0 - Production
+	Oracle Bequeath NT Protocol Adapter for 32-bit Windows: Version 8.1.6.0.0 - Production
+  Time: 27-10月-2004 15:12:34
+  Tracing not turned on.
+  Tns error struct:
+    nr err code: 0
+    ns main err code: 12560
+    TNS-12560: TNS：协议适配器出现错误
+    ns secondary err code: 0
+    nt main err code: 530
+    TNS-00530: 协议适配器错误
+    nt secondary err code: 2
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=zheng)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=ORACLE9)(CID=(PROGRAM=D:\hiss_flood\DataAccess\TestApp\bin\Debug\TestApp.exe)(HOST=LAN)(USER=lan))))
+
+  VERSION INFORMATION:
+	TNS for 32-bit Windows: Version 8.1.6.0.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 32-bit Windows: Version 8.1.6.0.0 - Production
+  Time: 27-10月-2004 15:12:37
+  Tracing not turned on.
+  Tns error struct:
+    nr err code: 0
+    ns main err code: 12541
+    TNS-12541: TNS：无监听器
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: 无监听器
+    nt secondary err code: 61
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12560, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=BEQ)(PROGRAM=oracle)(ARGV0=oraclerichway)(ARGS='(DESCRIPTION=(LOCAL=YES)(ADDRESS=(PROTOCOL=beq)))'))(CONNECT_DATA=(SID=richway)(CID=(PROGRAM=D:\hiss_flood\DataAccess\TestApp\bin\Debug\TestApp.exe)(HOST=LAN)(USER=lan))))
+
+  VERSION INFORMATION:
+	TNS for 32-bit Windows: Version 8.1.6.0.0 - Production
+	Oracle Bequeath NT Protocol Adapter for 32-bit Windows: Version 8.1.6.0.0 - Production
+  Time: 27-10月-2004 15:12:37
+  Tracing not turned on.
+  Tns error struct:
+    nr err code: 0
+    ns main err code: 12560
+    TNS-12560: TNS：协议适配器出现错误
+    ns secondary err code: 0
+    nt main err code: 530
+    TNS-00530: 协议适配器错误
+    nt secondary err code: 2
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=zheng)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=ORACLE9)(CID=(PROGRAM=D:\hiss_flood\DataAccess\TestApp\bin\Debug\TestApp.exe)(HOST=LAN)(USER=lan))))
+
+  VERSION INFORMATION:
+	TNS for 32-bit Windows: Version 8.1.6.0.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 32-bit Windows: Version 8.1.6.0.0 - Production
+  Time: 27-10月-2004 15:13:16
+  Tracing not turned on.
+  Tns error struct:
+    nr err code: 0
+    ns main err code: 12541
+    TNS-12541: TNS：无监听器
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: 无监听器
+    nt secondary err code: 61
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12560, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=BEQ)(PROGRAM=oracle)(ARGV0=oraclerichway)(ARGS='(DESCRIPTION=(LOCAL=YES)(ADDRESS=(PROTOCOL=beq)))'))(CONNECT_DATA=(SID=richway)(CID=(PROGRAM=D:\hiss_flood\DataAccess\TestApp\bin\Debug\TestApp.exe)(HOST=LAN)(USER=lan))))
+
+  VERSION INFORMATION:
+	TNS for 32-bit Windows: Version 8.1.6.0.0 - Production
+	Oracle Bequeath NT Protocol Adapter for 32-bit Windows: Version 8.1.6.0.0 - Production
+  Time: 27-10月-2004 15:13:16
+  Tracing not turned on.
+  Tns error struct:
+    nr err code: 0
+    ns main err code: 12560
+    TNS-12560: TNS：协议适配器出现错误
+    ns secondary err code: 0
+    nt main err code: 530
+    TNS-00530: 协议适配器错误
+    nt secondary err code: 2
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=zheng)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=ORACLE9)(CID=(PROGRAM=D:\hiss_flood\DataAccess\TestApp\bin\Debug\TestApp.exe)(HOST=LAN)(USER=lan))))
+
+  VERSION INFORMATION:
+	TNS for 32-bit Windows: Version 8.1.6.0.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 32-bit Windows: Version 8.1.6.0.0 - Production
+  Time: 27-10月-2004 15:13:19
+  Tracing not turned on.
+  Tns error struct:
+    nr err code: 0
+    ns main err code: 12541
+    TNS-12541: TNS：无监听器
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: 无监听器
+    nt secondary err code: 61
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12560, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=BEQ)(PROGRAM=oracle)(ARGV0=oraclerichway)(ARGS='(DESCRIPTION=(LOCAL=YES)(ADDRESS=(PROTOCOL=beq)))'))(CONNECT_DATA=(SID=richway)(CID=(PROGRAM=D:\hiss_flood\DataAccess\TestApp\bin\Debug\TestApp.exe)(HOST=LAN)(USER=lan))))
+
+  VERSION INFORMATION:
+	TNS for 32-bit Windows: Version 8.1.6.0.0 - Production
+	Oracle Bequeath NT Protocol Adapter for 32-bit Windows: Version 8.1.6.0.0 - Production
+  Time: 27-10月-2004 15:13:19
+  Tracing not turned on.
+  Tns error struct:
+    nr err code: 0
+    ns main err code: 12560
+    TNS-12560: TNS：协议适配器出现错误
+    ns secondary err code: 0
+    nt main err code: 530
+    TNS-00530: 协议适配器错误
+    nt secondary err code: 2
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=zheng)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=ORACLE9)(CID=(PROGRAM=D:\hiss_flood\DataAccess\TestApp\bin\Debug\TestApp.exe)(HOST=LAN)(USER=lan))))
+
+  VERSION INFORMATION:
+	TNS for 32-bit Windows: Version 8.1.6.0.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 32-bit Windows: Version 8.1.6.0.0 - Production
+  Time: 27-10月-2004 15:14:05
+  Tracing not turned on.
+  Tns error struct:
+    nr err code: 0
+    ns main err code: 12541
+    TNS-12541: TNS：无监听器
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: 无监听器
+    nt secondary err code: 61
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12560, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=BEQ)(PROGRAM=oracle)(ARGV0=oraclerichway)(ARGS='(DESCRIPTION=(LOCAL=YES)(ADDRESS=(PROTOCOL=beq)))'))(CONNECT_DATA=(SID=richway)(CID=(PROGRAM=D:\hiss_flood\DataAccess\TestApp\bin\Debug\TestApp.exe)(HOST=LAN)(USER=lan))))
+
+  VERSION INFORMATION:
+	TNS for 32-bit Windows: Version 8.1.6.0.0 - Production
+	Oracle Bequeath NT Protocol Adapter for 32-bit Windows: Version 8.1.6.0.0 - Production
+  Time: 27-10月-2004 15:14:05
+  Tracing not turned on.
+  Tns error struct:
+    nr err code: 0
+    ns main err code: 12560
+    TNS-12560: TNS：协议适配器出现错误
+    ns secondary err code: 0
+    nt main err code: 530
+    TNS-00530: 协议适配器错误
+    nt secondary err code: 2
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=zheng)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=ORACLE9)(CID=(PROGRAM=D:\hiss_flood\DataAccess\TestApp\bin\Debug\TestApp.exe)(HOST=LAN)(USER=lan))))
+
+  VERSION INFORMATION:
+	TNS for 32-bit Windows: Version 8.1.6.0.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 32-bit Windows: Version 8.1.6.0.0 - Production
+  Time: 27-10月-2004 15:14:08
+  Tracing not turned on.
+  Tns error struct:
+    nr err code: 0
+    ns main err code: 12541
+    TNS-12541: TNS：无监听器
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: 无监听器
+    nt secondary err code: 61
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12560, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=BEQ)(PROGRAM=oracle)(ARGV0=oraclerichway)(ARGS='(DESCRIPTION=(LOCAL=YES)(ADDRESS=(PROTOCOL=beq)))'))(CONNECT_DATA=(SID=richway)(CID=(PROGRAM=D:\hiss_flood\DataAccess\TestApp\bin\Debug\TestApp.exe)(HOST=LAN)(USER=lan))))
+
+  VERSION INFORMATION:
+	TNS for 32-bit Windows: Version 8.1.6.0.0 - Production
+	Oracle Bequeath NT Protocol Adapter for 32-bit Windows: Version 8.1.6.0.0 - Production
+  Time: 27-10月-2004 15:14:08
+  Tracing not turned on.
+  Tns error struct:
+    nr err code: 0
+    ns main err code: 12560
+    TNS-12560: TNS：协议适配器出现错误
+    ns secondary err code: 0
+    nt main err code: 530
+    TNS-00530: 协议适配器错误
+    nt secondary err code: 2
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=zheng)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=ORACLE9)(CID=(PROGRAM=D:\hiss_flood\DataAccess\TestApp\bin\Debug\TestApp.exe)(HOST=LAN)(USER=lan))))
+
+  VERSION INFORMATION:
+	TNS for 32-bit Windows: Version 8.1.6.0.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 32-bit Windows: Version 8.1.6.0.0 - Production
+  Time: 27-10月-2004 15:14:16
+  Tracing not turned on.
+  Tns error struct:
+    nr err code: 0
+    ns main err code: 12541
+    TNS-12541: TNS：无监听器
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: 无监听器
+    nt secondary err code: 61
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12560, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=BEQ)(PROGRAM=oracle)(ARGV0=oraclerichway)(ARGS='(DESCRIPTION=(LOCAL=YES)(ADDRESS=(PROTOCOL=beq)))'))(CONNECT_DATA=(SID=richway)(CID=(PROGRAM=D:\hiss_flood\DataAccess\TestApp\bin\Debug\TestApp.exe)(HOST=LAN)(USER=lan))))
+
+  VERSION INFORMATION:
+	TNS for 32-bit Windows: Version 8.1.6.0.0 - Production
+	Oracle Bequeath NT Protocol Adapter for 32-bit Windows: Version 8.1.6.0.0 - Production
+  Time: 27-10月-2004 15:14:16
+  Tracing not turned on.
+  Tns error struct:
+    nr err code: 0
+    ns main err code: 12560
+    TNS-12560: TNS：协议适配器出现错误
+    ns secondary err code: 0
+    nt main err code: 530
+    TNS-00530: 协议适配器错误
+    nt secondary err code: 2
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12500, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=lan)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=richway)(CID=(PROGRAM=D:\hiss_flood\DataAccess\TestApp\bin\Debug\TestApp.exe)(HOST=LAN)(USER=lan))))
+
+  VERSION INFORMATION:
+	TNS for 32-bit Windows: Version 8.1.6.0.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 32-bit Windows: Version 8.1.6.0.0 - Production
+  Time: 15-11月-2004 21:31:23
+  Tracing not turned on.
+  Tns error struct:
+    nr err code: 0
+    ns main err code: 12564
+    TNS-12564: TNS：拒绝连接
+    ns secondary err code: 0
+    nt main err code: 0
+    nt secondary err code: 0
+    nt OS err code: 0

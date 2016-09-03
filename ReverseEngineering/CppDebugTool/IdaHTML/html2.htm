@@ -1,0 +1,570 @@
+<html>
+	<head>
+		<title>IdaHTML帮助</title>
+		<meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5">
+		<META http-equiv="Content-Type" content="text/html; charset=gb2312">
+	</head>
+	<body>
+		<p><FONT face="宋体"><STRONG>一、介绍</STRONG></FONT>
+		</p>
+		<P><FONT face="宋体" size="2">一开始我没打算写idapro的插件的，因为之前下载的许多idapro插件在idapro4.9中不能用，怀疑idapro的插件SDK不能向前兼容，而且idapro带有一个类似C语言的脚本IDC，想来没必要多此一举，但没想到IDC语言内建类型太弱（也许是我没搞明白吧，用了一下它的数组，那可真是难用，帮助里有对HASH表的操作，但没创建HASH表的函数，估计可能是数组也能当HASH表用吧），用它写了一个脚本，觉得太不方便了，忍不住就又去看idapro的SDK，可惜没有独立的帮助，只从头文件的注释了解了一些大概，觉得SDK也挺烦的，呵呵，正要放弃时，突然发现插件例子里有一个扩充IDC内部函数的片断，觉得也许能直接调IDC内部函数，那样就比较方便了，于是找到了expr.hpp头文件，先蒙find_builtin_idc_func,结果是个未输出函数，不能用，正打算放弃时发现这样一段</FONT></P>
+		<P><FONT color="#0066ff">/*-------------------------------------------------------------------------*/
+			</FONT>
+		</P>
+		<P><FONT color="#0066ff">// Array of built-in IDA functions </FONT>
+		</P>
+		<P><FONT color="#0066ff">idaman funcset_t ida_export_data IDCFuncs; // external 
+				functions</FONT>
+		</P>
+		<P><FONT face="宋体" size="2">柳暗花明了，经查ida.wll的输出表，确认IDCFuncs是输出的变量，但还不确定是不是IDC内部API，因为注释上写着external嘛，试了一下，居然真的可以，就这样开始了IdaHTML的初始版，这有点瞎猫撞死耗子，呵呵。</FONT></P>
+		<P><FONT face="宋体" size="2">因为之前我已经为Ollydbg写了一个用DHTML作脚本的插件了，现在为idapro写的插件的DHTML核心部分与那个插件是一样的，通常我们用idapro主要是静态分析，ollydbg则主要是动态调试，我写的DHTML脚本部分是可以进程间通信的，也就是现在两个插件的脚本间可以互相通信了（利用WM_COPYDATA消息，两个脚本间可以传递字符串信息，我本来想的是静态分析的脚本给动态调试的脚本提供静态信息，不过现在还没有写多少脚本，不知道这样的功能是否实用，通信的这些API也未公布,呵呵）。</FONT></P>
+		<P><FONT face="宋体" size="2">好了，废话先这么多（这可是要影响最终插件占用的存储空间的），开始正题。</FONT></P>
+		<P><FONT face="宋体" size="2">其实现在idapro也好,ollydbg也好，都已经有了许多脚本语言了，用DHTML作脚本意义何在呢？我一开始写的时候主要是因为这种技术我用了很多年了，觉得工作量不大，而且也有兴趣，也没多考虑。现在回过头看，我想主要还是偏重于分析的辅助吧，现在ollydbg的脚本感觉偏重于特定软件的破解与脱壳（也许是我的误解，因为我主要做软件开发，不怎么做破解与脱壳，而且我发现大多数的脚本都是作者对某个软件的破解或脱壳研究清楚了，写个脚本将人工做的工作自动化），这样子，DHTML与现有脚本相比特点就比较明显了</FONT></P>
+		<P><FONT face="宋体" size="2">1、javascript可以提供相当丰富的高级数据类型(语言内建已经比较丰富，再加上我扩充的C++ 
+				STL的主要容器对象，这部分扩充API比较多，因为离调试相对较远，未在帮助里说明)与新的编程范型支持（如面向对象等），而且javascript语言自身可供挖掘的东东也很多（足够灵活），相应的学习与代码资源非常丰富；</FONT></P>
+		<P><FONT face="宋体" size="2">2、DHTML有成熟的文档对象模型，良好的GUI支持，加上VML还可以完成矢量图的绘制；</FONT></P>
+		<P><FONT face="宋体" size="2">3、IE对ActiveX的支持可以获取更多的API，当然，也包括不安全的API ：）</FONT></P>
+		<P><FONT face="宋体" size="2">4、有相对较好的调试工具（如果安装了vs.net，再打开IE的脚本调试选项，就可以用这个优秀的脚本调试工具了）</FONT></P>
+		<P><FONT face="宋体" size="2">也就是说用DHTML作脚本就提供了一个真正的开发语言，因此可以成为人工分析的辅助而不仅仅是将人工分析的结果重新自动化一下，我现在想要做的一件事是分析一个C++语言开发的程序中的对象模型（不知道是否能完成），这样的工作纯手工量有点大，现有的脚本语言呢功能比较弱（当然也可以直接用C++写插件，但很显然，这种需求变化迅速的事情，脚本是更好的选择），DHTML对付类似这样的事情我觉得是恰好的。</FONT></P>
+		<P><FONT face="宋体" size="2">当然，用DHTML作脚本有一个最大的缺点就是性能比较差（百万次的过程调用就会有明显的等待了），不过我想作为分析的辅助，是可以由人来协调这个问题的。</FONT></P>
+		<P><FONT face="宋体"><STRONG>二、更新历史</STRONG></FONT></P>
+		<FONT face="宋体" size="2">
+			<P><FONT size="2"><STRONG>0.6~0.7(2006.10.25):</STRONG></FONT></P>
+			<P>1、删除了所有调试相关的功能，思索再三，觉得还是去掉的好，与OD相比，ida的调试，唉！;</P>
+			<P>2、使用ida pro 5.0 SDK，现在是5.0的插件了。</P>
+			<P><FONT size="2"><STRONG>0.5~0.6(2006.9.12):</STRONG></FONT></P>
+			<P><FONT size="2">1、帮助文档细化;</FONT></P>
+			<P><FONT size="2">2、增加一个非HTML控件：脚本编辑控件，用于在线编辑HTML脚本;</FONT></P>
+			<P><FONT size="2">3、BUG修正与基础API（window.external上的，非IDA相关功能）的一些改变。</FONT>
+			<P>
+		</FONT><FONT face="宋体" size="2"><STRONG>0.4~0.5 (2006.5.26):</STRONG></FONT>
+		<P><FONT face="宋体" size="2">1、增加了app.Memory用于调试时的内存操作。</FONT></P>
+		<P><STRONG><FONT face="宋体" size="2">0.3~0.4 (2006.4.7):</FONT></STRONG></P>
+		<P><FONT face="宋体" size="2">1、缺省HTML脚本通过访问网站来获取公用脚本列表，方便使用。</FONT></P>
+		<PRE><STRONG>0.2~0.3 (2006.4.7):</STRONG></PRE>
+		<PRE>1、添加调试相关的API；</PRE>
+		<PRE>2、修正IE窗口快捷键失效的问题；</PRE>
+		<PRE>3、现在可以在win98以上系统使用（对新OS API的调用作了动态装入处理）。</PRE>
+		<PRE><STRONG>0.1~0.2 (2006.4.4)：</STRONG></PRE>
+		<PRE>1、主要是修正了调用返回字符串的IDC内部函数时未释放返回变量占用字符串空间的问题；</PRE>
+		<PRE>2、对非可变参数的IDC内部函数调用的返回值的处理。</PRE>
+		<PRE><STRONG>0.1 (2006.4.3):</STRONG></PRE>
+		<PRE>1、初始版，将IDC内部函数用作DHTML的API，从而可使用DHTML作idapro 4.9的脚本语言。</PRE>
+		<P><FONT face="宋体"><STRONG>三、</STRONG></FONT><FONT face="宋体"><STRONG>IDC内部函数API</STRONG></FONT></P>
+		<p><FONT face="宋体" size="2"><STRONG>所有idc内部函数经由window.external.Application.IdcApi(或app.IdcApi)访问.</STRONG></FONT>
+		</p>
+		<P><FONT size="2">api的参数及返回值与IDC内部函数相同,参见idapro帮助或idapro安装目录下的idc目录下的idc.idc文件源码 
+				(我也没完全弄明白，就不卖弄了)。</FONT>
+		</P>
+		<P><FONT size="2"> <FONT color="#ff3366">IDC内部函数中有许多是采用的宏定义，这样的宏不能在IdaHTML中使用，必须按它们原始定义的代码访问。</FONT></FONT><FONT color="#ff3366">
+			</FONT>
+		</P>
+		<P><FONT color="#ff3366" size="2">IDC内部函数返回字符串的，如果有返回空串，IdaHTML脚本中调用时可能返回值是0，我没弄明白原因，对这样的API，不能单纯的判断“返回值!=''”，而需要先对返回值作判断：typeof(返回值)=="string"。</FONT></P>
+		<P><FONT face="宋体" color="#000000"><STRONG>四、常量包含文件</STRONG></FONT></P>
+		<P><FONT face="宋体" size="2">常量包含文件以资源形式提供，里面包含了API的参数与返回值中用到的常量。在HTML中如下引用(如果是98系统<A href="http://dreaman.haolinju.net/IdaHTML/const.js">包含http://dreaman.haolinju.net/IdaHTML/const.js</A>或下载到本地使用)：</FONT></P>
+		<P align="left"><FONT face="宋体" color="#0066ff" size="2">&lt;script 
+				src="res://IdaHTML.plw/const.js"&gt;&lt;/script&gt;</FONT></P>
+		<P align="left"><FONT face="宋体" color="#000000" size="2">常量文件内容如下：</FONT></P>
+		<pre><FONT color=#0066ff>
+//常量定义文件
+
+//IDC内部函数用到的常量
+
+var BADADDR=-1;
+var BADSEL=-1;
+var MAXADDR=0xFF000000;
+var MS_VAL=0x000000FF;
+var FF_IVL=0x00000100;
+var MS_CLS=0x00000600;
+var FF_CODE=0x00000600;
+var FF_DATA=0x00000400;
+var FF_TAIL=0x00000200;
+var FF_UNK=0x00000000;
+var MS_COMM=0x000FF800;
+var FF_COMM=0x00000800;
+var FF_REF=0x00001000;
+var FF_LINE=0x00002000;
+var FF_NAME=0x00004000;
+var FF_LABL=0x00008000;
+var FF_FLOW=0x00010000;
+var FF_VAR=0x00080000;
+var MS_0TYPE=0x00F00000;
+var FF_0VOID=0x00000000;
+var FF_0NUMH=0x00100000;
+var FF_0NUMD=0x00200000;
+var FF_0CHAR=0x00300000;
+var FF_0SEG=0x00400000;
+var FF_0OFF=0x00500000;
+var FF_0NUMB=0x00600000;
+var FF_0NUMO=0x00700000;
+var FF_0ENUM=0x00800000;
+var FF_0FOP=0x00900000;
+var FF_0STRO=0x00A00000;
+var FF_0STK=0x00B00000;
+var MS_1TYPE=0x0F000000;
+var FF_1VOID=0x00000000;
+var FF_1NUMH=0x01000000;
+var FF_1NUMD=0x02000000;
+var FF_1CHAR=0x03000000;
+var FF_1SEG=0x04000000;
+var FF_1OFF=0x05000000;
+var FF_1NUMB=0x06000000;
+var FF_1NUMO=0x07000000;
+var FF_1ENUM=0x08000000;
+var FF_1FOP=0x09000000;
+var FF_1STRO=0x0A000000;
+var FF_1STK=0x0B000000;
+var DT_TYPE=0xF0000000;
+var FF_BYTE=0x00000000;
+var FF_WORD=0x10000000;
+var FF_DWRD=0x20000000;
+var FF_QWRD=0x30000000;
+var FF_TBYT=0x40000000;
+var FF_ASCI=0x50000000;
+var FF_STRU=0x60000000;
+var FF_OWRD=0x70000000;
+var FF_FLOAT=0x80000000;
+var FF_DOUBLE=0x90000000;
+var FF_PACKREAL=0xA0000000;
+var FF_ALIGN=0xB0000000;
+var MS_CODE=0xF0000000;
+var FF_FUNC=0x10000000;
+var FF_IMMD=0x40000000;
+var FF_JUMP=0x80000000;
+var NEF_SEGS=0x0001;
+var NEF_RSCS=0x0002;
+var NEF_NAME=0x0004;
+var NEF_MAN=0x0008;
+var NEF_FILL=0x0010;
+var NEF_IMPS=0x0020;
+var NEF_TIGHT=0x0040;
+var NEF_FIRST=0x0080;
+var NEF_CODE=0x0100;
+var NEF_RELOAD=0x0200;
+var NEF_FLAT=0x0400;
+
+var IDCHK_OK=0;
+var IDCHK_ARG=-1;
+var IDCHK_KEY=-2;
+var IDCHK_MAX=-3;
+var SN_CHECK=0x01;
+var SN_NOCHECK=0x00;
+var SN_PUBLIC=0x02;
+var SN_NON_PUBLIC=0x04;
+var SN_WEAK=0x08;
+var SN_NON_WEAK=0x10;
+var SN_AUTO=0x20;
+var SN_NON_AUTO=0x40;
+var SN_NOLIST=0x80;
+var SN_NOWARN=0x100;
+var SN_LOCAL=0x200;
+var OPND_OUTER=0x80;
+var REF_OFF8=0;
+var REF_OFF16=1;
+var REF_OFF32=2;
+var REF_LOW8=3;
+var REF_LOW16=4;
+var REF_HIGH8=5;
+var REF_HIGH16=6;
+var REF_VHIGH=7;
+var REF_VLOW=8;
+var REF_OFF64=9;
+
+var AU_UNK=10;
+var AU_CODE=20;
+var AU_PROC=30;
+var AU_USED=40;
+var AU_LIBF=60;
+var AU_FINAL=200;
+var OFILE_MAP=0;
+var OFILE_EXE=1;
+var OFILE_IDC=2;
+var OFILE_LST=3;
+var OFILE_ASM=4;
+var OFILE_DIF=5;
+var GENFLG_MAPSEGS=0x0001;
+var GENFLG_MAPNAME=0x0002;
+var GENFLG_MAPDMNG=0x0004;
+var GENFLG_MAPLOC=0x0008;
+var GENFLG_IDCTYPE=0x0008;
+var GENFLG_ASMTYPE=0x0010;
+var GENFLG_GENHTML=0x0020;
+var GENFLG_ASMINC=0x0040;
+
+var SEARCH_DOWN=0x01;
+var SEARCH_NEXT=0x02;
+var SEARCH_CASE=0x04;
+var SEARCH_REGEX=0x08;
+var SEARCH_NOBRK=0x10;
+var SEARCH_NOSHOW=0x20;
+var INF_VERSION=3;
+var INF_PROCNAME=5;
+var INF_LFLAGS=13;
+var LFLG_PC_FPP=0x01;
+var LFLG_PC_FLAT=0x02;
+var LFLG_64BIT=0x04;
+var INF_DEMNAMES=14;
+var DEMNAM_CMNT=0;
+var DEMNAM_NAME=1;
+var DEMNAM_NONE=2;
+var DEMNAM_GCC3=4;
+var INF_FILETYPE=15;
+var FT_EXE_OLD=0;
+var FT_COM_OLD=1;
+var FT_BIN=2;
+var FT_DRV=3;
+var FT_WIN=4;
+var FT_HEX=5;
+var FT_MEX=6;
+var FT_LX=7;
+var FT_LE=8;
+var FT_NLM=9;
+var FT_COFF=10;
+var FT_PE=11;
+var FT_OMF=12;
+var FT_SREC=13;
+var FT_ZIP=14;
+var FT_OMFLIB=15;
+var FT_AR=16;
+var FT_LOADER=17;
+var FT_ELF=18;
+var FT_W32RUN=19;
+var FT_AOUT=20;
+var FT_PRC=21;
+var FT_EXE=22;
+var FT_COM=23;
+var FT_AIXAR=24;
+var INF_FCORESIZ=17;
+var INF_CORESTART=21;
+var INF_OSTYPE=25;
+var OSTYPE_MSDOS=0x0001;
+var OSTYPE_WIN=0x0002;
+var OSTYPE_OS2=0x0004;
+var OSTYPE_NETW=0x0008;
+var INF_APPTYPE=27;
+var APPT_CONSOLE=0x0001;
+var APPT_GRAPHIC=0x0002;
+var APPT_PROGRAM=0x0004;
+var APPT_LIBRARY=0x0008;
+var APPT_DRIVER=0x0010;
+var APPT_1THREAD=0x0020;
+var APPT_MTHREAD=0x0040;
+var APPT_16BIT=0x0080;
+var APPT_32BIT=0x0100;
+var INF_START_SP=29;
+var INF_START_AF=33;
+var AF_FIXUP=0x0001;
+var AF_MARKCODE=0x0002;
+var AF_UNK=0x0004;
+var AF_CODE=0x0008;
+var AF_PROC=0x0010;
+var AF_USED=0x0020;
+var AF_FLIRT=0x0040;
+var AF_PROCPTR=0x0080;
+var AF_JFUNC=0x0100;
+var AF_NULLSUB=0x0200;
+var AF_LVAR=0x0400;
+var AF_TRACE=0x0800;
+var AF_ASCII=0x1000;
+var AF_IMMOFF=0x2000;
+var AF_DREFOFF=0x4000;
+var AF_FINAL=0x8000;
+var INF_START_IP=35;
+var INF_BEGIN_EA=39;
+var INF_MIN_EA=43;
+var INF_MAX_EA=47;
+var INF_OMIN_EA=51;
+var INF_OMAX_EA=55;
+var INF_LOW_OFF=59;
+var INF_HIGH_OFF=63;
+var INF_MAXREF=67;
+var INF_ASCII_BREAK=71;
+var INF_WIDE_HIGH_BYTE_FIRST=72;
+var INF_INDENT=73;
+var INF_COMMENT=74;
+var INF_XREFNUM=75;
+var INF_ENTAB=76;
+var INF_SPECSEGS=77;
+var INF_VOIDS=78;
+var INF_SHOWAUTO=80;
+var INF_AUTO=81;
+var INF_BORDER=82;
+var INF_NULL=83;
+var INF_GENFLAGS=84;
+var INFFL_LZERO=0x01;
+var INFFL_ALLASM=0x02;
+var INF_SHOWPREF=85;
+var INF_PREFSEG=86;
+var INF_ASMTYPE=87;
+var INF_BASEADDR=88;
+var INF_XREFS=92;
+var SW_SEGXRF=0x01;
+var SW_XRFMRK=0x02;
+var SW_XRFFNC=0x04;
+var SW_XRFVAL=0x08;
+var INF_BINPREF=93;
+var INF_CMTFLAG=95;
+var SW_RPTCMT=0x01;
+var SW_ALLCMT=0x02;
+var SW_NOCMT=0x04;
+var SW_LINNUM=0x08;
+var SW_MICRO=0x10;
+var INF_NAMETYPE=96;
+var NM_REL_OFF=0;
+var NM_PTR_OFF=1;
+var NM_NAM_OFF=2;
+var NM_REL_EA=3;
+var NM_PTR_EA=4;
+var NM_NAM_EA=5;
+var NM_EA=6;
+var NM_EA4=7;
+var NM_EA8=8;
+var NM_SHORT=9;
+var NM_SERIAL=10;
+var INF_SHOWBADS=97;
+var INF_PREFFLAG=98;
+var PREF_SEGADR=0x01;
+var PREF_FNCOFF=0x02;
+var PREF_STACK=0x04;
+var INF_PACKBASE=99;
+var INF_ASCIIFLAGS=100;
+var ASCF_GEN=0x01;
+var ASCF_AUTO=0x02;
+var ASCF_SERIAL=0x04;
+var ASCF_COMMENT=0x10;
+var ASCF_SAVECASE=0x20;
+var INF_LISTNAMES=101;
+var LN_NORMAL=0x01;
+var LN_PUBLIC=0x02;
+var LN_AUTO=0x04;
+var LN_WEAK=0x08;
+var INF_ASCIIPREF=102;
+var INF_ASCIISERNUM=118;
+var INF_ASCIIZEROES=122;
+var INF_TRIBYTE_ORDER=125;
+var TRIBYTE_123=0;
+var TRIBYTE_132=1;
+var TRIBYTE_213=2;
+var TRIBYTE_231=3;
+var TRIBYTE_312=4;
+var TRIBYTE_321=5;
+var INF_MF=126;
+var INF_ORG=127;
+var INF_ASSUME=128;
+var INF_CHECKARG=129;
+var INF_START_SS=130;
+var INF_START_CS=134;
+var INF_MAIN=138;
+var INF_SHORT_DN=142;
+var INF_LONG_DN=146;
+var INF_DATATYPES=150;
+var INF_STRTYPE=154;
+var ASCSTR_TERMCHR=0;
+var ASCSTR_C=0;
+var ASCSTR_PASCAL=1;
+var ASCSTR_LEN2=2;
+var ASCSTR_UNICODE=3;
+var ASCSTR_LEN4=4;
+var ASCSTR_ULEN2=5;
+var ASCSTR_ULEN4=6;
+var ASCSTR_LAST=6;
+var INF_AF2=158;
+var AF2_JUMPTBL=0x0001;
+var AF2_DODATA=0x0002;
+var AF2_HFLIRT=0x0004;
+var AF2_STKARG=0x0008;
+var AF2_REGARG=0x0010;
+var AF2_CHKUNI=0x0020;
+var AF2_SIGCMT=0x0040;
+var AF2_SIGMLT=0x0080;
+var AF2_FTAIL=0x0100;
+var AF2_DATOFF=0x0200;
+var INF_NAMELEN=160;
+var INF_MARGIN=162;
+var INF_LENXREF=164;
+var INF_LPREFIX=166;
+var INF_LPREFIXLEN=182;
+var INF_COMPILER=183;
+var INF_MODEL=184;
+var INF_SIZEOF_INT=185;
+var INF_SIZEOF_BOOL=186;
+var INF_SIZEOF_ENUM=187;
+var INF_SIZEOF_ALGN=188;
+var INF_SIZEOF_SHORT=189;
+var INF_SIZEOF_LONG=190;
+var INF_SIZEOF_LLONG=191;
+var SETPROC_COMPAT=0;
+var SETPROC_ALL=1;
+var SETPROC_USER=2;
+var SETPROC_FATAL=0x80;
+
+var IDA_STATUS_READY=0;
+var IDA_STATUS_THINKING=1;
+var IDA_STATUS_WAITING=2;
+var IDA_STATUS_WORK=3;
+var saAbs=0;
+var saRelByte=1;
+var saRelWord=2;
+var saRelPara=3;
+var saRelPage=4;
+var saRelDble=5;
+var saRel4K=6;
+var saGroup=7;
+var saRel32Bytes=8;
+var saRel64Bytes=9;
+var saRelQword=10;
+var scPriv=0;
+var scPub=2;
+var scPub2=4;
+var scStack=5;
+var scCommon=6;
+var scPub3=7;
+var SEG_NORM=0;
+var SEG_XTRN=1;
+var SEG_CODE=2;
+var SEG_DATA=3;
+var SEG_IMP=4;
+var SEG_GRP=6;
+var SEG_NULL=7;
+var SEG_UNDF=8;
+var SEG_BSS=9;
+var SEG_ABSSYM=10;
+var SEG_COMM=11;
+var SEG_IMEM=12;
+
+var SEGATTR_START=0;
+var SEGATTR_END=4;
+var SEGATTR_ORGBASE=16;
+var SEGATTR_ALIGN=20;
+var SEGATTR_COMB=21;
+var SEGATTR_PERM=22;
+var SEGATTR_BITNESS=23;
+var SEGATTR_FLAGS=24;
+var SEGATTR_SEL=26;
+var SEGATTR_ES=30;
+var SEGATTR_CS=34;
+var SEGATTR_SS=38;
+var SEGATTR_DS=42;
+var SEGATTR_FS=46;
+var SEGATTR_GS=50;
+var SEGATTR_TYPE=94;
+var SEGATTR_COLOR=95;
+
+var fl_CF=16;
+var fl_CN=17;
+var fl_JF=18;
+var fl_JN=19;
+var fl_F=21;
+var XREF_USER=32;
+var dr_O=1;
+var dr_W=2;
+var dr_R=3;
+var dr_T=4;
+var dr_I=5;
+
+var FUNCATTR_START=0;
+var FUNCATTR_END=4;
+var FUNCATTR_FLAGS=8;
+var FUNCATTR_FRAME=10;
+var FUNCATTR_FRSIZE=14;
+var FUNCATTR_FRREGS=18;
+var FUNCATTR_ARGSIZE=20;
+var FUNCATTR_FPD=24;
+var FUNCATTR_COLOR=28;
+
+var FUNC_NORET=0x00000001;
+var FUNC_FAR=0x00000002;
+var FUNC_LIB=0x00000004;
+var FUNC_STATIC=0x00000008;
+var FUNC_FRAME=0x00000010;
+var FUNC_USERFAR=0x00000020;
+var FUNC_HIDDEN=0x00000040;
+var FUNC_THUNK=0x00000080;
+var FUNC_BOTTOMBP=0x00000100;
+var FIXUP_MASK=0xF;
+var FIXUP_BYTE=FIXUP_OFF8;
+var FIXUP_OFF8=0;
+var FIXUP_OFF16=1;
+var FIXUP_SEG16=2;
+var FIXUP_PTR32=3;
+var FIXUP_OFF32=4;
+var FIXUP_PTR48=5;
+var FIXUP_HI8=6;
+var FIXUP_HI16=7;
+var FIXUP_LOW8=8;
+var FIXUP_LOW16=9;
+var FIXUP_REL=0x10;
+var FIXUP_SELFREL=0x0;
+var FIXUP_EXTDEF=0x20;
+var FIXUP_UNUSED=0x40;
+var FIXUP_CREATED=0x80;
+var STRUC_ERROR_MEMBER_NAME=(-1);
+var STRUC_ERROR_MEMBER_OFFSET=(-2);
+var STRUC_ERROR_MEMBER_SIZE=(-3);
+var STRUC_ERROR_MEMBER_TINFO=(-4);
+var STRUC_ERROR_MEMBER_STRUCT=(-5);
+var STRUC_ERROR_MEMBER_UNIVAR=(-6);
+var STRUC_ERROR_MEMBER_VARLAST=(-7);
+var CONST_ERROR_NAME=1;
+var CONST_ERROR_VALUE=2;
+var CONST_ERROR_ENUM=3;
+var CONST_ERROR_MASK=4;
+var CONST_ERROR_ILLV=5;
+var AR_LONG='A'.charCodeAt(0);
+var AR_STR='S'.charCodeAt(0);
+var PT_FILE=0x01;
+var PT_SILENT=0x02;
+var CIC_ITEM=1;
+var CIC_FUNC=2;
+var CIC_SEGM=3;
+var DEFCOLOR=0xFFFFFFFF;
+var I_IDA=0;
+var I_AMIGA=1;
+var I_ARM=2;
+var I_BEOS=3;
+var I_BIN=4;
+var I_DLL=5;
+var I_DOS=6;
+var I_DREAMCAST=7;
+var I_DRV=8;
+var I_DMP=9;
+var I_EXE=10;
+var I_GAMEBOY=11;
+var I_GEOS=12;
+var I_HEX=13;
+var I_JAVA=14;
+var I_LIB=15;
+var I_MAC=16;
+var I_N64=17;
+var I_NET=18;
+var I_NETWARE=19;
+var I_OBJ=20;
+var I_OCX=21;
+var I_OS2=22;
+var I_OSX=23;
+var I_PALM=24;
+var I_PLAYSTATION=25;
+var I_RAW=26;
+var I_ROM=27;
+var I_SIS=28;
+var I_SYMBIAN=29;
+var I_UNIX=30;
+var I_UNK=31;
+var I_WIN=32;
+var I_XBOX=33;
+var I_ZIP=34;
+
+
+//预定义的扩展对象模型全局变量
+
+var app=window.external.Application;
+</FONT><FONT face="宋体" size="2"></FONT>		
+		</pre>
+		<PRE><FONT face=宋体 size=2>-------------------------------------------------------------------------------------------------------</FONT></PRE>
+		<P><FONT color="#ff3366" size="2">注：调用IDC内部函数的C++代码可在<A href="http://spaces.msn.com/dreaman-alan">我的Blog</A>上看到。其它部分源代码暂不考虑开放（没有特别有价值的东东，呵呵），请不要向我索取源代码。</FONT></P>
+		<P><FONT color="#000000" size="2">兰翔 (alan)</FONT></P>
+		<P><FONT size="2"><FONT face="宋体">我的BLOG：</FONT><A href="http://blog.sina.com.cn/u/1403122390">http://blog.sina.com.cn/u/1403122390</A></FONT></P>
+		<P><FONT size="2"><FONT face="宋体">联系方式：</FONT><A href="mailto:dreaman_163@163.com">dreaman_163@163.com</A></FONT></P>
+		<P><FONT size="2"></FONT>&nbsp;</P>
+	</body>
+</html>

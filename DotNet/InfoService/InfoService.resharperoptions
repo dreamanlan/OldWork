@@ -1,0 +1,13 @@
+<Configuration>
+  <RecentFilesTracker>
+    <RecentFilesTracker>
+      <TrackedFile location="D:\test\DotNet\InfoService\Edit\AutoDataTable.cs" offset="30301" line="183" column="0" />
+    </RecentFilesTracker>
+  </RecentFilesTracker>
+  <SettingsComponent>
+    <string />
+    <integer />
+    <boolean />
+  </SettingsComponent>
+  <CompletionStatisticsManager />
+</Configuration>

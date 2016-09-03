@@ -1,0 +1,21 @@
+extern "user32.dll" 4 MsgBox(4,4,4,4) MessageBoxA;
+include "l2.txt";
+function main
+{
+m=math();
+o=oqlclass("test",3,1,4,6,2,5);
+for(i=0;i<100;i++)
+o.push((m.floor(m.random()*100)):long);
+msg(o.length);
+oqlclass("test2",3,2,6);
+defquery(0,select test from test,test2 where test2 > 2 join on !invariant(test,test2) order by test);
+os=vector().concatVariant(execquery(0,0));
+msg(os.toString("->"));
+a="123456";
+b=&a;
+b=new(6);
+*b:cstr="12345";
+MsgBox(0,b,0x00400000,1);
+delete(b);
+lib::test(100);
+}

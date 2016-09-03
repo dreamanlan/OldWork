@@ -1,0 +1,110 @@
+.LanMouseOver { FONT-SIZE: 12px; CURSOR: hand; BACKGROUND-COLOR: #92acdd }
+.LanMouseOut { FONT-SIZE: 12px; CURSOR: hand; BACKGROUND-COLOR: transparent }
+.LanSelected { FONT-SIZE: 12px; CURSOR: hand; BACKGROUND-COLOR: #ffd52e }
+.LanTreeFrame { BORDER-RIGHT: black 1px solid; BORDER-TOP: black 1px solid; FLOAT: left; MARGIN: 1px; BORDER-LEFT: black 1px solid; WIDTH: 100%; BORDER-BOTTOM: black 1px solid; HEIGHT: 100% }
+.LanInputTable { PADDING-RIGHT: 10px; PADDING-LEFT: 10px; FONT-SIZE: 12px; PADDING-BOTTOM: 2px; VERTICAL-ALIGN: top; PADDING-TOP: 2px; BORDER-COLLAPSE: collapse; BACKGROUND-COLOR: transparent }
+.LanViewTable { PADDING-RIGHT: 10px; PADDING-LEFT: 10px; FONT-SIZE: 12px; PADDING-BOTTOM: 2px; VERTICAL-ALIGN: top; PADDING-TOP: 2px; BORDER-COLLAPSE: collapse; BACKGROUND-COLOR: transparent }
+.LanQueryTable { PADDING-RIGHT: 10px; PADDING-LEFT: 10px; FONT-SIZE: 12px; PADDING-BOTTOM: 2px; VERTICAL-ALIGN: top; PADDING-TOP: 2px; BORDER-COLLAPSE: collapse; BACKGROUND-COLOR: transparent }
+.LanEditTable { PADDING-RIGHT: 10px; PADDING-LEFT: 10px; FONT-SIZE: 12px; PADDING-BOTTOM: 2px; VERTICAL-ALIGN: top; PADDING-TOP: 2px; BORDER-COLLAPSE: collapse; BACKGROUND-COLOR: transparent }
+.LanXmlEditTable { PADDING-RIGHT: 10px; PADDING-LEFT: 10px; FONT-SIZE: 12px; PADDING-BOTTOM: 2px; VERTICAL-ALIGN: top; PADDING-TOP: 2px; BORDER-COLLAPSE: collapse; BACKGROUND-COLOR: transparent }
+
+.LanInputHeaderCell {}
+.LanInputBodyCell {}
+.LanViewHeaderCell { border:solid 1px #92acdd }
+.LanViewBodyCell { border:solid 1px #92acdd }
+.LanQueryHeaderCell {}
+.LanQueryBodyCell {}
+.LanEditHeaderCell {}
+.LanEditBodyCell {}
+.LanXmlEditHeaderCell {}
+.LanXmlEditBodyCell {}
+
+.LanRowShow { }
+.LanRowHide { DISPLAY: none }
+.LanFileOrHtmlCell { WIDTH:100px; }
+.LanHtmlEditorCell { width:550px; }
+
+.LanSelectFrame { WIDTH:160px;height:140px;border:gray 1px solid;overflow:auto }
+.LanSelectTable { WIDTH:160px;FONT-SIZE: 12px;BACKGROUND-COLOR:white; }
+.LanSearchSelectTable { FONT-SIZE: 12px; }
+.LanSearchSelectHeaderCell {  }
+.LanSearchSelectBodyCell {  }
+.LanSelectItemCell { cursor:hand;color:Black }
+.LanSelectItemCellSelect { cursor:hand;color:blue }
+
+.LanListFrame { WIDTH:280px;height:80px;border:gray 1px solid;overflow:auto }
+.LanListTable { WIDTH:280px;FONT-SIZE: 12px; }
+.LanSearchCheckBoxesTable { width:100%;FONT-SIZE: 12px; }
+.LanSearchCheckBoxesHeaderCell {  }
+.LanSearchCheckBoxesBodyCell {  }
+.LanCheckBoxTable { width:100%; FONT-SIZE: 12px; BORDER-COLLAPSE: collapse; BACKGROUND-COLOR: transparent }
+
+.LanStatTable { font-size:12px; }
+.LanStatHeadCell1 { border:groove 1px lightgray }
+.LanStatHeadCell2 { border:groove 1px lightgray }
+.LanStatNormalCell1 { }
+.LanStatNormalCell2 { border:groove 1px lightgray }
+.LanStatNormalCell3 { border:groove 1px lightgray }
+.LanStatGroupCell1 { }
+.LanStatGroupCell2 { border:groove 1px lightgray }
+.LanStatGroupCell3 { border:groove 1px lightgray }
+.LanCheckBox { }
+.LanSelect { WIDTH:160px; }
+.LanSelectSort { WIDTH:40px; }
+.LanFilter { WIDTH:140px; }
+.LanTextArea { WIDTH:160px; border-style:groove; }
+.LanInput { WIDTH:160px; BORDER-TOP-STYLE: groove; BORDER-RIGHT-STYLE: groove; BORDER-LEFT-STYLE: groove; BORDER-BOTTOM-STYLE: groove }
+.SLanInput { WIDTH:78px; BORDER-TOP-STYLE: groove; BORDER-RIGHT-STYLE: groove; BORDER-LEFT-STYLE: groove; BORDER-BOTTOM-STYLE: groove }
+
+.LanGridHeader { font-weight:bold;background-color:#FFFFFF;color:#000000; }
+.LanGridPager { background-color:white;color:#330099; }
+.LanGridItem { background-color:#CAE9FE;color:#330099; }
+.LanGridAlternate { background-color:White;color:#330099; }
+.LanGrid { font-size:12px; }
+
+.LanGridHeaderCell {}
+.LanGridBodyCell {}
+.LanGridFooterCell {}
+
+.LanGridHeaderBtnCell {}
+.LanGridBodyBtnCell {}
+.LanGridFooterBtnCell {}
+
+.MLanInputTable { PADDING-RIGHT: 10px; PADDING-LEFT: 10px; FONT-SIZE: 12px; PADDING-BOTTOM: 2px; VERTICAL-ALIGN: top; PADDING-TOP: 2px; BORDER-COLLAPSE: collapse; BACKGROUND-COLOR: transparent }
+.MLanRowShow { }
+.MLanRowHide { DISPLAY: none }
+.MLanInputCell { WIDTH:100px; }
+.MLanHtmlEditorCell { width:550px; }
+
+.MLanListFrame { width:100%;height:60px;border:gray 1px solid;overflow:auto }
+.MLanListTable { width:100%;FONT-SIZE: 12px; }
+
+.MLanSearchSelectTable { FONT-SIZE: 12px; }
+.MLanSearchSelectHeaderCell {  }
+.MLanSearchSelectBodyCell {  }
+.MLanListItemCell { cursor:hand;color:Black }
+.MLanListItemCellSelect { cursor:hand;color:blue }
+
+.MLanSearchCheckBoxesTable { width:100%;FONT-SIZE: 12px; }
+.MLanSearchCheckBoxesHeaderCell {  }
+.MLanSearchCheckBoxesBodyCell {  }
+.MLanCheckBoxTable { FONT-SIZE: 12px; BORDER-COLLAPSE: collapse; BACKGROUND-COLOR: transparent }
+
+.MLanCheckBox { }
+.MLanSelect { WIDTH:60px; }
+.MLanSelectShort { WIDTH:30px; }
+.MLanFilter { WIDTH:40px; }
+.MLanTextArea { WIDTH:60px;border-width:0px; }
+.MLanInput { WIDTH:60px;border-width:0px; }
+.MLanDateTimeInput { WIDTH:60px;border-width:0px; }
+
+.LanMouseOverRow { background-color:#AEC3EE;color:#330099; }
+.LanMouseOutRow { background-color:transparent;color:#330099; }
+
+.LanTable
+{
+	FONT-SIZE: 12px;
+	table-layout:fixed;
+	border-collapse:collapse;
+	border:outset 1px lightgray;
+}

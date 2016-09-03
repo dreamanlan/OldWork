@@ -1,0 +1,1600 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Dreaman.InfoService</name>
+    </assembly>
+    <members>
+        <member name="T:Dreaman.InfoService.FileField">
+            <summary>
+            用于辅助读写文件字段的类,当前不考虑尺寸过大的文件,如果将来需要扩充,按当前的设计思路,
+            应该设定读写事件,用以提供从字段读出的数据与写回的数据.
+            </summary>
+        </member>
+        <member name="T:Dreaman.InfoService.ShowType">
+            <summary>
+            描述表域的显示控件样式
+            </summary>
+        </member>
+        <member name="T:Dreaman.InfoService.TableFieldBase">
+            <summary>
+            描述一个表域的信息,不同于数据层的表列,这里包括表域的显示信息。
+            </summary>
+        </member>
+        <member name="F:Dreaman.InfoService.TableFieldBase.UseClassValue">
+            <summary>
+            设置是否使用分类表的内容字段作字段值,否则使用分类表的编码作字段值.
+            分类显示始终使用内容.
+            </summary>
+        </member>
+        <member name="T:Dreaman.InfoService.TableField">
+            <summary>
+            描述一个表域的信息,不同于数据层的表列,这里包括表域的显示信息。
+            </summary>
+        </member>
+        <member name="T:Dreaman.InfoService.NameValueClass">
+            <summary>
+            用户提供分类值的分类，这样的分类就是一个名字/值列表。
+            </summary>
+        </member>
+        <member name="T:Dreaman.InfoService.SQLSourceClass">
+            <summary>
+            用SQL语句的结果集作分类值的分类，不同于分类表提供数据的分类，这样的SQL语句
+            只提供一个分类的值。
+            </summary>
+        </member>
+        <member name="T:Dreaman.InfoService.StandardClasses">
+            <summary>
+            标准分类，使用指定的SQL查询结果来提供多个分类值。
+            </summary>
+        </member>
+        <member name="T:Dreaman.InfoService.SQLInfo">
+            <summary>
+            获取与一个SQL相关的信息（包括用于查询与更新的信息），SQL结果集来自多张表时，SQLInfo仅以其中一张表为依据构造更新信息，
+            默认的选定SQL结果集字段所属的第一个表。考虑到多表查询可更新的表通常只能是最详细的表，KeyFields只取更新表相关的字段（出现多个的以第一次出现为准）。
+            </summary>
+        </member>
+        <member name="M:Dreaman.InfoService.DataAccessInfo.GetFieldsSchema(System.String)">
+            <summary>
+            返回表的各字段如下:
+            	["IsReadOnly"]			bool
+            	["ColumnOrdinal"]		int32
+            	["BaseTableName"]		string
+            	["IsKey"]				bool
+            	["ColumnSize"]			int32
+            	["NumericPrecision"]	int16
+            	["ColumnName"]			string
+            	["BaseColumnName"]		string
+            	["NumericScale"]		int16
+            	["AllowDBNull"]			bool
+            	["IsAutoIncrement"]		bool
+            	["BaseCatalogName"]		string
+            	["ProviderType"]		int32
+            	["IsLong"]				bool
+            	["IsUnique"]			bool
+            	["IsRowVersion"]		bool
+            	["DataType"]			System.Type
+            	["BaseSchemaName"]		string
+            </summary>
+            <param name="sqlstr">这个SQL语句最好仅返回空的表头,不返回任何记录,特别是表中包含二进制字段的时候!</param>
+            <returns></returns>
+        </member>
+        <member name="M:Dreaman.InfoService.SQLInfo.SetFieldClass(System.String,System.String,Dreaman.InfoService.ShowType)">
+            <summary>
+            设定列引用的分类名称。
+            </summary>
+            <param name="refcol"></param>
+            <param name="className"></param>
+            <param name="showtype"></param>
+        </member>
+        <member name="M:Dreaman.InfoService.SQLInfo.SetFieldClassUsage(System.String,System.Boolean)">
+            <summary>
+            设置列的分类存储方式,是存储分类的值还是编码,缺省存储值(useClassValue参数为true)
+            </summary>
+            <param name="refcol"></param>
+            <param name="useClassValue"></param>
+        </member>
+        <member name="M:Dreaman.InfoService.SQLInfo.SetClass(System.String,System.String[])">
+            <summary>
+            设置一个分类，分类值由（代码，值，代码，值，...)提供。
+            </summary>
+            <param name="name"></param>
+            <param name="nameVals"></param>
+        </member>
+        <member name="M:Dreaman.InfoService.SQLInfo.SetClass(System.String,System.Collections.Specialized.NameValueCollection)">
+            <summary>
+            设置一个分类，分类值由名字(代码)/值表提供。
+            </summary>
+            <param name="name"></param>
+            <param name="vals"></param>
+        </member>
+        <member name="M:Dreaman.InfoService.SQLInfo.SetClass(System.String,System.String,System.String,System.String)">
+            <summary>
+            设置一个分类，分类值由SQL语句提供，其中的代码/值字段由参数指定。
+            </summary>
+            <param name="name"></param>
+            <param name="valCol"></param>
+            <param name="codeCol"></param>
+            <param name="sqlstr"></param>
+        </member>
+        <member name="M:Dreaman.InfoService.SQLInfo.SetClass(System.String,System.String,System.String,System.String,Dreaman.DataAccess.DataAccessType,System.String)">
+            <summary>
+            设置一个分类，分类值由SQL语句提供，其中的代码/值字段由参数指定，SQL访问的数据库也由参数指定。
+            </summary>
+            <param name="name"></param>
+            <param name="valCol"></param>
+            <param name="codeCol"></param>
+            <param name="sqlstr"></param>
+            <param name="datype"></param>
+            <param name="connstr"></param>
+        </member>
+        <member name="M:Dreaman.InfoService.SQLInfo.SetStandardClass(System.String,System.String,System.String,System.String)">
+            <summary>
+            设置标准分类对象的信息,使用与查询库同样的连结串访问分类数据
+            </summary>
+            <param name="valCol"></param>
+            <param name="_codeCol"></param>
+            <param name="_filterCol"></param>
+            <param name="_sql"></param>
+        </member>
+        <member name="M:Dreaman.InfoService.SQLInfo.SetStandardClass(Dreaman.InfoService.StandardClasses)">
+            <summary>
+            设置标准分类对象
+            </summary>
+            <param name="sc"></param>
+        </member>
+        <member name="M:Dreaman.InfoService.SQLInfo.SetFieldShowName(System.String,System.String)">
+            <summary>
+            设定域的显示名
+            </summary>
+            <param name="f"></param>
+            <param name="showname"></param>
+        </member>
+        <member name="M:Dreaman.InfoService.SQLInfo.SetFieldUnit(System.String,System.String)">
+            <summary>
+            设置域的单位
+            </summary>
+            <param name="f"></param>
+            <param name="unit"></param>
+        </member>
+        <member name="M:Dreaman.InfoService.SQLInfo.SetFieldDescription(System.String,System.String)">
+            <summary>
+            设置域的描述
+            </summary>
+            <param name="f"></param>
+            <param name="description"></param>
+        </member>
+        <member name="M:Dreaman.InfoService.SQLInfo.SetFieldFormat(System.String,System.String)">
+            <summary>
+            设置域的显示格式
+            </summary>
+            <param name="f"></param>
+            <param name="format"></param>
+        </member>
+        <member name="M:Dreaman.InfoService.SQLInfo.SetFieldIndent(System.String,System.Int32)">
+            <summary>
+            设置域的缩进
+            </summary>
+            <param name="f"></param>
+            <param name="indent"></param>
+        </member>
+        <member name="M:Dreaman.InfoService.SQLInfo.SetFieldShowType(System.String,Dreaman.InfoService.ShowType)">
+            <summary>
+            设置域的显示样式。
+            </summary>
+            <param name="fieldname"></param>
+            <param name="showType"></param>
+        </member>
+        <member name="M:Dreaman.InfoService.SQLInfo.SetFieldHtmlEdit(System.String,System.Boolean)">
+            <summary>
+            设定一个HTML编辑域。
+            </summary>
+            <param name="fieldname"></param>
+            <param name="useOuterEditor"></param>
+        </member>
+        <member name="M:Dreaman.InfoService.SQLInfo.SetFieldHidden(System.String)">
+            <summary>
+            设定隐藏域。
+            </summary>
+            <param name="fieldname"></param>
+        </member>
+        <member name="M:Dreaman.InfoService.SQLInfo.SetFieldReadOnly(System.String)">
+            <summary>
+            设定只读域。
+            </summary>
+            <param name="fieldname"></param>
+        </member>
+        <member name="M:Dreaman.InfoService.SQLInfo.SetDefaultMetaInfo">
+            <summary>
+            指定使用权缺省的分类表结构与指标信息表结构,并且这些元数据信息来自当前要访问的数据库
+            </summary>
+        </member>
+        <member name="M:Dreaman.InfoService.SQLInfo.SetDefaultClassTable(Dreaman.DataAccess.DataAccessType,System.String)">
+            <summary>
+            指定使用缺省的分类表结构,且分类表存在于参数指定的数据库中
+            </summary>
+            <param name="daType"></param>
+            <param name="connStr"></param>
+        </member>
+        <member name="M:Dreaman.InfoService.SQLInfo.SetDefaultGuideInfo(Dreaman.DataAccess.DataAccessType,System.String)">
+            <summary>
+            指定使用缺省的指标信息表结构,且指标信息表存在于参数指定的数据库中
+            </summary>
+            <param name="daType"></param>
+            <param name="connStr"></param>
+        </member>
+        <member name="P:Dreaman.InfoService.SQLInfo.HtmlEditorConfigFile">
+            <summary>
+            HTML编辑器的配置文件目录
+            </summary>
+        </member>
+        <member name="T:Dreaman.InfoService.DynamicTable">
+            <summary>
+            Summary description for DynamicTable.
+            提供为对应数据表生成界面的相关信息。
+            添加状态默认为真，当Select被调用并且发现记录时才会被设置成假，如果确认是要修改而不是添加，
+            或者调用Select或者直接设置AppendState来指定（InputControl的修改状态在出错时就是这样指定的）。
+            </summary>
+        </member>
+        <member name="M:Dreaman.InfoService.DynamicTable.SetFieldComboBoxUsage(System.String,System.Boolean)">
+            <summary>
+            设置一个COMBOBOX字段的查询界面构造法，指明是否构造为与CHECKBOX一样的查询界面(即允许多选，一般的搜索应该允许多选)。
+            </summary>
+            <param name="refcol"></param>
+            <param name="asCheckBox"></param>
+        </member>
+        <member name="M:Dreaman.InfoService.DynamicTable.SetFieldGroup(System.String,System.Boolean)">
+            <summary>
+            设置域是否参与分组信息（分组的顺序由排序决定）。
+            </summary>
+        </member>
+        <member name="M:Dreaman.InfoService.DynamicTable.SetFieldSort(System.String,System.Int32)">
+            <summary>
+            设置域的排序信息。
+            </summary>
+        </member>
+        <member name="M:Dreaman.InfoService.DynamicTable.SetFieldInitVal(System.String,System.String)">
+            <summary>
+            设置域的初始值。
+            </summary>
+            <param name="fieldname"></param>
+            <param name="val"></param>
+        </member>
+        <member name="M:Dreaman.InfoService.DynamicTable.CheckInputValue">
+            <summary>
+            检查录入数据的有效性,当前只检查不应为空的列,可以考虑加上对日期,数值,字符串长等数据的检查.
+            </summary>
+            <returns></returns>
+            
+        </member>
+        <member name="M:Dreaman.InfoService.DynamicTable.GetUpdateCondition">
+            <summary>
+            构造用于更新与删除的查询条件，这里直接使用更新表的字段名构造条件
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Dreaman.InfoService.DynamicTable.GetSelectCondition">
+            <summary>
+            构造用于select的查询条件，这里使用原始SQL中的字段名构造条件，与更新时不一样。
+            对于浮点字段与完整的日期字段，这里构造的条件可能会查不到实际的记录，这是个BUG。
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Dreaman.InfoService.DynamicTable.AppendState">
+            <summary>
+            指明当前表示的记录是否明确的处于添加状态，在获取输入值时明确的处在添加状态的记录将用录入值覆盖旧值
+            </summary>
+        </member>
+        <member name="T:Dreaman.InfoService.WebDynamicTable">
+            <summary>
+            Summary description for WebDynamicTable.
+            </summary>
+        </member>
+        <member name="M:Dreaman.InfoService.WebDynamicTable.GetQuerySql(System.String@,System.String@)">
+            <summary>
+            get query sql string
+            </summary>
+        </member>
+        <member name="M:Dreaman.InfoService.WebDynamicTable.BuildFieldView(System.String,System.Web.UI.HtmlControls.HtmlTableCell)">
+            <summary>
+            构造察看表的某条记录时的某字段的显示,主要包括字段值的转换与格式化.
+            </summary>
+            <param name="f">字段名</param>
+            <param name="cell">用于显示字段值的HtmlTableCell</param>
+        </member>
+        <member name="M:Dreaman.InfoService.WebDynamicTable.GetFieldAdditional(System.String)">
+            <summary>
+            得到一个域的类型相关的描述，对数值如果有单位则用单位描述
+            </summary>
+            <param name="f"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Dreaman.InfoService.WebDynamicTable.GetFieldDescription(System.String)">
+            <summary>
+            得到一个域的描述
+            </summary>
+            <param name="f"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Dreaman.InfoService.WebDynamicTable.GenerateAllInternalScript">
+            <summary>
+            辅助函数,生成除标准事件处理外的其它脚本.
+            </summary>
+            <returns></returns>		
+        </member>
+        <member name="P:Dreaman.InfoService.WebDynamicTable.UI">
+            <summary>
+            指示当前构造的UI类型：编辑、查询、详细信息
+            </summary>
+        </member>
+        <member name="T:Dreaman.InfoService.BatchEditField">
+            <summary>
+            描述一个表域的信息,不同于数据层的表列,这里包括表域的显示信息。
+            </summary>
+        </member>
+        <member name="T:Dreaman.InfoService.BatchEdit">
+            <summary>
+            BatchEdit 的摘要说明。
+            添加状态主要对Update起作用，如果是生成UI的，则GetInputValue会调整理添加状态，别的情形需要通过执行
+            Select或者明确调用AppendState来指定。
+            </summary>
+        </member>
+        <member name="M:Dreaman.InfoService.BatchEdit.AppendState(System.Int32)">
+            <summary>
+            用于指明某个记录是否明确的处于添加状态，在获取输入值时明确的处在添加状态的记录将用录入值覆盖旧值
+            </summary>
+            <param name="index"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Dreaman.InfoService.BatchEdit.SelectRecord">
+            <summary>
+            根据设定好的字段初始值搜索符合条件的记录,此时记录数已经设定为某个值
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Dreaman.InfoService.BatchEdit.SelectRecord(System.String)">
+            <summary>
+            按指定条件过滤当前批量录入表，生成一个XML描述的结果。
+            </summary>
+            <param name="condition">条件</param>
+            <returns>
+            以XML文件体表示的结果集，根元素为DATATABLE，行元素为ROW，各字段元素为字段ID，
+            InnerText为其值，每个字段生成一个旧值值，元素为字段ID+old
+            </returns>
+        </member>
+        <member name="M:Dreaman.InfoService.BatchEdit.SelectCompatibleRecord(System.String)">
+            <summary>
+            按指定结果相似SQL语句构造批量录入数据，生成一个XML描述的结果。
+            </summary>
+            <param name="sqlstr">SQL语句</param>
+            <returns>
+            以XML文件体表示的结果集，根元素为DATATABLE，行元素为ROW，各字段元素为字段ID，
+            InnerText为其值，每个字段生成一个旧值值，元素为字段ID+old
+            </returns>
+        </member>
+        <member name="M:Dreaman.InfoService.BatchEdit.CheckInputValue">
+            <summary>
+            检查录入数据的有效性,当前只检查不应为空的列,可以考虑加上对日期,数值,字符串长等数据的检查.
+            </summary>
+            <returns></returns>
+            
+        </member>
+        <member name="M:Dreaman.InfoService.BatchEdit.GetUpdateCondition(System.Int32)">
+            <summary>
+            构造更新的条件，直接使用更新表的字段名构造。
+            </summary>
+            <param name="index"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Dreaman.InfoService.BatchEdit.GetSelectCondition(System.Int32)">
+            <summary>
+            构造用于select的查询条件，这里使用原始SQL中的字段名构造条件，与更新时不一样。
+            对于浮点字段与完整的日期字段，这里构造的条件可能会查不到实际的记录，这是个BUG。
+            </summary>
+            <param name="index"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Dreaman.InfoService.WebBatchEdit.GenerateHtml">
+            <summary>
+            按指定的数据行数以及初始值搜索表生成HTML界面及脚本
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Dreaman.InfoService.WebBatchEdit.GenerateHtmlByFilter(System.String)">
+            <summary>
+            指定过滤条件生成批量录入界面HTML，包括数据绑定，POST脚本，COPY/PASTE脚本以及录入检查脚本
+            </summary>
+            <param name="condition"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Dreaman.InfoService.WebBatchEdit.GenerateHtmlBySql(System.String)">
+            <summary>
+            指定结果相似SQL生成批量录入界面HTML，包括数据绑定，POST脚本，COPY/PASTE脚本以及录入检查脚本
+            </summary>
+            <param name="sqlstr"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Dreaman.InfoService.WebBatchEdit.GetFieldAdditional(System.String)">
+            <summary>
+            得到一个域的类型相关的描述，对数值如果有单位则用单位描述
+            </summary>
+            <param name="f"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Dreaman.InfoService.WebBatchEdit.GetFieldDescription(System.String)">
+            <summary>
+            得到一个域的描述
+            </summary>
+            <param name="f"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Dreaman.InfoService.WebBatchEdit.GenerateAllInternalScript">
+            <summary>
+            辅助函数,生成除标准事件处理外的其它脚本.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Dreaman.InfoService.IEditFieldDisplay">
+            <summary>
+            IEditFieldDisplay 的摘要说明。
+            </summary>	
+        </member>
+        <member name="T:Dreaman.InfoService.IQueryFieldDisplay">
+            <summary>
+            IQueryFieldDisplay 的摘要说明。
+            </summary>	
+        </member>
+        <member name="P:Dreaman.InfoService.IQueryFieldDisplay.QueryControl">
+            <summary>
+            用于构造查询条件的控件
+            </summary>
+        </member>
+        <member name="P:Dreaman.InfoService.IQueryFieldDisplay.SortControl">
+            <summary>
+            用于构造排序的控件
+            </summary>
+        </member>
+        <member name="P:Dreaman.InfoService.IQueryFieldDisplay.GroupControl">
+            <summary>
+            用来构造分组统计的控件
+            </summary>
+        </member>
+        <member name="T:Dreaman.InfoService.IEditField">
+            <summary>
+            由于编辑的显示可能是单记录或者多记录两种情形，需要对两种情形下的域结构进行抽象，提取公共接口；
+            </summary>
+        </member>
+        <member name="T:Dreaman.InfoService.ShowAttr">
+            <summary>
+            指标的显示属性
+            </summary>
+        </member>
+        <member name="T:Dreaman.InfoService.Guide">
+            <summary>
+            指标数据结构
+            </summary>	
+        </member>
+        <member name="T:Dreaman.InfoService.InputControl">
+            <summary>
+            InputControl 的摘要说明。
+            采用了状态模式来分离录入控件的显示\添加\搜索\修改\明细等状态下的UI构造
+            </summary>
+        </member>
+        <member name="T:Dreaman.InfoService.IMultiFacadeControl">
+            <summary>
+            IMultiFacadeControl 的摘要说明。
+            </summary>
+        </member>
+        <member name="M:Dreaman.InfoService.IMultiFacadeControl.AddToParent(System.Web.UI.Control)">
+            <summary>
+            将控件加入到父控件中,只要不使用界面设计器,应总是调用此方法来将控件加入到页面中,
+            此方法将触发控件状态的实际处理以生成控件当前界面。
+            返回值表明是否继续构造界面，为真时应该终止后续的任何界面相关的操作（此时响应流已关闭）。
+            </summary>
+            <param name="parent"></param>
+        </member>
+        <member name="M:Dreaman.InfoService.IMultiFacadeControl.AdjustControlEnvironment">
+            <summary>
+            调整控件显示的上下文环境,使用界面设计器时,应调用此方法,因为控件的某些状态可能需要完整的
+            页面来显示，控件需要对页面作相应处理，不使用界面设计器时用上一方法即可。
+            此外,控件的客户端资源URL也需要借此处理。返回值表明是否继续构造界面，为真时应该终止后
+            续的任何界面相关的操作（此时响应流已关闭）。
+            </summary>
+        </member>
+        <member name="M:Dreaman.InfoService.IMultiFacadeControl.ChangeState(System.String,System.Collections.Specialized.NameValueCollection)">
+            <summary>
+            改变控件到指定状态
+            </summary>
+            <param name="state">状态名</param>
+            <param name="args">参数集合（名字/值对）</param>
+        </member>
+        <member name="M:Dreaman.InfoService.IMultiFacadeControl.ChangeState(System.String,System.String[])">
+            <summary>
+            改变控件到指定状态
+            </summary>
+            <param name="state">状态名</param>
+            <param name="args">参数数组，交替为：名，值，名，值，...</param>
+        </member>
+        <member name="M:Dreaman.InfoService.InputControl.GetDataGrid">
+            <summary>
+            返回数据表所用的DataGrid,这提供了在将控件加入父控件之前调整DataGrid通用属性的机会,
+            此种情形下返回一个空的DataGrid,只设置了默认的通用属性,还没有任何列.其它情形返回当
+            时状态下的DataGrid对象.这个方法应该在PageSize属性设置后调用,它会使用该属性.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Dreaman.InfoService.InputControl.BuildRequestUrl(System.String)">
+            <summary>
+            构造请求特定状态界面的URL
+            </summary>
+            <param name="state"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Dreaman.InfoService.InputControl.GetWebDynamicTable">
+            <summary>
+            返回数据表,浏览,增加,删除,修改,搜索所用的动态表,这一方法必须在其它属性设置后使用,
+            因为它要用到SQL,GuideInfo等.考虑到各状态切换时需要清空webDynaTable,这个方法不再为
+            公有方法(它已经不能正确的返回当前状态用来设置属性的动态表,因为稍后可能被清空了重
+            新实例化),仅供控件内部使用,实际使用需要设置动态表属性的请使用事件处理.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Dreaman.InfoService.InputControl.AddToParent(System.Web.UI.Control)">
+            <summary>
+            将控件加入到父控件中,只要不使用界面设计器,应总是调用此方法来将控件加入到页面中,
+            此方法将触发控件状态的实际处理以生成控件当前界面。
+            返回值表明是否继续构造界面，为真时应该终止后续的任何界面相关的操作（此时响应流已关闭）。
+            </summary>
+            <param name="parent"></param>
+        </member>
+        <member name="M:Dreaman.InfoService.InputControl.AdjustControlEnvironment">
+            <summary>
+            调整控件显示的上下文环境,使用界面设计器时,应调用此方法,因为控件的某些状态可能需要完整的
+            页面来显示，控件需要对页面作相应处理，不使用界面设计器时用上一方法即可。
+            此外,控件的客户端资源URL也需要借此处理。返回值表明是否继续构造界面，为真时应该终止后
+            续的任何界面相关的操作（此时响应流已关闭）。
+            </summary>
+        </member>
+        <member name="M:Dreaman.InfoService.InputControl.ChangeState(System.String,System.Collections.Specialized.NameValueCollection)">
+            <summary>
+            改变控件到指定状态
+            </summary>
+            <param name="state">状态名：show,add,modify,view,search,upload,htmleditor</param>
+            <param name="args">参数集合（名字/值对）</param>
+        </member>
+        <member name="M:Dreaman.InfoService.InputControl.ChangeState(System.String,System.String[])">
+            <summary>
+            改变控件到指定状态
+            </summary>
+            <param name="state">状态名：show,add,modify,view,search,upload,htmleditor</param>
+            <param name="args">参数数组，交替为：名，值，名，值，...</param>
+        </member>
+        <member name="E:Dreaman.InfoService.InputControl.CreateWebDynamicTable">
+            <summary>
+            给用户创建WebDynamicTable等描述SQL结果集的对象并使用元数据初始化一些
+            特性的机会,返回值表明为空表明使用用缺省的类创建对象并使用缺省的元数据来初始化。
+            </summary>
+        </member>
+        <member name="E:Dreaman.InfoService.InputControl.SharedWebDynamicTable">
+            <summary>
+            此事件给用户在动态表创建与初始设置后一次设置其属性的机会，这一事件主要用于
+            取代原GetWebDynamicTable公有方法（现已变为内部方法），用于为控件设置各个状态共
+            享的属性（show,add,modify,search,view）
+            </summary>
+        </member>
+        <member name="E:Dreaman.InfoService.InputControl.DataGridUseDynamicTable">
+            <summary>
+            在DataGrid使用DynamicTable之前给用户一次设置DynamicTable的机会
+            </summary>
+        </member>
+        <member name="E:Dreaman.InfoService.InputControl.ShowDataGrid">
+            <summary>
+            在DataGrid进行数据绑定之前提供最后一次修改属性的机会.
+            第一个参数为DataGrid的父元素表,第二个参数为DataGrid
+            </summary>
+        </member>
+        <member name="E:Dreaman.InfoService.InputControl.ExportDataGrid">
+            <summary>
+            在导出DataGrid数据前提供对DataGrid进行调整的机会。参数为DataGrid。
+            </summary>
+        </member>
+        <member name="E:Dreaman.InfoService.InputControl.ShowAdd">
+            <summary>
+            在显示添加记录界面前提供修改动态表属性的机会,
+            第一个参数为动态表的父元素表,第二个参数为动态表
+            </summary>
+        </member>
+        <member name="E:Dreaman.InfoService.InputControl.ShowModify">
+            <summary>
+            在显示修改记录界面前提供修改动态表属性的机会,
+            第一个参数为动态表的父元素表,第二个参数为动态表
+            </summary>
+        </member>
+        <member name="E:Dreaman.InfoService.InputControl.ShowView">
+            <summary>
+            在显示记录界面前提供修改动态表属性的机会,
+            第一个参数为动态表的父元素表,第二个参数为动态表
+            </summary>
+        </member>
+        <member name="E:Dreaman.InfoService.InputControl.ShowSearch">
+            <summary>
+            在显示搜索记录界面前提供修改动态表属性的机会,
+            第一个参数为动态表的父元素表,第二个参数为动态表
+            </summary>
+        </member>
+        <member name="E:Dreaman.InfoService.InputControl.BuildCondition">
+            <summary>
+            在构造数据搜索条件前提供对用于构造条件的数据的处理。参数为动态表。
+            </summary>
+        </member>
+        <member name="E:Dreaman.InfoService.InputControl.FileUpload">
+            <summary>
+            在上传文件但服务端保存文件到磁盘前提供用户处理的机会.
+            第一个参数为HttpPostedFile,第二个参数为用户指定的文档名,第三个为输出参数,它
+            指明客户端访问此文档的URL,如果赋值服务端不再保存文件.
+            </summary>
+        </member>
+        <member name="E:Dreaman.InfoService.InputControl.ShowHtmlEdit">
+            <summary>
+            在显示HTML编辑器前提供修改编辑器属性的机会,参数为HTMLEDITOR控件
+            </summary>
+        </member>
+        <member name="E:Dreaman.InfoService.InputControl.BeforeAdd">
+            <summary>
+            在执行数据库添加操作前提供对数据库或准备添加的数据的处理，返回值表示是否需要继续处理，
+            如果需要显示错误，抛出一个包含错误消息的异常。
+            </summary>
+        </member>
+        <member name="E:Dreaman.InfoService.InputControl.AfterAdd">
+            <summary>
+            在执行数据库添加操作后提供对数据库的处理，参数为动态表。
+            如果需要显示错误，抛出一个包含错误消息的异常。
+            </summary>
+        </member>
+        <member name="E:Dreaman.InfoService.InputControl.BeforeModify">
+            <summary>
+            在执行数据库修改操作前提供对数据库或准备修改的数据的处理，返回值表示是否需要继续处理，参数为动态表。
+            如果需要显示错误，抛出一个包含错误消息的异常。
+            </summary>
+        </member>
+        <member name="E:Dreaman.InfoService.InputControl.AfterModify">
+            <summary>
+            在执行数据库修改操作后提供对数据库的处理，参数为动态表。
+            如果需要显示错误，抛出一个包含错误消息的异常。
+            </summary>
+        </member>
+        <member name="E:Dreaman.InfoService.InputControl.BeforeDelete">
+            <summary>
+            在执行数据库删除操作前提供对数据库或准备删除的数据的处理，返回值表示是否需要继续处理，参数为动态表。
+            如果需要显示错误，抛出一个包含错误消息的异常。
+            </summary>
+        </member>
+        <member name="E:Dreaman.InfoService.InputControl.AfterDelete">
+            <summary>
+            在执行数据库删除操作后提供对数据库的处理，参数为动态表。
+            如果需要显示错误，抛出一个包含错误消息的异常。
+            </summary>
+        </member>
+        <member name="E:Dreaman.InfoService.InputControl.ShowInfo">
+            <summary>
+            在显示错误信息或者提示信息时给用户一个处理信息显示的机会，参数1为信息内容，参数2指示是否错误，
+            返回值表明是否采用默认显示方式。
+            </summary>
+        </member>
+        <member name="P:Dreaman.InfoService.InputControl.DataAccessType">
+            <summary>
+            数据库访问类型:Sql,OleDb,Oracle,Odbc
+            </summary>		
+        </member>
+        <member name="P:Dreaman.InfoService.InputControl.ConnectionString">
+            <summary>
+            数据库连接串
+            </summary>
+        </member>
+        <member name="P:Dreaman.InfoService.InputControl.SQL">
+            <summary>
+            当前录入基于的数据源,通常为select * from tablename,单用于查询时可以为其它select语句
+            </summary>
+        </member>
+        <member name="P:Dreaman.InfoService.InputControl.MaxRecordNumber">
+            <summary>
+            数据表读取的最大记录数,默认为100
+            </summary>
+        </member>
+        <member name="P:Dreaman.InfoService.InputControl.ShowFieldNumber">
+            <summary>
+            数据表显示的字段数(功能按钮除外),默认为10
+            </summary>
+        </member>
+        <member name="P:Dreaman.InfoService.InputControl.MaxFieldWidth">
+            <summary>
+            字段内容显示的最大宽度,超过则以...表示,改用提示显示全部内容.默认为8
+            </summary>
+        </member>
+        <member name="P:Dreaman.InfoService.InputControl.PageSize">
+            <summary>
+            数据表每页显示的记录数,默认为15
+            </summary>
+        </member>
+        <member name="P:Dreaman.InfoService.InputControl.DisplayButtons">
+            <summary>
+            显示哪些操作按钮,默认是全部显示
+            </summary>
+        </member>
+        <member name="P:Dreaman.InfoService.InputControl.IsMaxLengthShow">
+            <summary>
+            是否显示一个字符串字段的允许长度
+            </summary>
+        </member>
+        <member name="P:Dreaman.InfoService.InputControl.UploadFileVirtualPath">
+            <summary>
+            上传文件保存的虚拟根路径.
+            </summary>
+        </member>
+        <member name="P:Dreaman.InfoService.InputControl.HtmlEditorConfigFile">
+            <summary>
+            HTML编辑器的配置文件目录
+            </summary>
+        </member>
+        <member name="P:Dreaman.InfoService.InputControl.CssUrl">
+            <summary>
+            用于WEB动态表的样式表文件
+            </summary>
+        </member>
+        <member name="P:Dreaman.InfoService.InputControl.ScriptUrl">
+            <summary>
+            用于WEB动态表的客户端脚本文件
+            </summary>
+        </member>
+        <member name="P:Dreaman.InfoService.InputControl.ExportContentType">
+            <summary>
+            导出功能使用的ContentType响应头的值,缺省为application/vnd.ms-excel
+            </summary>
+        </member>
+        <member name="P:Dreaman.InfoService.InputControl.ExportContentDisposition">
+            <summary>
+            导出功能使用的Content-Disposition响应头的值,缺省为attachment;filename=datagrid.xls
+            </summary>
+        </member>
+        <member name="P:Dreaman.InfoService.InputControl.ExportContentEncoding">
+            <summary>
+            导出功能使用的字符编码名称,缺省为GB2312
+            </summary>
+        </member>
+        <member name="P:Dreaman.InfoService.InputControl.WhereCondition">
+            <summary>
+            附加的查询条件，与SQL中的查询条件不同，这里的条件可以经由搜索功能改变。
+            </summary>
+        </member>
+        <member name="P:Dreaman.InfoService.InputControl.HavingCondition">
+            <summary>
+            附加的查询条件，与SQL中的查询条件不同，这里的条件可以经由搜索功能改变。
+            </summary>
+        </member>
+        <member name="P:Dreaman.InfoService.InputControl.Sorts">
+            <summary>
+            排序字段列表，如果是降序，则字段名写成"字段名 DESC"。
+            </summary>
+        </member>
+        <member name="T:Dreaman.InfoService.ControlState">
+            <summary>
+            描述复合控件某个独立的状态
+            </summary>
+        </member>
+        <member name="M:Dreaman.InfoService.IControlState.Handle(Dreaman.InfoService.IMultiFacadeControl,System.String)">
+            <summary>
+            控件状态接口，第一个参数为组合控件，组合控件与其状态对象之间是紧耦合
+            所以这一参数总是会向下转型到具体的组合控件，用参数化类型是一个较好的
+            选择。（组合控件承担状态对象工厂的职责，同时为状态对象提供上下文）
+            </summary>
+            <param name="ctrl"></param>
+            <param name="stateargs"></param>
+        </member>
+        <member name="T:Dreaman.InfoService.ShowControlState">
+            <summary>
+            显示数据状态,也是缺省状态
+            </summary>
+        </member>
+        <member name="T:Dreaman.InfoService.AddControlState">
+            <summary>
+            添加数据状态
+            </summary>
+        </member>
+        <member name="T:Dreaman.InfoService.ModifyControlState">
+            <summary>
+            修改数据状态
+            </summary>
+        </member>
+        <member name="T:Dreaman.InfoService.SearchControlState">
+            <summary>
+            搜索数据状态
+            </summary>
+        </member>
+        <member name="T:Dreaman.InfoService.ViewControlState">
+            <summary>
+            查看数据状态
+            </summary>
+        </member>
+        <member name="T:Dreaman.InfoService.FileUploadState">
+            <summary>
+            文件上传状态
+            </summary>
+        </member>
+        <member name="T:Dreaman.InfoService.HtmlEditorState">
+            <summary>
+            HTML编辑状态
+            </summary>
+        </member>
+        <member name="M:Dreaman.InfoService.ContentEncoder.HtmlEncode(System.String)">
+            <summary>
+            用作客户端HTML内容的字符串用此方法编码(客户端源码中看到编码后的内容)
+            </summary>
+            <param name="s"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Dreaman.InfoService.ContentEncoder.StringEncode(System.String)">
+            <summary>
+            用作客户端脚本参数的字符串用此方法编码(这些字符串在客户端源代码中是常量字符串,客户端源码中看到编码后的内容)
+            </summary>
+            <param name="s"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Dreaman.InfoService.ContentEncoder.UrlEncode(System.String)">
+            <summary>
+            用作URL参数名或值的字符串的编码
+            </summary>
+            <param name="s"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Dreaman.InfoService.ControlStateUrl.BuildStateRequestUrl(System.String,System.String)">
+            <summary>
+            构造请求特定状态界面的URL
+            </summary>
+        </member>
+        <member name="M:Dreaman.InfoService.ControlStateUrl.BuildResourceRequestUrl(System.String)">
+            <summary>
+            构造资源请求URL
+            </summary>
+            <param name="resName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Dreaman.InfoService.ControlStateUrl.HandleResourceRequest">
+            <summary>
+            分析请求参数，若为资源请求则清空当前响应流写入资源响应并终止响应流
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Dreaman.InfoService.ControlStateUrl.HandleResourceRequest(System.Reflection.Assembly)">
+            <summary>
+            分析请求参数，若为资源请求则清空当前响应流写入资源响应并终止响应流
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Dreaman.InfoService.QueryResult">
+            <summary>
+            QueryResult 的摘要说明。
+            </summary>
+        </member>
+        <member name="T:Dreaman.InfoService.XmlBatchEdit">
+            <summary>
+            XmlBatchEdit 的摘要说明。因为主要通过XML来联系数据与UI，Field的OldValues仅在设初值查询与获取用户输入更新时才会用到。
+            添加状态主要对Update起作用，因为Update总是要调GetInputValue（GetInputValue总是一条一条的确认是否添加状态），所以除
+            GetInputValue外Select并不更改添加状态。
+            </summary>
+        </member>
+        <member name="M:Dreaman.InfoService.XmlBatchEdit.AppendState(System.Int32)">
+            <summary>
+            用于指明某个记录是否明确的处于添加状态，在获取输入值时明确的处在添加状态的记录将用录入值覆盖旧值
+            </summary>
+            <param name="index"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Dreaman.InfoService.XmlBatchEdit.SelectRecord">
+            <summary>
+            根据设定好的字段初始值搜索符合条件的记录,此时记录数已经设定为某个值
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Dreaman.InfoService.XmlBatchEdit.SelectRecord(System.String)">
+            <summary>
+            按指定条件过滤当前批量录入表，生成一个XML描述的结果。
+            </summary>
+            <param name="condition">条件</param>
+            <returns>
+            以XML文件体表示的结果集，根元素为DATATABLE，行元素为ROW，各字段元素为字段ID，
+            InnerText为其值，每个字段生成一个旧值值，元素为字段ID+old
+            </returns>
+        </member>
+        <member name="M:Dreaman.InfoService.XmlBatchEdit.SelectCompatibleRecord(System.String)">
+            <summary>
+            按指定结果相似SQL语句构造批量录入数据，生成一个XML描述的结果。
+            </summary>
+            <param name="sqlstr">SQL语句</param>
+            <returns>
+            以XML文件体表示的结果集，根元素为DATATABLE，行元素为ROW，各字段元素为字段ID，
+            InnerText为其值，每个字段生成一个旧值值，元素为字段ID+old
+            </returns>
+        </member>
+        <member name="M:Dreaman.InfoService.XmlBatchEdit.CheckInputValue">
+            <summary>
+            检查录入数据的有效性,当前只检查不应为空的列,可以考虑加上对日期,数值,字符串长等数据的检查.
+            </summary>
+            <returns></returns>
+            
+        </member>
+        <member name="M:Dreaman.InfoService.XmlBatchEdit.GetUpdateCondition(System.Int32)">
+            <summary>
+            构造更新用的查询条件，直接使用更新表的字段名构造。
+            </summary>
+            <param name="index"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Dreaman.InfoService.XmlBatchEdit.GetSelectCondition(System.Int32)">
+            <summary>
+            构造用于select的查询条件，这里使用原始SQL中的字段名构造条件，与更新时不一样。
+            对于浮点字段与完整的日期时间字段，这里构造的条件可能会查不到实际的记录，这是个BUG。
+            </summary>
+            <param name="index"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Dreaman.InfoService.WebXmlBatchEdit.GenerateHtml">
+            <summary>
+            按指定的数据行数以及初始值搜索表生成HTML界面及脚本
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Dreaman.InfoService.WebXmlBatchEdit.GenerateHtmlByFilter(System.String)">
+            <summary>
+            指定过滤条件生成批量录入界面HTML，包括数据绑定，POST脚本，COPY/PASTE脚本以及录入检查脚本
+            </summary>
+            <param name="condition"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Dreaman.InfoService.WebXmlBatchEdit.GenerateHtmlBySql(System.String)">
+            <summary>
+            指定结果相似SQL生成批量录入界面HTML，包括数据绑定，POST脚本，COPY/PASTE脚本以及录入检查脚本
+            </summary>
+            <param name="sqlstr"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Dreaman.InfoService.WebXmlBatchEdit.UpdateRecord(System.Boolean)">
+            <summary>
+            提交批量录入，并生成错误校正界面HTML，包括数据绑定，POST脚本，COPY/PASTE脚本以及录入检查脚本
+            </summary>
+            <param name="overwrite"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Dreaman.InfoService.WebXmlBatchEdit.GetFieldAdditional(System.String)">
+            <summary>
+            得到一个域的类型相关的描述，对数值如果有单位则用单位描述
+            </summary>
+            <param name="f"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Dreaman.InfoService.WebXmlBatchEdit.GetFieldDescription(System.String)">
+            <summary>
+            得到一个域的描述
+            </summary>
+            <param name="f"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Dreaman.InfoService.WebXmlBatchEdit.GenerateAllInternalScript">
+            <summary>
+            辅助函数,生成除标准事件处理外的其它脚本.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Dreaman.InfoService.DataBaseType">
+            <summary>
+            数据库类型,服务器端常用的三类数据库(不考虑客户端常用的ACCESS)
+            </summary>
+        </member>
+        <member name="T:Dreaman.InfoService.IParserContext">
+            <summary>
+            分析器使用的上下文接口,主要目的:
+            1、提供词法分析的结果
+            2、分析结果的处理
+            </summary>
+        </member>
+        <member name="M:Dreaman.InfoService.SQLSelectParser.#ctor(System.String)">
+            <summary>
+            这里不考虑COMPUTE与UNION运算，使用COMPUTE的场合不应使用本类，如果实际需要使用UNION，需要写成视图，
+            再写视图查询，或者如在MS SQL SERVER中使用内联视图。
+            我们只关心SELECT语句的第一层的构成，并且我们假定SQL语句语法是正确的，因些可以忽略许多
+            细节的语法，语法构造的EBNF如下：（T表示终截符）
+            EXP::=[T*][(( '(' SELECT | (EXP ( , EXP )*) ')' ) | T)* ]
+            EXPLIST::=EXP ( , EXP )*
+            SELECT::=select EXPLIST from EXPLIST [where EXP][group by EXPLIST [having EXP]][order by EXPLIST]
+            因为我们不希望实面全SQL语法的分析，别名关键字AS在语法中成为上下文相关的，这样我们不在语法中定义它，
+            而在语法分析完成后，对语法片断采用正则表达式或字符串处理进一点分析。
+            </summary>
+            <param name="sqlstr"></param>
+        </member>
+        <member name="M:Dreaman.InfoService.SQLSelectParser.TableAlias(System.String)">
+            <summary>
+            取表的别名，这里的别名是SQL里的别名，在前面构造对应关系时，没有别名的表的别名就是原始名，
+            所以通常这个函数的返回不会为null
+            </summary>
+            <param name="tableName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Dreaman.InfoService.SQLSelectParser.FieldAlias(System.String)">
+            <summary>
+            当前不考虑加了转义符的情况,取SQL中明确定义的别名，没有别名定义但列出现在SQL语句
+            SELECT中时返回自身，如列不出现在SELECT中则返回空（对select *也是如此）
+            返回空主要用于GetGroupByList与GetOrderByList的处理，防止它们返回未出现在结果集中
+            的列
+            </summary>
+            <param name="fieldName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Dreaman.InfoService.SQLSelectParser.FieldName(System.String)">
+            <summary>
+            当前不考虑加了转义符的情况,取SQL中明确定义的别名对应的原始名，没有别名定义但列出现
+            在SQL语句SELECT中时返回自身，如列不出现在SELECT中则返回空（对select *也是如此）
+            返回空主要用于GetGroupByList与GetOrderByList的处理，防止它们返回未出现在结果集中
+            的列
+            </summary>
+            <param name="fieldAlias"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Dreaman.InfoService.SQLSelectParser.FieldName(System.String,System.String,System.String)">
+            <summary>
+            如果SQL中明确定义了别名，则返回明确定义的别名对应的原始名，否则，根据基本表与字段名构造完全限定的列名
+            ，因SQL语句中的*号无法在语法分析时扩展成各个列名，故查表为空时直接返回参数值
+            </summary>
+            <param name="fieldAlias"></param>
+            <param name="baseTable"></param>
+            <param name="baseField"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Dreaman.InfoService.SQLSelectParser.GetGroupByList">
+            <summary>
+            得到SQL中GROUP BY子句中的字段列表，如果有别名的采用别名表示（也就是SQL结果集中的名称）
+            ，因为语法分析时无法解析select子句中*代表的列，这里的返回可能会不全
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Dreaman.InfoService.SQLSelectParser.GetOrderByList">
+            <summary>
+            得到SQL中ORDER BY子句中的字段列表（含ASC与DESC部分），如果有别名的采用别名表示（也就是SQL结果集中的名称）
+            ，因为语法分析时无法解析select子句中*代表的列，这里的返回可能会不全
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Dreaman.InfoService.ParserTokenType">
+            <summary>
+            标识符类型
+            </summary>
+        </member>
+        <member name="T:Dreaman.InfoService.ParserToken">
+            <summary>
+            标识符类，一个标识符主要包括其单词与类型，这些信息在词法分析时确定
+            </summary>
+        </member>
+        <member name="T:Dreaman.InfoService.AbstractClause">
+            <summary>
+            抽象子句，提供了子句行为的接口与复合子句的基本操作与方法
+            </summary>
+        </member>
+        <member name="M:Dreaman.InfoService.AbstractClause.Parse(Dreaman.InfoService.IParserContext)">
+            <summary>
+            分析方法接口，分析功能委托ParseImpl实现,在这里调整公共的匹配失败时回溯需要的
+            标识符队列状态，因为这个分析器基于EBNF语法来解析，所以它必须支持回溯以确保正
+            确性，但EBNF通常是可以写成无需回溯的，如果是按LL（1）构造出的EBNF，则本分析
+            器不会回溯。另外一个功能是子句的处理（分析树的生成等），这些均委托到
+            IParserContext的实现类。
+            </summary>
+            <param name="context"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Dreaman.InfoService.AbstractClause.ParseImpl(Dreaman.InfoService.IParserContext)">
+            <summary>
+            分析功能的具体实现
+            </summary>
+            <param name="context"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Dreaman.InfoService.AbstractClause.Item(System.Object)">
+            <summary>
+            用于存储调用IParserContext::PushClause的参数
+            </summary>
+        </member>
+        <member name="T:Dreaman.InfoService.NilpotentClause">
+            <summary>
+            零元子句，用于引导一个二选一/或子句
+            </summary>
+        </member>
+        <member name="T:Dreaman.InfoService.IdenticClause">
+            <summary>
+            幺元子句，用于引导一个与子句
+            </summary>
+        </member>
+        <member name="T:Dreaman.InfoService.ArgumentClause">
+            <summary>
+            参数子句,用于分析到该子句时传递特定的参数给IParserContext::PushClause，
+            以指导语法树的构造
+            </summary>
+        </member>
+        <member name="F:Dreaman.InfoService.ArgumentClause.clauseArg">
+            <summary>
+            用于IParserContext::PushClause的参数
+            </summary>
+        </member>
+        <member name="T:Dreaman.InfoService.AndClause">
+            <summary>
+            与子句依次执行构成它的子句，并且仅在所有子句匹配时返回匹配
+            </summary>
+        </member>
+        <member name="T:Dreaman.InfoService.AlternativeClause">
+            <summary>
+            二选一子句依次执行构成它的子句，只要有一个子句匹配则返回匹配（之后的子句不再执行）
+            </summary>
+        </member>
+        <member name="T:Dreaman.InfoService.OrClause">
+            <summary>
+            或子句依次执行构成它的子句，不管子句是否匹配均返回匹配
+            </summary>
+        </member>
+        <member name="T:Dreaman.InfoService.RepeatClause">
+            <summary>
+            重复子句,重复子句不需要支持递归(因此没有BUILD方法)
+            </summary>
+        </member>
+        <member name="T:Dreaman.InfoService.TerminalClause">
+            <summary>
+            终截符子句匹配非关键字/算符/分隔符的终截符
+            </summary>
+        </member>
+        <member name="T:Dreaman.InfoService.KeywordClause">
+            <summary>
+            关键字子句匹配指定的关键字/算符/分隔符
+            </summary>
+        </member>
+        <member name="T:Dreaman.InfoService.FileSystemUtility">
+            <summary>
+            FileSystemUtility 的摘要说明。
+            </summary>
+        </member>
+        <member name="M:Dreaman.InfoService.ColorTransform.RGB2HSL(System.UInt32)">
+            <summary>
+            将整数表示的RGB颜色值转为HSL表示的颜色值，H（0~360）S（0~1.0）L（0~1.0）
+            </summary>
+            <param name="rgb"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Dreaman.InfoService.ColorTransform.HSL2RGB(System.Double,System.Double,System.Double)">
+            <summary>
+            将HSL表示的颜色转为RGB表的颜色
+            </summary>
+            <param name="H">0~360 色相</param>
+            <param name="S">0~1.0 饱和度</param>
+            <param name="L">0~1.0 亮度</param>
+            <returns>0x00RRGGBB 32位整数表示的RGB颜色值</returns>
+        </member>
+        <member name="M:Dreaman.InfoService.ColorTransform.HSV2RGB(System.Double,System.Double,System.Double)">
+            <summary>
+            将HSV颜色值转换为32位整数表示的RGB颜色值
+            </summary>
+            <param name="h"></param>
+            <param name="s"></param>
+            <param name="v"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Dreaman.InfoService.IModelFactory">
+            <summary>
+            Model 的摘要说明。
+            </summary>
+        </member>
+        <member name="T:Dreaman.InfoService.StateMachine">
+            <summary>
+            StateMachine 的摘要说明。
+            状态机是由多个松耦合的模块按用户（或开发人员）可定制的状态图展示的业务操作流程。
+            因为当前项目的几个子系统（OA已采用工作流平台）不涉及流程定制，这个想法没有实现。
+            用户可定制的状态图实际上可由三维表记录下来：
+            	对每个入口状态记录一个状态转换表即构成了要记录的表
+            	（判断，动作（调用模块），转换到的状态）
+            	判断可以采用JScript脚本定制，动作是一个模块的标识（参见模块管理器其它部分）
+            	转换到的状态简单用状态标识表示。
+            流程执行：
+            	状态机执行需要实例化一个状态机，考虑到工作中的流程时间跨度可能很大，因此，
+            	状态机应该是可以序列化的（其实就是简单的记录其当前状态与某些上下文信息），
+            	通常将状态机实例序列化后存入数据库。
+            </summary>
+            <remarks>
+            这里的设计思想主要来自《Thinking in Patterns with JAVA》
+            为什么是状态机而不是协作类?
+            1、协作类考查类间相对紧密的耦合关系，而可定制对灵活性的要求很高，必须是松耦合
+            状态机的各状态间具有松耦合的特点；
+            2、一个流程虽然由各个模块组成，但本质上服务于一个特定的主题，如果把这个主题看
+            做对象，组成模块便是它的不同状态下的方法，而流程便是在各个状态间的转换；
+            3、流程存在较大时间跨度，在生命期内，到达特定结点时，系统必须允许重启，而重新
+            进入后流程应当从上次间断的结点继续，这表明流程要记忆当前结点，这便是状态，进
+            一步，状态必须可序列化。
+            附带的说点形而上的东西：
+            软件设计的范型通常是提供概念抽象，概念包括概念之内与概念之外，从概念外看，我们
+            对世界的分解粒度上升到概念提供的级别，这给了我们对世界建模的基本元素，就如同数
+            学中有了幂的概念后可以轻松理解2^64的涵义一样；从概念内看，概念又是存在内部结构
+            的，它可细分到更小的概念，这种内部结构是精化概念的关键，它确定了概念的内涵。系
+            统分析就是依据概念内涵确定系统里涉及的概念外延，这便是系统分解，分解后将每个概
+            念按内涵持续精化与调整，这便是设计。
+            总的说来，软件开发便是这种抽象与分解的艺术。而抽象与分解在多个层级交迭，最终形
+            自相似的螺旋结构（想象一下自相似的螺旋结构是什么样子？）
+            </remarks>
+        </member>
+        <member name="T:Dreaman.InfoService.Arguments">
+            <summary>
+            在状态机各状态间共享的参数信息
+            </summary>
+        </member>
+        <member name="T:Dreaman.InfoService.Condition">
+            <summary>
+            当前状态用来确定是否要发生转换的条件对象，它通过执行jscript脚本
+            来作出判断，符合条件时则执行相应的状态动作（调用某个模块）。
+            </summary>
+        </member>
+        <member name="T:Dreaman.InfoService.State">
+            <summary>
+            状态的表示
+            </summary>
+        </member>
+        <member name="T:Dreaman.InfoService.Module">
+            <summary>
+            一个模块由一个唯一标识,一个描述,一个后台处理模型与一个UI构成。
+            考虑到展示与交互部分都是非常个性化的方面，我们不采用像MVC模式分三块的做法，而是把V与C合并到UI里
+            ，启动一个模块就是调用UI，并传给它模块ID，UI借此向模块管理器查询模型并使用它（这允许UI并不使用模
+            块定义里的模型，这里这样的定义主要是考虑到提供共用模型或者共用UI的可能性）
+            </summary>
+        </member>
+        <member name="T:Dreaman.InfoService.ModuleManager">
+            <summary>
+            模块管理器，通常是一个持久化存储的模块集合，因为模块组织是表现层的东西，是非常个性化的，模块管理器
+            并不提供模块组织的相关信息。
+            模块的各部分均应完全持久化，当前假设模型与UI均可以用一个字符串来描述，这
+            个描述的字符串可认为是模型与UI的标识。
+            </summary>
+        </member>
+        <member name="M:Dreaman.InfoService.ScriptInterpreter.#ctor(System.String)">
+            <summary>
+            借用一个模板文件来构造一个含有一个装配与一个类的script源代码,并返回构造类的实例。
+            模板文件中必须有三个可替换变量:#ASSEMBLYNAME#,#CLASSNAME#,#SCRIPTCODE#,分别对应
+            装配名、类名以及要执行的脚本。（装配名、类名由解释器自动分配）
+            </summary>
+        </member>
+        <member name="T:Dreaman.InfoService.TreeTable">
+            <summary>
+            TreeTable 的摘要说明。
+            </summary>
+        </member>
+        <member name="M:Dreaman.InfoService.TreeTable.AppendNode(System.Int32,System.Boolean,System.String,System.String[])">
+            <summary>
+            提供一种按树的正向顺序添加结点的方法,添加完毕时必须调用EndAppend来产生反向树数据。
+            </summary>
+            <param name="level"></param>
+            <param name="useSecondImage"></param>
+            <param name="name"></param>
+            <param name="rowAttrs"></param>
+        </member>
+        <member name="M:Dreaman.InfoService.TreeTable.AppendNode(System.Int32,System.Boolean,System.String,System.Collections.Specialized.NameValueCollection)">
+            <summary>
+            提供一种按树的正向顺序添加结点的方法,添加完毕时必须调用EndAppend来产生反向树数据。
+            </summary>
+            <param name="level"></param>
+            <param name="useSecondImage"></param>
+            <param name="name"></param>
+            <param name="rowAttrs"></param>
+        </member>
+        <member name="M:Dreaman.InfoService.TreeTable.PushNode(System.Int32,System.Boolean,System.String,System.Collections.Specialized.NameValueCollection)">
+            <summary>
+            用于生成树的一个结点的代码，这个方法以上次调用的内容为基准，并假定上次调用加入的结点
+            为这次调用的结点在树上的后一个结点，也就是调用这个函数时必须对树从下往上构造，（这
+            里的上、下指的是树对应的表中的行的上下。）
+            每个树结点对应一行,行上定制了几个属性:isExtend,level,useSecondImage,行上另外定制的属性
+            由参数rowAttrs参数决定.
+            每一行由一个一行多列的表构成,每个单元格里放一个IMG或SPAN,IMG与SPAN上定制了一个属性:itag
+            </summary>
+            <param name="level"></param>
+            <param name="useSecondImage"></param>
+            <param name="name"></param>
+            <param name="rowAttrs"></param>
+        </member>
+        <member name="M:Dreaman.InfoService.TreeTable.AddToParent(System.Web.UI.Control)">
+            <summary>
+            将控件加入到父控件中,只要不使用界面设计器,应总是调用此方法来将输入控件加入到页面中,
+            此方法将触发控件状态的实际处理以生成控件当前界面。返回值表明是否继续构造界面，为真时应该终止后
+            续的任何界面相关的操作（此时响应流已关闭）。
+            </summary>
+            <param name="parent"></param>
+        </member>
+        <member name="M:Dreaman.InfoService.TreeTable.EnsureControlEnvironment(System.Web.UI.Control)">
+            <summary>
+            确保控件显示的上下文环境,使用界面设计器时,应调用此方法,因为控件的某些状态可能需要完整的
+            页面来显示，控件需要对页面作相应处理，不使用界面设计器时用上一方法即可，它会自动调用此方
+            法。此外,控件的客户端资源URL也需要借此处理。返回值表明是否继续构造界面，为真时应该终止后
+            续的任何界面相关的操作（此时响应流已关闭）。
+            </summary>
+            <param name="parent"></param>
+        </member>
+        <member name="T:Dreaman.InfoService.Report.IDataBlock">
+            <summary>
+            IDataBlock 的摘要说明。
+            </summary>
+        </member>
+        <member name="M:Dreaman.InfoService.Report.IDataBlock.Filter(System.String,System.String)">
+            <summary>
+            用当前数据块的值替换指定模板内容中的数据标签,一个值对应一个数据标签
+            ,多出的标签被替换为空,多出的值不使用
+            这一方法主要用于基于模板的报表,模板通过数据标签被划分为若干数据块,
+            每个数据块对应一个IDataBlock,模板的求值过程便成为模板数据依次流过各
+            个IDataBlock后的输出(管道-过滤器模式)
+            </summary>
+            <param name="templateContent"></param>
+            <param name="dataTag">
+            数据标签格式如下：(数据标签总是出现在单元格中，前后不要有空格,>出现在标签中用于替换为单元格中数据的类型)
+            >$dataTag!fieldName$
+            或
+            >$dataTag$
+            
+            识别正则表达式:
+            1、特定数据标签
+            >\$dataTag(?:!(\w+))*\$
+            2、所有符合格式的可能标签
+            \$(\w+)(?:!(\w+))*\$
+            </param>
+            <returns></returns>
+        </member>
+        <member name="M:Dreaman.InfoService.Report.IDataBlock.GetDataBlockUI(System.String[])">
+            <summary>
+            用于读取当前数据块UI的HTML代码,这里假定数据块知道它自己应如何显示,
+            或者委托给显示对象,不过我们假定数据块有一些实例数据指明它将要采用
+            哪个显示对象,并且数据块会调用相应的显示对象来求得显示结果（或者简
+            单的情形下数据块自己就知道如何生成它的显示）（换句话说，如果从MVC
+            的角度考虑，数据块既是模型，又是控制器，或者MVC全在数据块）
+            这一方法用于不使用模板的数据块或者对应于模板中的一个数据块标签(从
+            而有这样的情形,一个模板确定总的布局,它上面的每个数据标签对应一个数
+            据块,这样的数据块负责自己的显示)
+            现在看到的主要应用情形是作为模板里的数据块标签的替换，并且模板是基
+            于HTML的，典型情形是用EXCEL制作模板，另存为HTML文件（或MHTML文件，
+            因此可以嵌入图片之类的其它文件）作为模板文件
+            </summary>
+        </member>
+        <member name="M:Dreaman.InfoService.Report.IDataBlock.GetDataBlockUI">
+            <summary>
+            用于数据标签未指列的情形，即得到数据默认的显示UI
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Dreaman.InfoService.Report.FilterDataLabel">
+            <summary>
+            用作替换一个数据标签的事件处理,fieldName为空表明标签中没有指明fieldName,index为
+            对应fieldName的标签序号
+            </summary>
+        </member>
+        <member name="T:Dreaman.InfoService.Report.QueryField">
+            <summary>
+            描述一个表域的信息,不同于数据层的表列,这里包括表域的显示信息。
+            </summary>
+        </member>
+        <member name="T:Dreaman.InfoService.Report.SQLDataBlock">
+            <summary>
+            描述一个SQL结果集形成的数据块，它的职责包括分类汇总（当前未实现,分类汇总的数据需要
+            设计新的属性与结构来描述，可能会类似StatisticField类的方式计算值）。
+            </summary>
+        </member>
+        <member name="M:Dreaman.InfoService.Report.SQLDataBlock.SetFieldGroup(System.String,System.Boolean)">
+            <summary>
+            设置域是否参与分组信息（分组的顺序由排序决定）。
+            </summary>
+        </member>
+        <member name="M:Dreaman.InfoService.Report.SQLDataBlock.SetFieldSort(System.String,System.Int32)">
+            <summary>
+            设置域的排序信息。
+            </summary>
+        </member>
+        <member name="M:Dreaman.InfoService.Report.SQLDataBlock.BuildFieldView(System.Int32,System.String,System.Web.UI.HtmlControls.HtmlTableCell)">
+            <summary>
+            构造表UI的某条记录时的某字段的显示,主要包括字段值的转换与格式化.
+            </summary>
+            <param name="index">记录索引</param>
+            <param name="f">字段名</param>
+            <param name="cell">用于显示字段值的HtmlTableCell</param>
+        </member>
+        <member name="T:Dreaman.InfoService.StatisticControl">
+            <summary>
+            StatisticControl 的摘要说明。
+            </summary>
+        </member>
+        <member name="M:Dreaman.InfoService.StatisticControl.GetWebDynamicTable">
+            <summary>
+            因为状态改变需要清空webDynaTable,这个方法仅供控件内部使用,不再为公有(它已经不能正确的返回当前状态用来
+            设置属性的动态表,因为稍后可能被清空了重新实例化),实际使用需要设置动态表属性的请使用事件处理.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Dreaman.InfoService.StatisticControl.AddToParent(System.Web.UI.Control)">
+            <summary>
+            将控件加入到父控件中,只要不使用界面设计器,应总是调用此方法来将控件加入到页面中,
+            此方法将触发控件状态的实际处理以生成控件当前界面。
+            返回值表明是否继续构造界面，为真时应该终止后续的任何界面相关的操作（此时响应流已关闭）。
+            </summary>
+            <param name="parent"></param>
+        </member>
+        <member name="M:Dreaman.InfoService.StatisticControl.AdjustControlEnvironment">
+            <summary>
+            调整控件显示的上下文环境,使用界面设计器时,应调用此方法,因为控件的某些状态可能需要完整的
+            页面来显示，控件需要对页面作相应处理，不使用界面设计器时用上一方法即可。
+            此外,控件的客户端资源URL也需要借此处理。返回值表明是否继续构造界面，为真时应该终止后
+            续的任何界面相关的操作（此时响应流已关闭）。
+            </summary>
+        </member>
+        <member name="M:Dreaman.InfoService.StatisticControl.ChangeState(System.String,System.Collections.Specialized.NameValueCollection)">
+            <summary>
+            改变控件到指定状态
+            </summary>
+            <param name="state">状态名：show,add,modify,view,search,upload,htmleditor</param>
+            <param name="args">参数集合（名字/值对）</param>
+        </member>
+        <member name="M:Dreaman.InfoService.StatisticControl.ChangeState(System.String,System.String[])">
+            <summary>
+            改变控件到指定状态
+            </summary>
+            <param name="state">状态名：show,add,modify,view,search,upload,htmleditor</param>
+            <param name="args">参数数组，交替为：名，值，名，值，...</param>
+        </member>
+        <member name="E:Dreaman.InfoService.StatisticControl.CreateWebDynamicTable">
+            <summary>
+            给用户创建WebDynamicTable等描述SQL结果集的对象并使用元数据初始化一些
+            特性的机会,返回值为空表明使用用缺省的类创建对象并使用缺省的元数据来初始化。
+            </summary>
+        </member>
+        <member name="E:Dreaman.InfoService.StatisticControl.SharedWebDynamicTable">
+            <summary>		
+            此事件给用户在动态表创建与初始设置后一次设置其属性的机会，这一事件主要用于
+            取代原GetWebDynamicTable公有方法（现已变为内部方法），用于为控件设置各个状态共
+            享的属性（show,search）
+            </summary>
+        </member>
+        <member name="E:Dreaman.InfoService.StatisticControl.StatTableUseDynamicTable">
+            <summary>
+            在统计表使用DynamicTable前给用户一次设置DynamicTable的机会
+            </summary>
+        </member>
+        <member name="E:Dreaman.InfoService.StatisticControl.ShowStatTable">
+            <summary>
+            在显示统计结果前提供对统计结果的调整机会。第一个参数为显示统计结果表的父元素表，第
+            二个参数为显示统计结果的表
+            </summary>
+        </member>
+        <member name="E:Dreaman.InfoService.StatisticControl.ExportStatTable">
+            <summary>
+            在导出统计结果表之前提供对统计结果表的调整机会。参数为Table。
+            </summary>
+        </member>
+        <member name="E:Dreaman.InfoService.StatisticControl.ShowSearch">
+            <summary>
+            在显示搜索记录界面前提供修改动态表属性的机会,
+            第一个参数为动态表的父元素表,第二个参数为动态表
+            </summary>
+        </member>
+        <member name="E:Dreaman.InfoService.StatisticControl.BuildCondition">
+            <summary>
+            在构造数据搜索条件前提供对用于构造条件的数据的处理。参数为动态表。
+            </summary>
+        </member>
+        <member name="P:Dreaman.InfoService.StatisticControl.DataAccessType">
+            <summary>
+            数据库访问类型:Sql,OleDb,Oracle,Odbc
+            </summary>
+        </member>
+        <member name="P:Dreaman.InfoService.StatisticControl.ConnectionString">
+            <summary>
+            数据库连接串
+            </summary>
+        </member>
+        <member name="P:Dreaman.InfoService.StatisticControl.SQL">
+            <summary>
+            当前录入基于的数据源,通常为select * from tablename,单用于查询时可以为其它select语句
+            </summary>
+        </member>
+        <member name="P:Dreaman.InfoService.StatisticControl.MaxRecordNumber">
+            <summary>
+            数据表读取的最大记录数,默认为100
+            </summary>
+        </member>
+        <member name="P:Dreaman.InfoService.StatisticControl.MaxFieldWidth">
+            <summary>
+            字段内容显示的最大宽度,超过则以...表示,改用提示显示全部内容.默认为8
+            </summary>
+        </member>
+        <member name="P:Dreaman.InfoService.StatisticControl.BaseColor">
+            <summary>
+            显示统计表的表头与总计行的颜色。
+            </summary>
+        </member>
+        <member name="P:Dreaman.InfoService.StatisticControl.DeltaColor">
+            <summary>
+            显示统计表的各分组行的颜色增量0x00HHSSVV，每个子分组的颜色在父组上增加这个值。
+            H: -120~120 S:-100~100 V:-100~100 H值表示色相的增量，S值除100表示饱和度的增量，V值除100表示亮度的增量。
+            </summary>
+        </member>
+        <member name="P:Dreaman.InfoService.StatisticControl.DisplayButtons">
+            <summary>
+            显示哪些操作按钮,默认是全部显示
+            </summary>
+        </member>
+        <member name="P:Dreaman.InfoService.StatisticControl.UploadFileVirtualPath">
+            <summary>
+            上传文件保存的虚拟根路径.
+            </summary>
+        </member>
+        <member name="P:Dreaman.InfoService.StatisticControl.CssUrl">
+            <summary>
+            用于WEB动态表的样式表文件
+            </summary>
+        </member>
+        <member name="P:Dreaman.InfoService.StatisticControl.ScriptUrl">
+            <summary>
+            用于WEB动态表的客户端脚本文件
+            </summary>
+        </member>
+        <member name="P:Dreaman.InfoService.StatisticControl.ExportContentType">
+            <summary>
+            导出功能使用的ContentType响应头的值,缺省为application/vnd.ms-excel
+            </summary>
+        </member>
+        <member name="P:Dreaman.InfoService.StatisticControl.ExportContentDisposition">
+            <summary>
+            导出功能使用的Content-Disposition响应头的值,缺省为attachment;filename=datagrid.xls
+            </summary>
+        </member>
+        <member name="P:Dreaman.InfoService.StatisticControl.ExportContentEncoding">
+            <summary>
+            导出功能使用的字符编码名称,缺省为GB2312
+            </summary>
+        </member>
+        <member name="P:Dreaman.InfoService.StatisticControl.WhereCondition">
+            <summary>
+            附加的查询条件，与SQL中的查询条件不同，这里的条件可以经由搜索功能改变。
+            </summary>
+        </member>
+        <member name="P:Dreaman.InfoService.StatisticControl.HavingCondition">
+            <summary>
+            附加的查询条件，与SQL中的查询条件不同，这里的条件可以经由搜索功能改变。
+            </summary>
+        </member>
+        <member name="P:Dreaman.InfoService.StatisticControl.Groups">
+            <summary>
+            分组字段列表，请注意分组字段的顺序应该与排序中的顺序一致（前后序一致）。
+            </summary>
+        </member>
+        <member name="P:Dreaman.InfoService.StatisticControl.Sorts">
+            <summary>
+            排序字段列表，如果是降序，则字段名写成"字段名 DESC"。
+            </summary>
+        </member>
+        <member name="T:Dreaman.InfoService.StatControlState">
+            <summary>
+            描述复合控件某个独立的状态
+            </summary>
+        </member>
+        <member name="T:Dreaman.InfoService.StatSearchControlState">
+            <summary>
+            搜索数据状态
+            </summary>
+        </member>
+        <member name="T:Dreaman.InfoService.StatisticRow">
+            <summary>
+            StatRow 的摘要说明。
+            </summary>
+        </member>
+        <member name="T:Dreaman.InfoService.CodeGenerator">
+            <summary>
+            CodeGenerator 的摘要说明。
+            </summary>
+        </member>
+        <member name="P:Dreaman.InfoService.Web3DControl.TemplateFile">
+            <summary>
+            所用模板文件的虚似路径名(包括文件名)
+            </summary>
+        </member>
+    </members>
+</doc>

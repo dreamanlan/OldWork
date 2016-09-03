@@ -1,0 +1,481 @@
+
+<title>第八军团 | 反病毒引擎设计</title>
+<script language="JavaScript">
+	function doZoom(size){
+		document.getElementById('zoom').style.fontSize=size+'px'
+	}
+	</script>
+	<script language="JavaScript">
+	
+	function doPrint(){
+	var str="<html>";
+	var article;
+	var css;
+	var strFontSize='【<A href="javascript:doZoom(16)">大</A> <A href="javascript:doZoom(14)">中</A> <A href="javascript:doZoom(12)">小</A>】'
+	var strdoPrint="doPrint()";
+	var strTmp;
+	
+		css="<style>"
+		+"td,.f12{font-size:12px}"
+		+".f24 {font-size:24px;}"
+		+".f14 {font-size:14px;}"
+		+".title14 {font-size:14px;line-height:130%}"
+		+".l17 {line-height:170%;}"
+		+"</style>";
+	
+		str +=	css;
+		str +=	'<meta http-equiv="content-type" content="text/html; charset=gb2312">';
+		str +=	"<body bgcolor=#ffffff topmargin=5 leftmargin=5 marginheight=5 marginwidth=5 onLoad='window.print()'>";
+		str +=	"<center><table width=600 border=0 cellspacing=0 cellpadding=0><tr><td align=right valign=bottom><a href='javascript:window.print()'>打印</a></td></tr></table>";
+		str +=	"<table width=600 border=0 cellpadding=0 cellspacing=20 bgcolor=#EDF0F5><tr><td>";
+		
+		article=document.getElementById('article').innerHTML;
+		str +=article.substr(0,article.indexOf(strAdBegin));
+		strTmp=article.substr(article.indexOf(strAdEnd)+strAdEnd.length, article.length);
+		
+		str +=strTmp.substr(0,strTmp.indexOf(strFontSize));
+		strTmp=strTmp.substr(strTmp.indexOf(strFontSize)+strFontSize.length, strTmp.length);
+		
+		str +=strTmp.substr(0,strTmp.indexOf(strdoPrint));
+		str +="window.print()";
+		str +=strTmp.substr(strTmp.indexOf(strdoPrint)+strdoPrint.length, strTmp.length);
+		
+		str +=document.getElementById('links').innerHTML;
+		str +=	"</td></tr></table></center>";
+		str +=	"</body></html>";
+		document.write(str);
+		document.close();
+	}
+</script>
+
+<SCRIPT language=JavaScript>
+var currentpos,timer;
+
+function initialize()
+{
+timer=setInterval("scrollwindow()",50);
+}
+function sc(){
+clearInterval(timer);
+}
+function scrollwindow()
+{
+currentpos=document.body.scrollTop;
+window.scroll(0,++currentpos);
+if (currentpos != document.body.scrollTop)
+sc();
+}
+document.onmousedown=sc
+document.ondblclick=initialize
+</script>
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<meta http-equiv="Content-Language" content="zh-cn">
+<title>第八军团 | 欢迎光临中国第八军团</title>
+<style>
+.textb 		{  border-color: #999999 #999999 #000000; font-size: 9pt; background-color: FFFFFF; border-style: solid; border-top-width: 0px; border-right-width: 0px; border-bottom-width: 1px; border-left-width: 0px; cursor: hand}
+.submit 	{  background-color: #CFCFC9; height: 18px; border-color: E0E7E0 #999999 #999999 E0E7E0; clip:   rect(   ); font-size: 9pt; border-style: solid; border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; cursor: hand}
+
+TD 			{COLOR: #000000; FONT-SIZE: 12px; LINE-HEIGHT: 150%}
+A:visited 	{COLOR: #333333; text-decoration: none }
+A:link 		{COLOR: #000000; text-decoration: none }
+A:hover 	{COLOR: #666666; text-decoration: none }
+
+input		{background-color: #F6F6F6; HEIGHT: 20px; POSITION: relative;font-size:9pt; border: 1 solid #999999}
+TEXTAREA	{font-size:9pt;background-color: #EFEFEF;border: 1 solid}
+select		{background-color: #F6F6F6; FONT-SIZE: 9pt}
+.TableLine{
+border-collapse: collapse
+}
+</style>
+<LINK href=style.css rel=stylesheet>
+<script src=JS/Js.js></script>
+<SCRIPT language=JavaScript>
+<!--
+var mystat=0;//price select
+function myout(){mystat=0;window.setTimeout("mycheck()",5);}
+function myin(){mystat=1;}
+function mycheck(){if (mystat==0) MM_showHideLayers('price','','hide');}//price select
+
+function MM_showHideLayers() { //v3.0
+var i,p,v,obj,args=MM_showHideLayers.arguments;
+for (i=0; i<(args.length-2); i+=3) if ((obj=MM_findObj(args[i]))!=null) { v=args[i+2];
+if (obj.style) { obj=obj.style; v=(v=='show')?'visible':(v='hide')?'hidden':v; }
+obj.visibility=v; }
+}
+//-->
+</SCRIPT>
+<SCRIPT language=JavaScript>
+function MM_openBrWindow(theURL,winName,features) { //v2.0
+window.open(theURL,winName,features);
+}
+function MM_findObj(n, d) { //v4.01
+var p,i,x; if(!d) d=document; if((p=n.indexOf("?"))>0&&parent.frames.length) {
+d=parent.frames[n.substring(p+1)].document; n=n.substring(0,p);}
+if(!(x=d[n])&&d.all) x=d.all[n]; for (i=0;!x&&i<d.forms.length;i++) x=d.forms[i][n];
+for(i=0;!x&&d.layers&&i<d.layers.length;i++) x=MM_findObj(n,d.layers[i].document);
+if(!x && d.getElementById) x=d.getElementById(n); return x;
+}
+function MM_preloadImages() { //v3.0
+var d=document; if(d.images){ if(!d.MM_p) d.MM_p=new Array();
+var i,j=d.MM_p.length,a=MM_preloadImages.arguments; for(i=0; i<a.length; i++)
+if (a[i].indexOf("#")!=0){ d.MM_p[j]=new Image; d.MM_p[j++].src=a[i];}}
+}
+//-->
+</SCRIPT>
+</head>
+<body topmargin="0" leftmargin="0" bgcolor="#666666"><div align="center"> 
+
+<div align="center">
+<center>
+<table border="0" cellpadding="0" cellspacing="0" width="780">
+<tr>
+  <td bgcolor=C7C6C6 width="780" align="right" height="20">首页·资料·安全·下载·论坛·新闻·文学·IT·通信·游戏·音乐&nbsp;&nbsp;</td>
+</tr>
+<tr>
+<td bgcolor=EFEFEF align="center" height="80">
+<div align="center">
+<table border="0" cellpadding="0" cellspacing="0" width="780" bgcolor=EFEFEF height="80">
+<tr>
+          <td width="170" align="center"><div align="center">
+              <object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,29,0" width="180" height="60">
+                <param name="movie" value="logo.swf">
+                <param name="quality" value="high">
+                <embed src="logo.swf" quality="high" pluginspage="http://www.macromedia.com/go/getflashplayer" type="application/x-shockwave-flash" width="180" height="60"></embed></object>
+            </div></td>
+          <td width="480" align="center"><div align="center">
+              <object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,29,0" width="470" height="60">
+                <param name="movie" value="banner.swf">
+                <param name="quality" value="high">
+                <embed src="banner.swf" quality="high" pluginspage="http://www.macromedia.com/go/getflashplayer" type="application/x-shockwave-flash" width="470" height="60"></embed></object>
+            </div></td>
+<td width="120" align="center">
+<div align="center">
+<table cellspacing="0" width="119" bgcolor="#81adb3" border="0">
+<tbody>
+<tr>
+<td>
+<table cellspacing="0" cellpadding="0" width="100%" bgcolor="#d9ebed" border="0">
+<tbody>
+<tr align="middle">
+<td height="19"><a href="http://www.mlyj.net/forum/index.php?mods=member&action=login" target="_blank"><font color="#006666">会员登陆</font></a></td>
+<td height="19"><a href="http://www.mlyj.net/forum/index.php?mods=member&action=showRegisterItem" target="_blank"><font color="#006666">会员注册</font></a></td>
+</tr>
+<tr align="middle" bgcolor=#FFFFFF>
+<td height="19"><a href="http://www.mlyj.net/forum/index.php?mods=member&action=list" target="_blank"><font color="#006666">会员列表</font></a></td>
+<td height="19"><a href="http://www.mlyj.net/forum/index.php?mods=member&action=logout"><font color="#006666">退出登陆</font></a></td>
+</tr>
+<tr align="middle">
+                            <td height="19"> <a href="#top" onClick="window.external.addFavorite('http://www.juntuan.org','第八军团')" title=第八军团  class=date> <font color="#006666">加入收藏</font></td>
+<td height="19"><a href="#" onclick="this.style.behavior='url(#default#homepage)';this.setHomePage('http://www.juntuan.org/index.asp');"><font color="#006666">设为首页</font></a></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</td>
+</tr>
+<div align="center">
+<center>
+<table border="0" cellpadding="0" cellspacing="0" width="780" bgcolor=#FFFFFF>
+<tr>
+<td height="20" width="60" bgcolor=7B91A9 align="center"><a class=top3 href="http://www.juntuan.org/index.asp">首 页</a>
+</td>
+<td height="20" width="720" valign="top" align="right">
+<div align="right">
+<table border="0" cellpadding="0" cellspacing="0" width="719" align="right">
+<tr>
+<td bgcolor=5A7087 width="459" height="19"><marquee onmouseover="this.scrollDelay=10000" onmouseout="this.scrollDelay=30" scrollamount="3" width="459"></marquee></td>
+<td bgcolor=5A7087 width="260" height="19" align="center"><script src="js/Clock.JS"></script></td>
+</tr>
+</table>
+</div>
+</td>
+</tr>
+</table>
+</center>
+</div>
+<div align="center">
+<center>
+ <table border="0" cellpadding="0" cellspacing="0" width="780">
+<tr bgcolor=7B91A9>
+ <td width="60" align="center"><a class=top3 href="Speciallist.asp">专 题</a></td>
+<td width="588">
+<div align="center">
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+
+<a class=top3 href="BigClass.asp?BigClassID=1&BigClassName=网络新闻&BigClassType=1"><font color=>网络新闻</font></a><font color="#FFFFFF"> | </td>
+
+<a class=top3 href="BigClass.asp?BigClassID=2&BigClassName=中国黑客&BigClassType=1"><font color=>中国黑客</font></a><font color="#FFFFFF"> | </td>
+
+<a class=top3 href="BigClass.asp?BigClassID=3&BigClassName=黑客知识&BigClassType=1"><font color=>黑客知识</font></a><font color="#FFFFFF"> | </td>
+
+<a class=top3 href="BigClass.asp?BigClassID=5&BigClassName=安全漏洞&BigClassType=1"><font color=>安全漏洞</font></a><font color="#FFFFFF"> | </td>
+
+<a class=top3 href="BigClass.asp?BigClassID=6&BigClassName=安全工具&BigClassType=1"><font color=>安全工具</font></a><font color="#FFFFFF"> | </td>
+
+<a class=top3 href="BigClass.asp?BigClassID=7&BigClassName=脚本攻击&BigClassType=1"><font color=>脚本攻击</font></a><font color="#FFFFFF"> | </td>
+
+<a class=top3 href="BigClass.asp?BigClassID=8&BigClassName=安全焦点&BigClassType=1"><font color=>安全焦点</font></a><font color="#FFFFFF"> | </td>
+
+<a class=top3 href="BigClass.asp?BigClassID=9&BigClassName=军团原创&BigClassType=1"><font color=>军团原创</font></a><font color="#FFFFFF"> | </td>
+
+<a class=top3 href="BigClass.asp?BigClassID=10&BigClassName=编程宝典&BigClassType=1"><font color=>编程宝典</font></a><font color="#FFFFFF"> | </td>
+
+</td>
+</tr>
+</table>
+</div>
+</td>
+        <td width="132" > &nbsp;<a href="http://www.mlyj.net/forum/" target="_blank"></a><a href="../soft/default.asp" target="_blank"><font color="#FFFFFF">黑软下载</font></a>&nbsp;<font color="#FFFFFF">|</font> 
+          <a href="http://www.mlyj.net/forum/" target="_blank"><font color="#FFFFFF">军团论坛</font></a> 
+          <a href="http://www.mlyj.net/forum/" target="_blank"></a> </td>
+</tr>
+</table>
+</center>
+</div>
+<table border="0" cellpadding="0" cellspacing="0" width="780">
+<tr>
+<td width="780" bgcolor="#7B91A9" valign="top">
+<hr color="#000000" noshade size="1" width="762">
+</td>
+</tr>
+</table>
+<NOSCRIPT><IFRAME SRC=*.html></IFRAME></NOSCRIPT>
+<table width=780 border=0 cellspacing=0 cellpadding=0>
+<tr>
+<TD BGCOLOR=7B91A9 WIDTH="1"></TD>
+<TD BGCOLOR='7B91A9' WIDTH="7">
+
+<td style="BORDER-BOTTOM: #000000 1px double" bgcolor="7B91A9" height="20" align="left" class=top4><img src="images/where.gif" border=0>&nbsp;<font color="#FFFFFF">当前位置：</font><a class=top4 href="http://www.juntuan.org/index.asp">第八军团</a> 
+<font color="#FFFFFF">></font> <font color="#FFFFff">阅读文章</font> </td>
+<td style="BORDER-BOTTOM: #000000 1px double" bgcolor="7B91A9" height="20" align="center" class=top4><a href="javascript:window.print()"><img src="images/printer.gif" width="16" height="14" border="0" alt="打印本页"></a></td>
+
+<TD BGCOLOR='7B91A9' WIDTH="7"></TD>
+<TD BGCOLOR=7B91A9 WIDTH="1"></TD>
+</tr>
+</table>
+
+<table border="0" style="border-collapse: collapse" width="780" cellspacing="0" cellpadding="0" bgcolor="#000000" height="338">
+<tr>
+<TD BGCOLOR="7B91A9" WIDTH="1"></TD><TD BGCOLOR='7B91A9' WIDTH="7"></TD><TD BGCOLOR="#000000" WIDTH="1"></TD>
+<td align="left" valign="top" bgcolor="FFFFFF">
+        <table border="0" cellpadding="0" cellspacing="0" width="98%" style="TABLE-LAYOUT: fixed" align="center">
+          <tr> 
+            <td align=center valign="bottom" style="WORD-WRAP: break-word" colspan="2" class=ReadNewsTitle> 
+              <br>
+              <br>
+              <b>反病毒引擎设计<br>
+              </b></td>
+          </tr>
+          <tr> 
+            <td align=center colspan="2"> 
+              <hr width="100%" align="center" noshade size="1">
+            </td>
+          </tr>
+          <tr> 
+            <td colspan="2" align=center class=NEWSREADME><font color=red>admin@ourmm.com</font>&nbsp;时间：2003-11-4 0:36:38</td>
+          </tr>
+          <tr> 
+            <td  align="center" colspan="2"> 
+              <table border="0" cellspacing="0" cellpadding="0" align="center" style="TABLE-LAYOUT: fixed">
+                <tr> 
+                  <td height="40">&nbsp; </td>
+                </tr>
+                <tr> 
+                  <td style="WORD-WRAP: break-word" Class=news> 
+                    <font id="zoom" class=f14>本文将对当今先进的病毒/反病毒技术做全面而细致的介绍，重点当然放在了反病毒上，特别是虚拟机和实时监控技术。文中首先介绍几种当今较为流行的病毒技术，包括获取系统核心态特权级，驻留，截获系统操作，变形和加密等。然后分五节详细讨论虚拟机技术：第一节简单介绍一下虚拟机的概论；第二节介绍加密变形病毒，作者会分析两个著名变形病毒的解密子；第三节是虚拟机实现技术详解，其中会对两种不同方案进行比较，同时将剖析一个查毒用虚拟机的总体控制结构；第四节主要是对特定指令处理函数的分析；最后在第五节中列出了一些反虚拟执行技术做为今后改进的参照。论文的第三章主要介绍实时监控技术，由于win9x和winnt/2000系统机制和驱动模型不同，所以会分成两个操作系统进行讨论。其中涉及的技术很广泛：包括驱动编程技术，文件钩挂，特权级间通信等等。本文介绍的技术涉及操作系统底层机制，难度较大。所提供的代码，包括一个虚拟机C语言源代码和两个病毒实时监控驱动程序反汇编代码，具有一定的研究和实用价值。 <BR>关键字：病毒，虚拟机，实时监控 <BR>文档内容目录 <BR>1．绪 论 <BR><BR>1. 1课题背景 <BR><BR>1.2当今病毒技术的发展状况 <BR><BR>1.2.1系统核心态病毒 <BR><BR>1.2.2驻留病毒 <BR><BR>1.2.3截获系统操作 <BR><BR>1.2.4加密变形病毒 <BR><BR>1.2.5反跟踪/反虚拟执行病毒 <BR><BR>1.2.6直接API调用 <BR><BR>1.2.7病毒隐藏 <BR><BR>1.2.8病毒特殊感染法 <BR><BR>2．虚拟机查毒 <BR><BR>2.1虚拟机概论 <BR><BR>2. 2加密变形病毒 <BR><BR>2.3虚拟机实现技术详解 <BR><BR>2.4虚拟机代码剖析 <BR><BR>2.4.1不依赖标志寄存器指令模拟函数的分析 <BR><BR>2.4.2依赖标志寄存器指令模拟函数的分析 <BR><BR>2.5反虚拟机技术 <BR><BR>3．病毒实时监控 <BR><BR>3.1实时监控概论 <BR><BR>3.2病毒实时监控实现技术概论 <BR><BR>3.3WIN9X下的病毒实时监控 <BR><BR>3.3.1实现技术详解 <BR><BR>3.3.2程序结构与流程 <BR><BR>3.3.3HOOKSYS.VXD逆向工程代码剖析 <BR><BR>3.4WINNT/2000下的病毒实时监控 <BR><BR>3.4.1实现技术详解 <BR><BR>3.4.2程序结构与流程 <BR><BR>3.4.3HOOKSYS.SYS逆向工程代码剖析 <BR><BR>结论 <BR><BR>致谢 <BR><BR>主要参考文献 <BR><BR><BR>1．绪 论 <BR>本论文研究的主要内容正如其题目所示是设计并编写一个先进的反病毒引擎。首先需要对这“先进”二字做一个解释，何为“先进”？众所周知，传统的反病毒软件使用的是基于特征码的静态扫描技术，即在文件中寻找特定十六进制串，如果找到，就可判定文件感染了某种病毒。但这种方法在当今病毒技术迅猛发展的形势下已经起不到很好的作用了。原因我会在以下的章节中具体描述。因此本论文将不对杀毒引擎中的特征码扫描和病毒代码清除模块做分析。我们要讨论的是为应付先进的病毒技术而必需的两大反病毒技术--虚拟机和实时监控技术。具体什么是虚拟机，什么是实时监控，我会在相应的章节中做详尽的介绍。这里我要说明的一点是，这两项技术虽然在前人的工作中已有所体现（被一些国内外先进的反病毒厂家所使用），但出于商业目的，这些技术并没有被完全公开，所以你无论从书本文献还是网路上的资料中都无法找到关于这些技术的内幕。而我会在相关的章节中剖析大量的程序源码（主要是2.4节中的一个完整的虚拟机源码）或是逆向工程代码（3.3.3节和3.4.3节中三个我逆向工程的某著名反病毒软件的实时监控驱动程序及客户程序的反汇编代码），并同时公布一些我个人挖掘的操作系统内部未公开的机制和数据结构。另外我在文中会大量地提到或引用一些关于系统底层奥秘的大师级经典图书，这算是给喜爱系统级编程但又苦于找不到合适教材的朋友开了一份书单。下面就开始进入论文的正题。 <BR><BR>1.1课题背景 <BR>本论文涉及的两个主要技术，也是当今反病毒界使用的最为先进的技术中的两个，究竟是作何而用的呢？首先说说虚拟机技术，它主要是为查杀加密变形病毒而设计的。简单地来说，所谓虚拟机并不是个虚拟的机器，说得更合适一些应该是个虚拟CPU（用软件实现的CPU），只不过病毒界都这么叫而已。它的作用主要是模拟INTEL X86 CPU的工作过程来解释执行可执行代码，与真正的CPU一样能够取指，译码并执行相应机器指令规定的操作。当然什么是加密变形病毒，它们为什么需要被虚拟执行以及怎样虚拟执行等问题会在合适的章节中得到解答。再说另一个重头戏--实时监控技术，它的用处更为广泛，不仅局限于查杀病毒。被实时监控的对象也很多，如中断（Intmon），页面错误（Pfmon），磁盘访问（Diskmon）等等。用于杀毒的监控主要是针对文件访问，在你要对一个文件进行访问时，实时监控会先检查文件是否为带毒文件，若是，则由用户选择是清除病毒还是取消此次操作请求。这样就给了用户一个相对安全的执行环境。但同时，实时监控会使系统性能有所下降，不少杀毒软件的用户都抱怨他们的实时监控让系统变得奇慢无比而且不稳定。这就给我们的设计提出了更高的要求，即怎样在保证准确拦截文件操作的同时，让实时监控占用的系统资源更少。我会在病毒实时监控一节中专门讨论这个问题。这两项技术在国内外先进的反病毒厂家的产品中都有使用，虽然它们的源代码没有公开，但我们还是可以通过逆向工程的方法来窥视一下它们的设计思路。其实你用一个十六进制编辑器来打开它们的可执行文件，也许就会看到一些没有剥掉的调试符号、变量名字或输出信息，这些蛛丝马迹对于理解代码的意图大有裨益。同时，在反病毒软件的安装目录中后缀为.VXD或.SYS就是执行实时监控的驱动程序，可以拿来逆向一下（参看我在后面分析驱动源代码中的讨论）。相信至此，我们对这两项技术有了一个大体的了解。后面我们将深入到技术的细节中去。 <BR><BR>1.2当今病毒技术的发展状况 <BR>要讨论怎样反病毒，就必须从病毒技术本身的讨论开始。正是所谓“知己知彼，百战不殆”。其实，我认为目前规定研究病毒技术属于违法行为存在着很大的弊端。很难想象一个毫无病毒写作经验的人会成为杀毒高手。据我了解，目前国内一些著名反病毒软件公司的研发队伍中不乏病毒写作高手。只不过他们将同样的技术用到了正道上，以‘毒’攻‘毒’。所以我希望这篇论文能起到抛砖引玉的作用，期待着有更多的人会将病毒技术介绍给大众。当今的病毒与DOS和WIN3.1时代下的从技术角度上看有很多不同。我认为最大的转变是：引导区病毒减少了，而脚本型病毒开始泛滥。原因是在当今的操作系统下直接改写磁盘的引导区会有一定的难度（DOS则没有保护，允许调用INT13直接写盘），而且引导区的改动很容易被发现，所以很少有人再写了；而脚本病毒以其传播效率高且容易编写而深得病毒作者的青睐。当然由于这两种病毒用我上面说过的基于特征码的静态扫描技术就可以查杀，所以不在我们的讨论之列。我要讨论的技术主要来自于二进制外壳型病毒（感染文件的病毒），并且这些技术大都和操作系统底层机制或386以上CPU的保护模式相关，所以值得研究。大家都知道DOS下的外壳型病毒主要感染16位的COM或EXE文件，由于DOS没有保护，它们能够轻松地进行驻留，减少可用内存（通过修改MCB链），修改系统代码，拦截系统服务或中断。而到了WIN9X和WINNT/2000时代，想写个运行其上的32位WINDOWS病毒绝非易事。由于页面保护，你不可能修改系统的代码页。由于I/O许可位图中的规定，你也不能进行直接端口访问。在WINDOWS中你不可能象在DOS中那样通过截获INT21H来拦截所有文件操作。总之，你以一个用户态程序运行，你的行为将受到操作系统严格的控制，不可能再象DOS下那样为所欲为了。另外值得一提的是，WINDOWS下采用的可执行文件格式和DOS下的EXE截然不同（普通程序采用PE格式，驱动程序采用LE），所以病毒的感染文件的难度增大了（PE和LE比较复杂，中间分了若干个节，如果感染错了，将导致文件不能继续执行）。因为当今病毒的新技术太多，我不可能将它们逐一详细讨论，于是就选取了一些重要并具有代表性的在本章的各小节中进行讨论。 <BR><BR>1.2.1系统核心态病毒 <BR>在介绍什么是系统核心态病毒之前，有必要讨论一下核心态与用户态的概念。其实只要随便翻开一本关于386保护模式汇编程序设计的教科书，都可以找到对这两个概念的讲述。386及以上的CPU实现了4个特权级模式（WINDOWS只用到了其中两个），其中特权级0（Ring0）是留给操作系统代码，设备驱动程序代码使用的，它们工作于系统核心态；而特权极3（Ring3）则给普通的用户程序使用，它们工作在用户态。运行于处理器核心态的代码不受任何的限制，可以自由地访问任何有效地址，进行直接端口访问。而运行于用户态的代码则要受到处理器的诸多检查，它们只能访问映射其地址空间的页表项中规定的在用户态下可访问页面的虚拟地址，且只能对任务状态段（TSS）中I/O许可位图（I/O Permission Bitmap）中规定的可访问端口进行直接访问（此时处理器状态和控制标志寄存器EFLAGS中的IOPL通常为0，指明当前可以进行直接I/O的最低特权级别是Ring0）。以上的讨论只限于保护模式操作系统，象DOS这种实模式操作系统则没有这些概念，其中的所有代码都可被看作运行在核心态。既然运行在核心态有如此之多的优势，那么病毒当然没有理由不想得到Ring0。处理器模式从Ring3向Ring0的切换发生在控制权转移时，有以下两种情况：访问调用门的长转移指令CALL，访问中断门或陷阱门的INT指令。具体的转移细节由于涉及复杂的保护检查和堆栈切换，不再赘述，请参阅相关资料。现代的操作系统通常使用中断门来提供系统服务，通过执行一条陷入指令来完成模式切换，在INTEL X86上这条指令是INT，如在WIN9X下是INT30（保护模式回调），在LINUX下是INT80，在WINNT/2000下是INT2E。用户模式的服务程序（如系统DLL）通过执行一个INTXX来请求系统服务，然后处理器模式将切换到核心态，工作于核心态的相应的系统代码将服务于此次请求并将结果传给用户程序。下面就举例子说明病毒进入系统核心态的方法。 <BR><BR>在WIN9X下进程虚拟地址空间中映射共享系统代码的部分（3G--4G）中除了最上面4M页表有页面保护外其它地方可由用户程序读写。如果你用Softice（系统级调试器）的PAGE命令查看这些地址的页属性，则你会惊奇地发现U RW位，这说明这些地址可从用户态直接读出或写入。这意味着任何一个用户程序都能够在其运行过程中恶意或无意地破坏操作系统代码页。由此病毒就可以在GDT（全局描述符表），LDT（局部描述符表）中随意构造门描述符并借此进入核心态。当然，也不一定要借助门描述，还有许多方法可以得到Ring0。据我所知的方法就不下10余种之多,如通过调用门（Callgate），中断门（Intgate），陷阱门（Trapgate），异常门（Fault），中断请求（IRQs），端口（Ports），虚拟机管理器（VMM），回调（Callback），形式转换（Thunks），设备IO控制（DeviceIOControl）,API函数（SetThreadContext） ,中断2E服务（NTKERN.VxD）。由于篇幅的限制我不可能将所有的方法逐一描述清楚，这里我仅选取最具有代表性的CIH病毒1.5版开头的一段代码。 <BR><BR>人们常说CIH病毒运用了VXD（虚拟设备驱动）技术，其实它本身并不是VXD。只不过它利用WIN9X上述漏洞，在IDT（中断描述符表）中构造了一个DPL（段特权级）为3的中断门（意味着可以从Ring3下执行访问该中断门的INT指令），并使描述符指向自己私有地址空间中的一个需要工作在Ring0下的函数地址。这样一来CIH就可以通过简单的执行一条INTXX指令（CIH选择使用INT3，是为了使同样接挂INT3的系统调试器Softice无法正常工作以达到反跟踪的目的）进入系统核心态，从而调用系统的VMM和VXD服务。以下是我注释的一段CIH1.5的源代码： <BR><BR>&nbsp;; ************************************* <BR>&nbsp;; * 修改IDT以求得核心态特权级 * <BR>&nbsp;; ************************************* <BR>&nbsp;push eax <BR>&nbsp;sidt [esp-02h] ；取得IDT表基地址 <BR>&nbsp;pop ebx <BR>&nbsp;add ebx, HookExceptionNumber*08h+04h ；ZF = 0 <BR>&nbsp;cli ；读取修改系统数据时先禁止中断 <BR>&nbsp;mov ebp, [ebx] <BR>&nbsp;mov bp, [ebx-04h] ；取得原来的中断入口地址 <BR>&nbsp;lea esi, MyExceptionHook-@1[ecx] ；取得需要工作在Ring0的函数的偏移地址 <BR>&nbsp;push esi <BR>&nbsp;mov [ebx-04h], si <BR>&nbsp;shr esi, 16 <BR>&nbsp;mov [ebx+02h], si ；设置为新的中断入口地址 <BR>&nbsp;pop esi <BR>&nbsp;; ************************************* <BR>&nbsp;; * 产生一个异常来进入Ring0 * <BR>&nbsp;; ************************************* <BR>&nbsp;int HookExceptionNumber ；产生一个异常 <BR>当然，后面还有恢复原来中断入口地址和异常处理帧的代码。 <BR><BR><BR>刚才所讨论的技术仅限于WIN9X，想在WINNT/2000下进入Ring0则没有这么容易。主要的原因是WINNT/2000没有上述的漏洞，它们的系统代码页面（2G--4G）有很好的页保护。大于0x80000000的虚拟地址对于用户程序是不可见的。如果你用Softice的PAGE命令查看这些地址的页属性，你会发现S位，这说明这些地址仅可从核心态访问。所以想在IDT，GDT随意构造描述符，运行时修改内核是根本做不到的。所能做的仅是通过加载一个驱动程序，使用它来做你在Ring3下做不到的事情。病毒可以在它们加载的驱动中修改内核代码，或为病毒本身创建调用门（利用NT由Ntoskrnl.exe导出的未公开的系统服务KeI386AllocateGdtSelectors，KeI386SetGdtSelector，KeI386ReleaseGdtSelectors）。如Funlove病毒就利用驱动来修改系统文件（Ntoskrnl.exe，Ntldr）以绕过安全检查。但这里面有两个问题，其一是驱动程序从哪里来，现代病毒普遍使用一个称为“Drop”的技术，即在病毒体本身包含驱动程序二进制码（可以进行压缩或动态构造文件头），在病毒需要使用时，动态生成驱动程序并将它们扔到磁盘上，然后马上通过在SCM（服务控制管理器）注册并最终调用StartService来使驱动程序得以运行；其二是加载一个驱动程序需要管理员身份，普通帐号在调用上述的加载函数时会返回失败（安全子系统要检查用户的访问令牌（Token）中有无SeLoadDriverPrivilege特权），但多数用户在大多时候登录时会选择管理员身份，否则连病毒实时监控驱动也同样无法加载，所以留给病毒的机会还是很多的。 <BR><BR>1.2.2驻留病毒 <BR>驻留病毒是指那些在内存中寻找合适的页面并将病毒自身拷贝到其中且在系统运行期间能够始终保持病毒代码的存在。驻留病毒比那些直接感染（Direct-action）型病毒更具隐蔽性，它通常要截获某些系统操作来达到感染传播的目的。进入了核心态的病毒可以利用系统服务来达到此目的，如CIH病毒通过调用一个由VMM导出的服务VMMCALL _PageAllocate在大于0xC0000000的地址上分配一块页面空间。而处于用户态的程序要想在程序退出后仍驻留代码的部分于内存中似乎是不可能的，因为无论用户程序分配何种内存都将作为进程占用资源的一部分，一旦进程结束，所占资源将立即被释放。所以我们要做的是分配一块进程退出后仍可保持的内存。 <BR><BR>病毒写作小组29A的成员GriYo 运用的一个技术很有创意：他通过CreateFileMappingA 和MapViewOfFile创建了一个区域对象并映射它的一个视口到自己的地址空间中去，并把病毒体搬到那里，由于文件映射所在的虚拟地址处于共享区域（能够被所有进程看到，即所有进程用于映射共享区内虚拟地址的页表项全都指向相同的物理页面），所以下一步他通过向Explorer.exe中注入一段代码（利用WriteProcessMemory来向其它进程的地址空间写入数据），而这段代码会从Explorer.exe的地址空间中再次申请打开这个文件映射。如此一来，即便病毒退出，但由于Explorer.exe还对映射页面保持引用，所以一份病毒体代码就一直保持在可以影响所有进程的内存页面中直至Explorer.exe退出。 <BR><BR>另外还可以通过修改系统动态连接模块（DLL）来进行驻留。WIN9X下系统DLL（如Kernel32.dll 映射至BFF70000）处于系统共享区域（2G-3G），如果在其代码段空隙中写入一小段病毒代码则可以影响其它所有进程。但Kernel32.dll的代码段在用户态是只能读不能写的。所以必须先通过特殊手段修改其页保护属性；而在WINNT/2000下系统DLL所在页面被映射到进程的私有空间（如Kernel32.dll 映射至77ED0000）中，并具有写时拷贝属性，即没有进程试图写入该页面时，所有进程共享这个页面；而当一个进程试图写入该页面时，系统的页面错误处理代码将收到处理器的异常，并检查到该异常并非访问违例，同时分配给引发异常的进程一个新页面，并拷贝原页面内容于其上且更新进程的页表以指向新分配的页。这种共享内存的优化给病毒的写作带来了一定的麻烦，病毒不能象在WIN9X下那样仅修改Kernel32.dll一处代码便可一劳永逸。它需要利用WriteProcessMemory来向每个进程映射Kernel32.dll的地址写入病毒代码，这样每个进程都会得到病毒体的一个副本，这在病毒界被称为多进程驻留或每进程驻留（Muti-Process Residence or Per-Process Residence ）。 <BR><BR>1.2.3截获系统操作 <BR>截获系统操作是病毒惯用的伎俩。DOS时代如此，WINDOWS时代也不例外。在DOS下，病毒通过在中断向量表中修改INT21H的入口地址来截获DOS系统服务（DOS利用INT21H来提供系统调用，其中包括大量的文件操作）。而大部分引导区病毒会接挂INT13H（提供磁盘操作服务的BIOS中断）从而取得对磁盘访问的控制。WINDOWS下的病毒同样找到了钩挂系统服务的办法。比较典型的如CIH病毒就是利用了IFSMGR.VXD（可安装文件系统）提供的一个系统级文件钩子来截获系统中所有文件操作，我会在相关章节中详细讨论这个问题，因为WIN9X下的实时监控也主要利用这个服务。除此之外，还有别的方法。但效果没有这个系统级文件钩子好，主要是不够底层，会丢失一些文件操作。 <BR><BR>其中一个方法是利用APIHOOK，钩挂API函数。其实系统中并没有现成的这种服务，有一个SetWindowsHookEx可以钩住鼠标消息，但对截获API函数则无能为力。我们能做的是自己构造这样的HOOK。方法其实很简单：比如你要截获Kernel32.dll导出的函数CreateFile，只须在其函数代码的开头（BFF7XXXX）加入一个跳转指令到你的钩子函数的入口，在你的函数执行完后再跳回来。如下图所示： <BR><BR>;; Target Function（要截获的目标函数） <BR>&nbsp;…… <BR>&nbsp;TargetFunction:（要截获的目标函数入口） <BR>&nbsp;jmp DetourFunction（跳到钩子函数，5个字节长的跳转指令） <BR>&nbsp;TargetFunction+5: <BR>&nbsp;push edi <BR>&nbsp;…… <BR>&nbsp;;; Trampoline（你的钩子函数） <BR>&nbsp;…… <BR>&nbsp;TrampolineFunction:（你的钩子函数执行完后要返回原函数的地方） <BR>&nbsp;push ebp <BR>&nbsp;mov ebp,esp <BR>&nbsp;push ebx <BR>&nbsp;push esi（以上几行是原函数入口处的几条指令，共5个字节） <BR>&nbsp;jmp TargetFunction+5（跳回原函数） <BR>&nbsp;…… <BR>&nbsp;&nbsp;但这种方法截获的仅仅是很小一部分文件打开操作。 <BR><BR>在WIN9X下还有一个鲜为人知的截获文件操作的办法，说起来这应该算是WIN9X的一大后门。它就是Kernel32.dll中一个未公开的叫做VxdCall0的API函数。反汇编这个函数的代码如下： <BR><BR>mov eax,dword ptr [esp+00000004h] ；取得服务代号 <BR><BR>pop dword ptr [esp] ；堆栈修正 <BR><BR>call fword ptr cs:[BFFC9004] ；通过一个调用门调用3B段某处的代码 <BR><BR>如果我们继续跟踪下去，则会看到： <BR><BR>003B:XXXXXXXX int 30h ；这是个用以陷入VWIN32.VXD的保护模式回调 <BR><BR>有关VxdCall的详细内容，请参看Matt Pietrek的《Windows 95 System Programming Secrets》。 <BR><BR>当服务代号为0X002A0010时，保护模式回调会陷入VWIN32.VXD中一个叫做VWIN32_Int21Dispatch的服务。这正说明了WIN9X还在依赖于MSDos，尽管微软声称WIN9X不再依赖于MSDos。调用规范如下： <BR><BR>&nbsp;my_int21h:push ecx <BR>&nbsp;push eax ；类似DOS下INT21H的AX中传入的功能号 <BR>&nbsp;push 002A0010h <BR>&nbsp;call dword ptr [ebp+a_VxDCall] <BR>&nbsp;ret <BR>&nbsp;我们可以将上面VxdCall0函数的入口处第三条远调用指令访问的Kernel32.dll数据段中用户态可写地址BFFC9004Υ娲⒌?FWORD'六个字节改为指向我们自己钩子函数的地址，并在钩子中检查传入服务号和功能号来确定是否是请求VWIN32_Int21Dispatch中的某个文件服务。著名的HPS病毒就利用了这个技术在用户态下直接截获系统中的文件操作，但这种方法截获的也仅仅是一小部分文件操作。 <BR><BR>1.2.4加密变形病毒 <BR>加密变形病毒是虚拟机一章的重点内容，将放到相关章节中介绍。 <BR><BR>1.2.5反跟踪/反虚拟执行病毒 <BR>反跟踪/反虚拟执行病毒和虚拟机联系密切，所以也将放到相应的章节中介绍。 <BR><BR>1.2.6直接API调用 <BR>直接API调用是当今WIN32病毒常用的手段，它指的是病毒在运行时直接定位API函数在内存中的入口地址然后调用之的一种技术。普通程序进行API调用时，编译器会将一个API调用语句编译为几个参数压栈指令后跟一条间接调用语句（这是指Microsoft编译器，Borland编译器使用JMP <BR><BR>DWORD PTR [XXXXXXXXh]）形式如下： <BR><BR>&nbsp;push arg1 <BR>&nbsp;push arg2 <BR>&nbsp;…… <BR>&nbsp;call dword ptr[XXXXXXXXh] <BR>地址XXXXXXXXh在程序映象的导入（Import Section）段中，当程序被加载运行时，由装入器负责向里面添入API函数的地址，这就是所谓的动态链接机制。病毒由于为了避免感染一个可执行文件时在文件的导入段中构造病毒体代码中用到的API的链接信息，它选择运用自己在运行时直接定位API函数地址的代码。其实这些函数地址对于操作系统的某个版本是相对固定的，但病毒不能依赖于此。现在较为流行的做法是先定位包含API函数的动态连接库的装入基址，然后在其导出段（Export Section）中寻找到需要的API地址。后面一步几乎没有难度，只要你熟悉导出段结构即可。关键在于第一步--确定DLL装入地址。其实系统DLL装入基址对于操作系统的某个版本也是固定的，但病毒为确保其稳定性仍不能依赖这一点。目前病毒大都利用一个叫做结构化异常处理的技术来捕获病毒体引发的异常。这样一来病毒就可以在一定内存范围内搜索指定的DLL（DLL使用PE格式，头部有固定标志），而不必担心会因引发页面错误而被操作系统杀掉。 <BR><BR>由于异常处理和后面的反虚拟执行技术密切相关，所以特将结构化异常处理简单解释如下： <BR><BR>共有两类异常处理：最终异常处理和每线程异常处理。 <BR><BR>其一：最终异常处理 <BR><BR>当你的进程中无论哪个线程发生了异常，操作系统将调用你在主线程中调用SetUnhandledExceptionFilter建立的异常处理函数。你也无须在退出时拆去你安装的处理代码,系统会为你自动清除。 <BR><BR>&nbsp;PUSH OFFSET FINAL_HANDLER <BR>&nbsp;CALL SetUnhandledExceptionFilter <BR>&nbsp;…… <BR>&nbsp;CALL ExitProcess <BR>&nbsp;；************************************ <BR>&nbsp;FINAL_HANDLER: <BR>&nbsp;…… <BR>&nbsp;;(eax=-1 reload context and continue) <BR>&nbsp;MOV EAX,1 <BR>&nbsp;RET ；program entry point <BR>&nbsp;…… <BR>&nbsp;；code covered by final handler <BR>&nbsp;…… <BR>&nbsp;；code to provide a polite exit <BR>&nbsp;…… <BR>&nbsp;；eax=1 stops display of closure box <BR>&nbsp;；eax=0 enables display of the box <BR>&nbsp;其二：每线程异常处理 <BR><BR>FS中的值是一个十六位的选择子，它指向包含线程重要信息的数据结构TIB,线程信息块。其的首双字节指向我们称为ERR的结构： <BR><BR>1st dword +0 pointer to next err structure <BR><BR>(下一个err结构的指针) <BR><BR>2nd dword +4 pointer to own exception handler <BR><BR>(当前一级的异常处理函数的地址) <BR><BR>所以异常处理是呈练状的，如果你自己的处理函数捕捉并处理了这个异常，那么当你的程序发生了异常时，操作系统就不会调用它缺省的处理函数了，也就不会出现一个讨厌的执行了非法操作的红叉。 <BR><BR>下面是cih的异常段： <BR><BR>MyVirusStart: <BR>&nbsp;push ebp <BR>&nbsp;lea eax, [esp-04h*2] <BR>&nbsp;xor ebx, ebx <BR>&nbsp;xchg eax, fs:[ebx] ；交换现在的err结构和前一个结构的地址 <BR>&nbsp;； eax=前一个结构的地址 <BR>&nbsp;； fs:[0]=现在的err结构指针（在堆栈上） <BR>&nbsp;call @0 <BR>&nbsp;@0: <BR>&nbsp;pop ebx <BR>&nbsp;lea ecx, StopToRunVirusCode-@0[ebx] ；你的异常处理函数的偏移 <BR>&nbsp;push ecx ；你的异常处理函数的偏移压栈 <BR>&nbsp;push eax ；前一个err结构的地址压栈 <BR>&nbsp;；构造err结构，记这时候的esp(err结构指针)为esp0 <BR>&nbsp;…… <BR>&nbsp;StopToRunVirusCode: <BR>&nbsp;@1 = StopToRunVirusCode <BR>&nbsp;xor ebx, ebx ；发生异常时系统在你的练前又加了一个err结构， <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ；所以要先找到原来的结构地址 <BR>&nbsp;mov eax, fs:[ebx] ； 取现在的err结构的地址eax <BR>&nbsp;mov esp, [eax] ； 取下个结构地址即eps0到esp <BR>&nbsp;RestoreSE: ；没有发生异常时顺利的回到这里,你这时的esp为本esp0 <BR>&nbsp;pop dword ptr fs:[ebx] ；弹出原来的前一个结构的地址到fs:0 <BR>&nbsp;pop eax ；弹出你的异常处理地址，平栈而已 <BR>&nbsp;1.2.7病毒隐藏 <BR>实现进程或模块隐藏应该是一个成功病毒所必须具备的特征。在WIN9X下Kernel32.dll有一个可以使进程从进程管理器进程列表中消失的导出函数RegisterServiceProcess ，但它不能使病毒逃离一些进程浏览工具的监视。但当你知道这些工具是如何来枚举进程后，你也会找到对付这些工具相应的办法。进程浏览工具在WIN9X下大都使用一个叫做ToolHelp32.dll的动态连接库中的Process32First和Process32Next两个函数来实现进程枚举的；而在WINNT/2000里也有PSAPI.DLL导出的EnumProcess可用以实现同样之功能。所以病毒就可以考虑修改这些公用函数的部分代码，使之不能返回特定进程的信息从而实现病毒的隐藏。 <BR><BR>但事情远没有想象中那么简单，俗话说“道高一尺，魔高一丈”，此理不谬。由于现在很多逆项工程师的努力，微软力图隐藏的许多秘密已经逐步被人们所挖掘出来。当然其中就包括WINDOWS内核使用的管理进程和模块的内部数据结构和代码。比如WINNT/2000用由ntoskrnl.exe导出的内核变量PsInitialSystemProcess所指向的进程Eprocess块双向链表来描述系统中所有活动的进程。如果进程浏览工具直接在驱动程序的帮助下从系统内核空间中读出这些数据来枚举进程，那么任何病毒也无法从中逃脱。 <BR><BR>有关Eprocess的具体结构和功能，请参看David A.Solomon和Mark E.Russinovich的《Inside Windows2000》第三版。 <BR><BR>1.2.8病毒特殊感染法 <BR>对病毒稍微有些常识的人都知道，普通病毒是通过将自身附加到宿主尾部（如此一来，宿主的大小就会增加），并修改程序入口点来使病毒得到击活。但现在不少病毒通过使用特殊的感染技巧能够使宿主大小及宿主文件头上的入口点保持不变。 <BR><BR>附加了病毒代码却使被感染文件大小不变听起来让人不可思议，其实它是利用了PE文件格式的特点：PE文件的每个节之间留有按簇大小对齐后的空洞，病毒体如果足够小则可以将自身分成几份并分别插入到每个节最后的空隙中，这样就不必额外增加一个节，因而文件大小保持不变。著名的CIH病毒正是运用这一技术的典型范例（它的大小只有1K左右）。 <BR><BR>病毒在不修改文件头入口点的前提下要想获得控制权并非易事：入口点不变意味着程序是从原程序的入口代码处开始执行的，病毒必须要将原程序代码中的一处修改为导向病毒入口的跳转指令。原理就是这样，但其中还存在很多可讨论的地方，如在原程序代码的何处插入这条跳转指令。一些查毒工具扫描可执行文件头部的入口点域，如果发现它指向的地方不正常，即不在代码节而在资源节或重定位节中，则有理由怀疑文件感染了某种病毒。所以刚才讨论那种病毒界称之为EPO（入口点模糊）的技术可以很好的对付这样的扫描，同时它还是反虚拟执行的重要手段。 <BR><BR>另外值得一提的是现在不少病毒已经支持对压缩文件的感染。如Win32.crypto病毒就可以感染ZIP，ARJ，RAR，ACE，CAB 等诸多类型的压缩文件。这些病毒的代码中含有对特定压缩文件类型解压并压缩的代码段，可以先把压缩文件中的内容解压出来，然后对合适的文件进行感染，最后再将感染后文件压缩回去并同时修改压缩文件头部的校验和。目前不少反病毒软件都支持查多种格式的压缩文件，但对有些染毒的压缩文件无法杀除。原因我想可能是怕由于某种缘故，如解压或压缩有误，校验和计算不对等，使得清除后压缩文件格式被破坏。病毒却不用对用户的文件损坏负责，所以不存在这种担心。 <BR><BR>2．虚拟机查毒 <BR>2.1虚拟机概论 <BR>近些年,虚拟机，在反病毒界也被称为通用解密器，已经成为反病毒软件中最引人注目的部分，尽管反病毒者对于它的运用还远没有达到一个完美的程度，但虚拟机以其诸如"病毒指令码模拟器"和"Stryker"等多变的名称为反病毒产品的市场销售带来了光明的前景。以下的讨论将把我们带入一个精彩的虚拟技术的世界中。 <BR><BR>首先要谈及的是虚拟机的概念和它与诸如Vmware（美国VMWARE公司生产的一款虚拟机，它支持在WINNT/2000环境下运行如Linux等其它操作系统）和WIN9X下的VDM（DOS虚拟机，它用来在32位保护模式环境中运行16实模式代码）的区别。其实这些虚拟机的设计思想是有渊源可寻的，早在上个世纪60年代IBM就开发了一套名为VM/370的操作系统。VM/370在不同的程序之间提供抢先式多任务，作法是在单一实际的硬件上模式出多部虚拟机器。典型的VM/370会话，使用者坐在电缆连接的远程终端前，经由控制程序的一个IPL命令，模拟真实机器的初始化程序装载操作，于是 一套完整的操作系统被载入虚拟机器中，并开始为使用者着手创建一个会话。这套模拟系统是如此的完备，系统程序员甚至可以运行它的一个虚拟副本，来对新版本进行除错。Vmware与此非常相似，它作为原操作系统下的一个应用程序可以为运行于其上的目标操作系统创建出一部虚拟的机器，目标操作系统就象运行在单独一台真正机器上，丝毫察觉不到自己处于Vmware的控制之下。当在Vmware中按下电源键（Power On）时，窗口里出现了机器自检画面，接着是操作系统的载入，一切都和真的一样。而WIN9X为了让多个程序共享CPU和其它硬件资源决定使用VMs（所有Win32应用程序运行在一部系统虚拟机上；而每个16位DOS程序拥有一部DOS虚拟机）。VM是一个完全由软件虚构出来的东西，以和真实电脑完全相同的方式来回应应用程序所提出的需求。从某种角度来看，你可以将一部标准的PC的结构视为一套API。这套API的元素包括硬件I/O系统，和以中断为基础的BIOS和MS-DOS。WIN9X常常以它自己的软件来代理这些传统的API元素，以便能够对珍贵的硬件多重发讯。在VM上运行的应用程序认为自己独占整个机器，它们相信自己是从真正的键盘和鼠标获得输入，并从真正的屏幕上输出。稍被加一点限制，它们甚至可以认为自己完全拥有CPU和全部内存。实现虚拟技术关键在于软件虚拟化和硬件虚拟化，下面简要介绍WIN9X下的DOS虚拟机的实现。 <BR><BR>当Windows移往保护模式后，保护模式程序无法直接调用实模式的MS-DOS处理例程，也不能直接调用实模式的BIOS。软件虚拟化就是用来描述保护模式Windows部件是如何能够和实模式MS-DOS和BIOS彼此互动。软件虚拟化要求操作系统能够拦截企图跨越保护模式和实模式边界的调用，并且调整适当的参数寄存器后，改变CPU模式。WIN9X使用虚拟设备驱动（VXD）拦截来自保护模式的中断，通过实模式中断向量表（IVT），将之转换为实模式中断调用。做为转换的一部分，VXD必须使用置于保护模式扩展内存中的参数，生成出适当的参数，并将之放在实模式（V86）操作系统可以存取的地方。服务结束后，VXD在把结果交给扩展内存中保护模式调用端。16位DOS程序中大量的21H和13H中断调用就此解决，但其中还存在不少直接端口I/O操作，这就需要引入硬件虚拟化来解决。虚拟硬件的出现是为了在硬件中断请求线上产生中断请求，为了回应IN和OUT指令，改变特殊内存映射位置等原因。硬件虚拟化依赖于Intel 80386+的几个特性。其中一个是I/O许可掩码，使操作系统可能诱捕（Trap）对任何一个端口的所有IN/OUT指令。另一个特性是：由硬件辅助的分页机制，使操作系统能够提供虚拟内存，并拦截对内存地址的存取操作，将Video RAM虚拟化是此很好的例证。最后一个必要的特性是CPU的虚拟8086（V86）模式 ，让DOS程序象在实模式中那样地执行。 <BR><BR>我们下面讨论用于查毒的虚拟机并不是象某些人想象的：如Vmware一样为待查可执行程序创建一个虚拟的执行环境，提供它可能用到的一切元素，包括硬盘，端口等，让它在其上自由发挥，最后根据其行为来判定是否为病毒。当然这是个不错的构想，但考虑到其设计难度过大（需模拟元素过多且行为分析要借助人工智能理论），因而只能作为以后发展的方向。我设计的虚拟机严格的说不能称之为虚拟机器，而叫做虚拟CPU，通用解密器等更为合适一些，但由于反病毒界习惯称之为虚拟机，所以在下面的讨论中我还将延续这个名称。查毒的虚拟机是一个软件模拟的CPU，它可以象真正CPU一样取指，译码，执行，它可以模拟一段代码在真正CPU上运行得到的结果。给定一组机器码序列，虚拟机会自动从中取出第一条指令操作码部分，判断操作码类型和寻址方式以确定该指令长度，然后在相应的函数中执行该指令，并根据执行后的结果确定下条指令的位置，如此循环反复直到某个特定情况发生以结束工作，这就是虚拟机的基本工作原理和简单流程。设计虚拟机查毒的目的是为了对付加密变形病毒，虚拟机首先从文件中确定并读取病毒入口处代码，然后以上述工作步骤解释执行病毒头部的解密段（decryptor），最后在执行完的结果（解密后的病毒体明文）中查找病毒的特征码。这里所谓的“虚拟”，并非是创建了什么虚拟环境，而是指染毒文件并没有实际执行，只不过是虚拟机模拟了其真实执行时的效果。这就是虚拟机查毒基本原理，具体介绍请参看后面的相关章节。 <BR><BR>当然，虚拟执行技术使用范围远不止自动脱壳（虚拟机查毒实际上是自动跟踪病毒入口的解密子将加密的病毒体按其解密算法进行解密），它还可以应用在跨平台高级语言解释器，恶意代码分析，调试器。如刘涛涛设计的国产调试器Trdos就是完全利用虚拟技术解释执行被调试程序的每条指令，这种调试器比较起传统的断点式调试器（Debug,Softice等）具有诸多优势，如不易被被调试者察觉，断点个数没有限制等。 <BR><BR>2.2加密变形病毒 <BR>前面提到过设计虚拟机查毒的目的是为了对付加密变形病毒。这一章就重点介绍加密变形技术。 <BR><BR>早期病毒没有使用任何复杂的反检测技术，如果拿反汇编工具打开病毒体代码看到的将是真正的机器码。因而可以由病毒体内某处一段机器代码和此处距离病毒入口（注意不是文件头）偏移值来唯一确定一种病毒。查毒时只需简单的确定病毒入口并在指定偏移处扫描特定代码串。这种静态扫描技术对付普通病毒是万无一失的。 <BR><BR>随着病毒技术的发展，出现了一类加密病毒。这类病毒的特点是：其入口处具有解密子（decryptor），而病毒主体代码被加了密。运行时首先得到控制权的解密代码将对病毒主体进行循环解密，完成后将控制交给病毒主体运行，病毒主体感染文件时会将解密子，用随机密钥加密过的病毒主体，和保存在病毒体内或嵌入解密子中的密钥一同写入被感染文件。由于同一种病毒的不同传染实例的病毒主体是用不同的密钥进行加密，因而不可能在其中找到唯一的一段代码串和偏移来代表此病毒的特征，似乎静态扫描技术对此即将失效。但仔细想想，不同传染实例的解密子仍保持不变机器码明文（从理论上讲任何加密程序中都存在未加密的机器码，否则程序无法执行），所以将特征码选于此处虽然会冒一定的误报风险（解密子中代码缺少病毒特性，同样的特征码也会出现在正常程序中），但仍不失为一种有效的方法。 <BR><BR>由于加密病毒还没有能够完全逃脱静态特征码扫描，所以病毒写作者在加密病毒的基础之上进行改进，使解密子的代码对不同传染实例呈现出多样性，这就出现了加密变形病毒。它和加密病毒非常类似，唯一的改进在于病毒主体在感染不同文件会构造出一个功能相同但代码不同的解密子，也就是不同传染实例的解密子具有相同的解密功能但代码却截然不同。比如原本一条指令完全可以拆成几条来完成，中间可能会被插入无用的垃圾代码。这样，由于无法找到不变的特征码，静态扫描技术就彻底失效了。下面先举两个例子说明加密变形病毒解密子构造，然后再讨论怎样用虚拟执行技术检测加密变形病毒。 <BR><BR>著名多形病毒Marburg的变形解密子： <BR><BR>&nbsp;00401020: movsx edi,si ；病毒入口 <BR>&nbsp;00401023: movsx edx,bp <BR>&nbsp;00401026: jmp 00408a99 <BR>&nbsp;...... <BR>&nbsp;00407400: ；病毒体入口 <BR>&nbsp;加密的病毒主体 <BR>&nbsp;00408a94: ；解密指针初始值 <BR>&nbsp;...... <BR>&nbsp;00408a99: mov dl,f7 <BR>&nbsp;00408a9b: movsx edx,bx <BR>&nbsp;00408a9e: mov ecx,cf4b9b4f <BR>&nbsp;00408aa3: call 00408ac4 <BR>&nbsp;...... <BR>&nbsp;00408ac4: pop ebx <BR>&nbsp;00408ac5: jmp 00408ade <BR>&nbsp;...... <BR>&nbsp;00408ade: mov cx,di <BR>&nbsp;00408ae1: add ebx,9fdbd22d <BR>&nbsp;00408ae7: jmp 00408b08 <BR>&nbsp;...... <BR>&nbsp;00408b08: add ecx,80c1fbc1 <BR>&nbsp;00408b0e: mov ebp,7fcdeff3 ；循环解密记数器初值 <BR>&nbsp;00408b13: sub cl,39 <BR>&nbsp;00408b16: movsx esi,si <BR>&nbsp;00408b19: add dword ptr[ebx+60242dbf],9ef42073 ；解密语句，9ef42073是密钥 <BR>&nbsp;00408b23: mov edx,6fd1d4cf <BR>&nbsp;00408b28: mov di,dx <BR>&nbsp;00408b2b: inc ebp <BR>&nbsp;00408b2c: xor dl,a3 <BR>&nbsp;00408b2f: mov cx,si <BR>&nbsp;00408b32: sub ebx,00000004 ；移动解密偏移指针，逆向解密 <BR>&nbsp;00408b38: mov ecx,86425df9 <BR>&nbsp;00408b3d: cmp ebp,7fcdf599 ；判断解密结束与否 <BR>&nbsp;00408b43: jnz 00408b16 <BR>&nbsp;00408b49: jmp 00408b62 <BR>&nbsp;...... <BR>&nbsp;00408b62: mov di,bp <BR>&nbsp;00408b65: jmp 00407400 ；将控制权交给解密后的病毒体入口 <BR>&nbsp;著名多形病毒Hps的变形解密子： <BR><BR>&nbsp;005365b8: ；解密指针初始值和病毒体入口 <BR>&nbsp;加密的病毒主体 <BR>&nbsp;...... <BR>&nbsp;005379cd: call 005379e2 <BR>&nbsp;...... <BR>&nbsp;005379e2: pop ebx <BR>&nbsp;005379e3: sub ebx,0000141a ；设置解密指针初值 <BR>&nbsp;005379e9: ret <BR>&nbsp;...... <BR>&nbsp;005379f0: dec edx ；减少循环记数值 <BR>&nbsp;005379f1: ret <BR>&nbsp;...... <BR>&nbsp;00537a00: xor dword ptr[ebx],10e7ed59 ；解密语句，10e7ed59是密钥 <BR>&nbsp;00537a06: ret <BR>&nbsp;...... <BR>&nbsp;00537a1a: sub ebx,ffffffff <BR>&nbsp;00537a20: sub ebx,fffffffd ；移动解密指针，正向解密 <BR>&nbsp;00537a26: ret <BR>&nbsp;...... <BR>&nbsp;00537a30: mov edx,74d9cb97 ；设置循环记数初值 <BR>&nbsp;00537a35: ret <BR>&nbsp;...... <BR>&nbsp;00537a3f: call 005379cd ；病毒入口 <BR>&nbsp;00537a44: call 00537a30 <BR>&nbsp;00537a49: call 00537a00 <BR>&nbsp;00537a4e: call 00537a1a <BR>&nbsp;00537a53: call 005379f0 <BR>&nbsp;00537a58: mov esi,edx <BR>&nbsp;00537a5a: cmp esi,74d9c696 ；判断解密结束与否 <BR>&nbsp;00537a60: jnz 00537a49 <BR>&nbsp;00537a66: jmp 005365b8 ；将控制权交给解密后的病毒体入口 <BR>&nbsp;以上的代码看上去绝对不会是用编译器编译出来，或是编程者手工写出来的，因为其中充斥了大量的乱数和垃圾。代码中没有注释部分均可认为是垃圾代码，有用部分完成的功能仅是循环向加密过的病毒体的每个双字加上或异或一个固定值。这只是变形病毒传染实例的其中一个，别的实例的解密子和病毒体将不会如此，极度变形以至让人无法辩识。至于变形病毒的实现技术由于涉及复杂的算法和控制，因此不在我们讨论范围内。 <BR><BR>这种加密变形病毒的检测用传统的静态特征码扫描技术显然已经不行了。为此我们采取的方法是动态特征码扫描技术，所谓“动态特征码扫描”指先在虚拟机的配合下对病毒进行解密，接着在解密后病毒体明文中寻找特征码。我们知道解密后病毒体明文是稳定不变的，只要能够得到解密后的病毒体就可以使用特征码扫描了。要得到病毒体明文首先必须利用虚拟机对病毒的解密子进行解释执行，当跟踪并确定其循环解密完成或达到规定次数后，整个病毒体明文或部分已被保存到一个内部缓冲区中了。虚拟机之所以又被称为通用解密器在于它不用事先知道病毒体的加密算法，而是通过跟踪病毒自身的解密过程来对其进行解密。至于虚拟机怎样解释指令执行，怎样确定可执行代码有无循环解密段等细节将在下一节中介绍。 <BR><BR>2.3虚拟机实现技术详解 <BR>有了前面关于加密变形病毒的介绍，现在我们知道动态特征码扫描技术的关键就在于必须得到病毒体解密后的明文，而得到明文产生的时机就是病毒自身解密代码解密的完毕。目前有两种方法可以跟踪控制病毒的每一步执行，并能够在病毒循环解密结束后从内存中读出病毒体明文。一种是单步和断点跟踪法，和目前一些程序调试器相类似；另一种方法当然就是虚拟执行法。下面分别分析单步和断点跟踪法和虚拟执行法的技术细节。 <BR><BR>单步跟踪和断点是实现传统调试器的最根本技术。单步的工作原理很简单：当CPU在执行一条指令之前会先检查标志寄存器，如果发现其中的陷阱标志被设置则会在指令执行结束后引发一个单步陷阱INT1H。至于断点的设置有软硬之分，软件断点是指调试器用一个通常是单字节的断点指令（CC，即INT3H）替换掉欲触发指令的首字节，当程序执行至断点指令处，默认的调试异常处理代码将被调用，此时保存在栈中的段/偏移地址就是断点指令后一字节的地址；而硬件断点的设置则利用了处理器本身的调试支持，在调试寄存器（DR0--DR4）中设置触发指令的线形地址并设置调试控制寄存器（DR7）中相关的控制位，CPU会在预设指令执行时自动引发调试异常。而Windows本身又提供了一套调试API，使得调试跟踪一个程序变得非常简单：调试器本身不用接挂默认的调试异常处理代码，而只须调用WaitForDebugEvent等待系统发来的调试事件；调试器可利用GetThreadContext挂起被调试线程获取其上下文，并设置上下文中的标志寄存器中的陷阱标志位，最后通过SetThreadContext使设置生效来进行单步调试；调试器还可通过调用两个功能强大的调试API--ReadProcessMemory和WriteProcessMemory来向被调试线程的地址空间中注入断点指令。根据我逆向后的分析结果，VC++的调试器就是直接利用这套调试API写成的。使用以上的调试技术既然可以写出像VC++那样功能齐全的调试器，那么没有理由不能将之运用于病毒代码的自动解密上。最简单的最法：创建待查可执行文件为调试器的调试子进程，然后用上述方法对其进行单步跟踪，每当收到具有EXCEPTION_SINGLE_STEP异常代码的事件时就可以分析该条以单步模式执行的指令，最后当判断病毒的整个解密过程结束后即可调用ReadProcessMemory读出病毒体明文。 <BR><BR>用单步和断点跟踪法的唯一一点好处就在于它不用处理每条指令的执行--这意味着它无需编写大量的特定指令处理函数，因为所有的解密代码都交由CPU去执行，调试器不过是在代码被单步中断的间隙得到控制权而已。但这种方法的缺点也是相当明显的：其一容易被病毒觉察到，病毒只须进行简单的堆栈检查，或直接调用IsDebugerPresent就可确定自己正处于被调试状态；其二由于没有相应的机器码分析模块，指令的译码，执行完全依赖于CPU，所以将导致无法准确地获取指令执行细节并对其进行有效的控制。；其三单步和断点跟踪法要求待查可执行文件真实执行，即其将做为系统中一个真实的进程在自己的地址空间中运行，这当然是病毒扫描所不能允许的。很显然，单步和断点跟踪法可以应用在调试器，自动脱壳等方面，但对于查毒却是不合适的。 <BR><BR>而使用虚拟执行法的唯一一点缺点就在于它必须在内部处理所有指令的执行--这意味着它需要编写大量的特定指令处理函数来模拟每种指令的执行效果，这里根本不存在何时得到控制权的问题，因为控制权将永远掌握在虚拟机手中。用软件方法模拟CPU并非易事，需要对其机制有足够的了解，否则模拟效果将与真实执行相去甚远。举两个例子：一个是病毒常用的乘法后ASCII调整指令AAM，这条指令因为存在未公开的行为从而常常被病毒用来考验虚拟机设计的优劣。通常情况下AAM是双字节指令，操作码为D4 0A（其实0A隐含代表了操作数10）；但也可作为单字节指令明确地指定第二字节除数为任意8位立即数，此时操作码仅为D4。虚拟机必需考虑到后一种指定除数的情况来保证模拟结果的正确性；还有一个例子是关于处理器响应中断的方式，即CPU在刚打开中断后将不会马上响应中断，而必须隔一个指令周期。如果虚拟机没有考虑到该机制则很可能虚拟执行流程会与真实情况不符。但虚拟执行的优点也是很明显的，同时它正好填补了单步和断点跟踪法所力不能及的方面：首先是不可能被病毒觉察到，因为虚拟机将在其内部缓冲区中为被虚拟执行代码设立专用的堆栈，所以堆栈检查结果与实际执行无二（不会向堆栈中压入单步和断点中断时的返回地址）；其次由于虚拟机自身完成指令的解码和地址的计算，所以能够获取每条指令的执行细节并加以控制；最后，最为关键的一条在于虚拟执行确实做到了“虚拟”执行，系统中不会产生代表被执行者的进程，因为被执行者的寄存器组和堆栈等执行要素均在虚拟机内部实现，因而可以认为它在虚拟机地址空间中执行。鉴于虚拟执行法诸多的优点，所以将其运用于通用病毒体解密上是再好不过的了。 <BR><BR>通常，虚拟机的设计方案可以采取以下三种之一：自含代码虚拟机（SCCE），缓冲代码虚拟机（BCE），有限代码虚拟机（LCE）。 <BR><BR>自含代码虚拟机工作起来象一个真正的CPU。一条指令取自内存，由SCCE解码，并被传送到相应的模拟这条指令的例程，下一条指令则继续这个循环。虚拟机会包含一个例程来对内存/寄存器寻址操作数进行解码，然后还会包括一个用于模拟每个可能在CPU上执行的指令的例程集。正如你所想到的，SCCE的代码会变的无比的巨大而且速度也会很慢。然而SCCE对于一个先进的反病毒软件是很有用的。所有指令都在内部被处理，虚拟机可以对每条指令的动作做出非常详细的报告，这些报告和启发式数据以及通用清除模块将相互参照形成一个有效的反毒系统。同时，反病毒程序能够最精确地控制内存和端口的访问，因为它自己处理地址的解码和计算。 <BR><BR>缓冲代码虚拟机是SCCE的一个缩略版,因为相对于SCCE它具有较小的尺寸和更快的执行速度。在BCE中，一条指令是从内存中取得的，并和一个特殊指令表相比较。如果不是特殊指令，则它被进行简单的解码以求得指令的长度，随后所有这样的指令会被导入到一个可以通用地模拟所有非特殊指令的小过程中。而特殊指令，只占整个指令集的一小部分，则在特定的小处理程序中进行模拟。BCE通过将所有非特殊指令用一个小的通用的处理程序模拟来减少它必须特殊处理的指令条数，这样一来它削减了自身的大小并提高了执行速度。但这意味着它将不能真正限制对某个内存区域，端口或其他类似东西的访问，同时它也不可能生成如SCCE提供的同样全面的报告。 <BR><BR>有限代码虚拟机有点象用于通用解密的虚拟系统所处的级别。LCE实际上并非一个虚拟机，因为它并不真正的模拟指令，它只简单地跟踪一段代码的寄存器内容，也许会提供一个小的被改动的内存地址表，或是调用过的中断之类的东西。选择使用LCE而非更大更复杂的系统的原因，在于即使只对极少数指令的支持便可以在解密原始加密病毒的路上走很远，因为病毒仅仅使用了INTEL指令集的一小部分来加密其主体。使用LCE，原本处理整个INTEL指令集时的大量花费没有了，带来的是速度的巨大增长。当然，这是以不能处理复杂解密程序段为代价的。当需要进行快速文件扫描时LCE就变的有用起来，因为一个小型但象样的LCE可以用来快速检查执行文件的可疑行为，反之对每个文件都使用SCCE算法将会导致无法忍受的缓慢。当然，如果一个文件看起来可疑，LCE还可以启动某个SCCE代码对文件进行全面检查。 <BR><BR>下面开始介绍32位自含代码虚拟机w32encode（w32encode.cpp，Tw32asm.h，Tw32asm.cpp做为查毒引擎的一部分和其它搜索清除模块联编为Rsengine.dll）的程序结构和流程。由于这是一个设计完备且复杂的大型商用虚拟机，其中不可避免地包含了对某些特定病毒的特定处理，为了使虚拟机模型的结构清晰脉络分明，分析时我将做适当的简化。 <BR><BR>w32encode的工作原理很简单：它首先设置模拟寄存器组（用一个DWORD全局变量模拟真实CPU内部的一个寄存器，如ENEAX）的初始值，初始化执行堆栈指针（虚拟机用内部的一个数组static int STACK[0x20]来模拟堆栈）。然后进入一个循环，解释执行指令缓冲区ProgBuffer中的头256条指令，如果循环退出时仍未发现病毒的解密循环则可由此判定非加密变形病毒，若发现了解密循环则调用EncodeInst函数重复执行循环解密过程，将病毒体明文解密到DataSeg1或DataSeg2中。相关部分代码如下： <BR><BR>W32Encode0中总体流程控制部分代码： <BR><BR>&nbsp;for (i=0;i&lt;0x100;i++) //首先虚拟执行256条指令试图发现病毒循环解密子 <BR>&nbsp;{ <BR>&nbsp;if (InstLoc&gt;=0x280) <BR>&nbsp;return(0); <BR>&nbsp;if (InstLoc+ProgSeekOff&gt;=ProgEndOff) <BR>&nbsp;return(0); //以上两条判断语句检查指令位置的合法性 <BR>&nbsp;saveinstloc(); //存储当前指令在指令缓冲区中的偏移 <BR>&nbsp;HasAddNewInst=0; <BR>&nbsp;if (!(j=parse())) //虚拟执行指令缓冲区中的一条指令 <BR>&nbsp;return(0); //遇到不认识的指令时退出循环 <BR>&nbsp;if (j==2) //返回值为2说明发现了解密循环 <BR>&nbsp;break; <BR>&nbsp;} <BR>&nbsp;if (i==0x100) //执行过256条指令后仍未发现循环则退出 <BR>&nbsp;return(0); <BR>&nbsp;PreParse=0; <BR>&nbsp;ProcessInst(); <BR>&nbsp;if (!EncodeInst()) //调用解密函数重复执行循环解密过程 <BR>&nbsp;return(0); <BR>&nbsp;jmp中判定循环出现部分代码： <BR><BR>&nbsp;if ((loc&gt;=0)&amp;&amp;(loc&lt;InstLoc)) //若转移后指令指针小于当前指令指针则可能出现循环 <BR>&nbsp;if (!isinstloc(loc)) //在保存的指令指针数组InstLocArray中查找转移后指 <BR>&nbsp;...... //令指针值，如发现则可判定循环出现 <BR>&nbsp;else <BR>&nbsp;{ <BR>&nbsp;...... <BR>&nbsp;return(2); //返回值2代表发现了解密循环 <BR>&nbsp;} <BR>&nbsp;parse中虚拟执行每条指令的过程较复杂一些：通常parse会从取得指令缓冲区ProgBuffer中取得当前指令的头两个字节（包括了全部操作码）并根据它们的值调用相应的指令处理函数。例如当第一个字节等于0F并且第二个字节位与BE后等于BE时，可判定此指令为movszx并同时调用movszx进行处理。当执行进入特定指令的处理函数中时，首先要通过判断寻址方式（调用modregrm或modregrm1）确定指令长度并将控制权交给saveinst函数。saveinst在保存该指令的相关信息后会调用真正指令执行函数W32ExecuteInst。这个函数和parse非常相似，它从SaveInstBuf1中取得当前指令的头两个字节并根据它们的值调用相应的指令模拟函数以完成一条指令的执行。相关部分代码如下： <BR><BR>W32ExecuteInst中指令分遣部分代码： <BR><BR>&nbsp;if ((c&amp;0xf0)==0x50) <BR>&nbsp;{if (ExecutePushPop1(c)) //模拟push和pop <BR>&nbsp;return(gotonext()); <BR>&nbsp;return(0); <BR>&nbsp;} <BR>&nbsp;if (c==0x9c) <BR>&nbsp;{if (ExecutePushf()) //模拟pushf <BR>&nbsp;return(gotonext()); <BR>&nbsp;return(0); <BR>&nbsp;} <BR>&nbsp;if (c==(char)0x9d) <BR>&nbsp;{if (ExecutePopf()) //模拟popf <BR>&nbsp;return(gotonext()); <BR>&nbsp;return(0); <BR>&nbsp;} <BR>&nbsp;if ((c==0xf)&amp;&amp;((c2&amp;0xbe)==0xbe)) <BR>&nbsp;{if (i=ExecuteMovszx(0)) //模拟movszx <BR>&nbsp;return(gotonext()); <BR>&nbsp;return(0); <BR>&nbsp;} <BR>&nbsp;&nbsp;2.4虚拟机代码剖析 <BR>总体流程控制和分遣部分的相关代码，在上一章中都已分析过了。下面分析具体的特定指令模拟函数，这才是虚拟机的精华之所在。我将指令分成不依赖标志寄存器和依赖标志寄存器两大类分别介绍： <BR><BR>2.4.1不依赖标志寄存器指令模拟函数的分析 <BR>push和pop指令的模拟： <BR><BR>&nbsp;static int ExecutePushPop1(int c) <BR>&nbsp;{ <BR>&nbsp;if (c&lt;=0x57) <BR>&nbsp;{if (StackP&lt;0) //入栈前检查堆栈缓冲指针的合法性 <BR>&nbsp;return(0); <BR>&nbsp;} <BR>&nbsp;else <BR>&nbsp;if (StackP&gt;=0x40) //出栈前检查堆栈缓冲指针的合法性 <BR>&nbsp;return(0); <BR>&nbsp;if (c&lt;=0x57) { <BR>&nbsp;StackP--; <BR>&nbsp;ENESP-=4; //如果是入栈指令则在入栈前减少堆栈指针 <BR>&nbsp;} <BR>&nbsp;switch (c) <BR>&nbsp;{case 0x50:STACK[StackP]=ENEAX; //模拟push eax <BR>&nbsp;break; <BR>&nbsp;...... <BR>&nbsp;case 0x5f:ENEDI=STACK[StackP]; //模拟push edi <BR>&nbsp;break; <BR>&nbsp;} <BR>&nbsp;if (c&gt;=0x58) { <BR>&nbsp;StackP++; <BR>&nbsp;ENESP+=4; //如果是出栈指令则在出栈后增加堆栈指针 <BR>&nbsp;} <BR>&nbsp;return(1); <BR>&nbsp;} <BR>&nbsp;2.4.2依赖标志寄存器指令模拟函数的分析 <BR>CW32Asm类中cmp指令的模拟： <BR><BR>&nbsp;void CW32Asm:: cmpw(int c1,int c2) <BR>&nbsp;{ <BR>&nbsp;char FlgReg; <BR>&nbsp;__asm { <BR>&nbsp;mov eax,c1 //取得第一个操作数 <BR>&nbsp;mov ecx,c2 //取得第二个操作数 <BR>&nbsp;cmp eax,ecx //比较 <BR>&nbsp;lahf //将比较后的标志结果装入ah <BR>&nbsp;mov FlgReg,ah //保存结果在局部变量FlgReg中 <BR>&nbsp;} <BR>&nbsp;FlagReg=FlgReg; //保存结果在全局变量FlagReg中 <BR>&nbsp;} <BR>&nbsp;CW32Asm类中jnz指令的模拟： <BR><BR>&nbsp;int CW32Asm::JNE() <BR>&nbsp;{int i; <BR>&nbsp;char FlgReg=FlagReg; //用保存的FlagReg初始化局部变量FlgReg <BR>&nbsp;__asm <BR>&nbsp;{ <BR>&nbsp;mov ah,FlgReg //设置ah为保存的模拟标志寄存器值 <BR>&nbsp;pushf //保存虚拟机自身当前标志寄存器 <BR>&nbsp;sahf //将模拟标志寄存器值装入真实标志寄存器中 <BR>&nbsp;mov eax,1 <BR>&nbsp;jne l //执行jnz <BR>&nbsp;popf //恢复虚拟机自身标志寄存器 <BR>&nbsp;xor eax,eax <BR>&nbsp;l: <BR>&nbsp;popf //恢复虚拟机自身标志寄存器 <BR>&nbsp;mov i,eax <BR>&nbsp;} <BR>&nbsp;return(i); //返回值为1代表需要跳转 <BR>&nbsp;} <BR>&nbsp;&nbsp;2.5反虚拟机技术 <BR>任何一个事物都不是尽善尽美，无懈可击的，虚拟机也不例外。由于反虚拟执行技术的出现，使得虚拟机查毒受到了一定的挑战。这里介绍几个比较典型的反虚拟执行技术： <BR><BR>首先是插入特殊指令技术，即在病毒的解密代码部分人为插入诸如浮点，3DNOW，MMX等特殊指令以达到反虚拟执行的目的。尽管虚拟机使用软件技术模拟真正CPU的工作过程，它毕竟不是真正的CPU，由于精力有限，虚拟机的编码者可能实现对整个Intel指令集的支持，因而当虚拟机遇到其不认识的指令时将会立刻停止工作。但通过对这类病毒代码的分析和统计，我们发现通常这些特殊指令对于病毒的解密本身没有发生任何影响，它们的插入仅仅是为了干扰虚拟机的工作，换句话说就是病毒根本不会利用这条随机的垃圾指令的运算结果。这样一来，我们可以仅构造一张所有特殊指令对应于不同寻址方式的指令长度表，而不必为每个特殊指令编写一个专用的模拟函数。有了这张表后，当虚拟机遇到不认识的指令时可以用指令的操作码索引表格以求得指令的长度，然后将当前模拟的指令指针（EIP）加上指令长度来跳过这条垃圾指令。当然，还有一个更为保险的办法那就是：得到指令长度后，可以将这条我们不认识的指令放到一个充满空操作指令（NOP）的缓冲区中，接着我们将跳到缓冲区中去执行，这等于让真正的CPU帮我们来执行这条指令，最后一步当然是将执行后真实寄存器中的结果放回我们的模拟寄存器中。这虚拟执行和真实执行参半方法的好处在于：即便在特殊指令对于病毒是有意义的，即病毒依赖其返回结果的情况下，虚拟机仍可保证虚拟执行结果的正确。 <BR><BR>其次是结构化异常处理技术，即病毒的解密代码首先设置自己的异常处理函数，然后故意引发一个异常而使程序流程转向预先设立的异常处理函数。这种流程转移是CPU和操作系统相互配合的结果，并且在很大程度上，操作系统在其中起了很大的作用。由于目前的虚拟机仅仅模拟了没有保护检查的CPU的工作过程，而对于系统机制没有进行处理。所以面对引发异常的指令会有两种结果：其一是某些设计有缺陷的虚拟机无法判断被模拟指令的合法性，所以模拟这样的指令将使虚拟机自身执行非法操作而退出；其二虚拟机判断出被模拟指令属于非法指令，如试图向只读页面写入的指令，则立刻停止虚拟执行。通常病毒使用该技术的目的在于将真正循环解密代码放到异常处理函数后，如此虚拟机将在进入异常处理函数前就停止了工作，从而使解密子有机会逃避虚拟执行。因而一个好的虚拟机应该具备发现和记录病毒安装异常过滤函数的操作并在其引发异常时自动将控制转向异常处理函数的能力。 <BR><BR>再次是入口点模糊（EPO）技术，即病毒在不修改宿主原入口点的前提下，通过在宿主代码体内某处插入跳转指令来使病毒获得控制权。通过前面的分析，我们知道虚拟机扫描病毒时出于效率考虑不可能虚拟执行待查文件的所有代码，通常的做法是：扫描待查文件代码入口，假如在规定步数中没有发现解密循环，则由此判定该文件没有携带加密变形病毒。这种技术之所以能起到反虚拟执行的作用在于它正好利用了虚拟机的这个假设：由于病毒是从宿主执行到一半时获得控制权的，所以虚拟机首先解释执行的是宿主入口的正常程序，当然在规定步数中不可能发现解密循环，因而产生了漏报。如果虚拟机能增加规定步数的大小，则很有可能随着病毒插入的跳转指令跟踪进入病毒的解密子，但确定规定步数大小实在是件难事：太大则将无谓增加正常程序的检测时间；太小则容易产生漏报。但我们对此也不必过于担心，这类病毒由于其编写技术难度较大所以为数不多。在没有反汇编和虚拟执行引擎的帮助下，病毒很难在宿主体内定位一条完整指令的开始处来插入跳转，同时很难保证插入的跳转指令的深度大于虚拟机的规定步数，并且没有把握插入的跳转指令一定会被执行到。 <BR><BR>另外还有多线程技术，即病毒在解密部分入口主线程中又启动了额外的工作线程，并且将真正的循环解密代码放置于工作线程中运行。由于多线程间切换调度由操作系统负责管理，所以我们的虚拟机只能在假定被执行线程独占处理器时间，即保证永远不被抢先，的前提下进行。如此一来，虚拟机对于模拟启用多线程工作的代码将很难做到与真实效果一致。多线程和结构化异常处理两种技术都利用了特定的操作系统机制来达到反虚拟执行的目的，所以在虚拟CPU中加入对特定操作系统机制的支持将是我们今后改进的目标。 <BR><BR>最后是元多形技术（MetaPolymorphy）,即病毒中并非是多形的解密子加加密的病毒体结构，而整体均采用变形技术。这种病毒整体都在变，没有所谓“病毒体明文”。当然，其编写难度是很大的。如果说前几种反虚拟机技术是利用了虚拟机设计上的缺陷，可以通过代码改进来弥补的话，那么这种元多形技术却使虚拟机配合的动态特征码扫描法彻底失效了，我们必须寻求如行为分析等更先进的方法来解决。 <BR><BR>3．病毒实时监控 <BR>3.1实时监控概论 <BR>实时监控技术其实并非什么新技术，早在DOS编程时代就有之。只不过那时人们没有给这项技术冠以这样专业的名字而已。早期在各大专院校机房中普遍使用的硬盘写保护软件正是利用了实时监控技术。硬盘写保护软件一般会将自身写入硬盘零磁头开始的几个扇区（由0磁头0柱面1扇最开始的64个扇区是保留的，DOS访问不到）并修改原来的主引导记录以使启动时硬盘写保护程序可以取得控制权。引导时取得控制权的硬盘写保护程序会修改INT13H的中断向量指向自身已驻留于内存中的钩子代码以便随时拦截所有对磁盘的操作。钩子代码的作用当然是很明显的，它主要负责由判断中断入口参数，包括功能号，磁盘目标地址等来决定该类型操作是否被允许，这样就可以实现对某一特定区域的写操作保护。后来又诞生了在此基础之上进行改进了的磁盘恢复卡之类的产品，其利用将写操作重定向至目标区域外的临时分区并保存磁盘先前状态等技术来实现允许写入并可随时恢复之功能。不管怎么改进，这类产品的核心技术还是对磁盘操作的实时监控。对此有兴趣的朋友可参看高云庆著《硬盘保护技术手册》。DOS下还有许多通过驻留并截获一些有用的中断来实现某种特定目的的程序，我们通常称之为TSR（终止并等待驻留terminate-and-stay-resident，此种程序不容易编好，需要大量的关于硬件和Dos中断的知识，还要解决Dos重入，tsr程序重入等问题，搞不好就会当机）。在WINDOWS下要实现实时监控决非易事，普通用户态程序是不可能监控系统的活动的，这也是出于系统安全的考虑。HPS病毒能在用户态下直接监控系统中的文件操作其实是由于WIN9X在设计上存在漏洞。而我们下面要讨论的两个病毒实时监控（For WIN9X&amp;WINNT/2000）都使用了驱动编程技术，让工作于系统核心态的驱动程序去拦截所有的文件访问。当然由于工作系统的不同，这两个驱动程序无论从结构还是工作原理都不尽相同的，当然程序写法和编译环境更是千差万别了，所以我们决定将其各自分成独立的一节来详细地加以讨论。上面提到的病毒实时监控其实就是对文件的监控，说成是文件监控应该更为合理一些。除了文件监控外，还有各种各样的实时监控工具，它们也都具有各自不同的特点和功用。这里向大家推荐一个关于WINDOWS系统内核编程的站点:www.sysinternals.com。在其上可以找到很多实时监控小工具，比如能够监视注册表访问的Regmon（通过修改系统调用表中注册表相关服务入口），可以实时地观察TCP和UDP活动的Tdimon（通过hook系统协议驱动Tcpip.sys中的dispatch函数来截获tdi clinet向其发送的请求），这些工具对于了解系统内部运作细节是很有裨益的。介绍完有关的背景情况后，我们来看看关于病毒 实时监控的具体实现技术的情况。 <BR><BR>3.2病毒实时监控实现技术概论 <BR>正如上面提到的病毒实时监控其实就是一个文件监视器，它会在文件打开，关闭，清除，写入等操作时检查文件是否是病毒携带者，如果是则根据用户的决定选择不同的处理方案，如清除病毒，禁止访问该文件，删除该文件或简单地忽略。这样就可以有效地避免病毒在本地机器上的感染传播，因为可执行文件装入器在装入一个文件执行时首先会要求打开该文件，而这个请求又一定会被实时监控在第一时间截获到，它确保了每次执行的都是干净的不带毒的文件从而不给病毒以任何执行和发作的机会。以上说的仅是病毒实时监控一个粗略的工作过程，详细的说明将留到后面相应的章节中。病毒实时监控的设计主要存在以下几个难点： <BR><BR>其一是驱动程序的编写不同于普通用户态程序的写作，其难度很大。写用户态程序时你需要的仅仅就是调用一些熟知的API函数来完成特定的目的，比如打开文件你只需调用CreateFile就可以了；但在驱动程序中你将无法使用熟悉的CreateFile。在NT/2000下你可以使用ZwCreateFile或NtCreateFile（native API），但这些函数通常会要求运行在某个IRQL（中断请求级）上，如果你对如中断请求级，延迟/异步过程调用，非分页/分页内存等概念不是特别清楚，那么你写的驱动将很容易导致蓝屏死机（BSOD），Ring0下的异常将往往导致系统崩溃，因为它对于系统总是被信任的，所以没有相应处理代码去捕获这个异常。在NT下对KeBugCheckEx的调用将导致蓝屏的出现，接着系统将进行转储并随后重启。另外驱动程序的调试不如用户态程序那样方便，用象VC++那样的调试器是不行的，你必须使用系统级调试器，如softice,kd,trw等。 <BR><BR>其二是驱动程序与ring3下客户程序的通信问题。这个问题的提出是很自然的，试想当驱动程序截获到某个文件打开请求时，它必须通知位于ring3下的查毒模块检查被打开的文件，随后查毒模块还需将查毒的结果通过某种方式传给ring0下的监控程序，最后驱动程序根据返回的结果决定请求是否被允许。这里面显然存在一个双向的通信过程。写过驱动程序的人都知道一个可以用来向驱动程序发送设备I/O控制信息的API调用DeviceIoControl，它的接口在MSDN中可以找到，但它是单向的，即ring3下客户程序可以通过调用DeviceIoControl将某些信息传给ring0下的监控程序但反过来不行。既然无法找到一个现成的函数实现从ring0下的监控程序到ring3下客户程序的通信，则我们必须采用迂回的办法来间接做到这一点。为此我们必须引入异步过程调用（APC）和事件对象的概念，它们就是实现特权级间唤醒的关键所在。现在先简单介绍一下这两个概念，具体的用法请参看后面的每子章中的技术实现细节。异步过程调用是一种系统用来当条件合适时在某个特定线程的上下文中执行一个过程的机制。当向一个线程的APC队列排队一个APC时，系统将发出一个软件中断，当下一次线程被调度时，APC函数将得以运行。APC分成两种：系统创建的APC称为内核模式APC，由应用程序创建的APC称为用户模式APC。另外只有当线程处于可报警（alertable）状态时才能运行一个APC。比如调用一个异步模式的ReadFileEx时可以指定一个用户自定义的回调函数FileIOCompletionRoutine，当异步的I/O操作完成或被取消并且线程处于可报警状态时函数被调用，这就是APC的典型用法。Kernel32.dll中导出的QueueUserAPC函数可以向指定线程的队列中增加一个APC对象，因为我们写的是驱动程序，这并不是我们要的那个函数。很幸运的是在Vwin32.vxd中导出了一个同名函数QueueUserAPC，监控程序拦截到一个文件打开请求后，它马上调用这个服务排队一个ring3下客户程序中需要被唤醒的函数的APC，这个函数将在不久客户程序被调度时被调用。这种APC唤醒法适用于WIN9X，在WINNT/2000下我们将使用全局共享的事件和信号量对象来解决互相唤醒问题。有关WINNT/2000下的对象组织结构我将在3.4.2节中详细说明。NT/2000版监控程序中我们将利用KeReleaseSemaphore来唤醒一个在ring3下客户程序中等待的线程。目前不少反病毒软件已将驱动使用的查毒模块移到ring0，即如其所宣传的“主动与操作系统无缝连接”，这样做省却了通信的消耗，但把查毒模块写成驱动形式也同时会带来一些麻烦，如不能调用大量熟知的API，不能与用户实时交互，所以我们还是选择剖析传统的反病毒软件的监控程序。 <BR><BR>其三是驱动程序所占用资源问题。如果由于监控程序频繁地拦截文件操作而使系统性能下降过多，则这样的程序是没有其存在的价值的。本论文将对一个成功的反病毒软件的监控程序做彻底的剖析，其中就包含有分析其用以提高自身性能的技巧的部分，如设置历史记录，内置文件类型过滤，设置等待超时等。 <BR><BR>3.3WIN9X下的病毒实时监控 <BR>3.3.1实现技术详解 <BR>WIN9X下病毒实时监控的实现主要依赖于虚拟设备驱动（VXD）编程，可安装文件系统钩挂（IFSHook），VXD与ring3下客户程序的通信（APC/EVENT）三项技术。 <BR><BR>我们曾经提到过只有工作于系统核心态的驱动程序才具有有效地完成拦截系统范围文件操作的能力，VXD就是适用于WIN9X下的虚拟设备驱动程序，所以正可当此重任。当然，VXD的功能远不止由IFSMGR.vxd提供的拦截文件操作这一项，系统的VXDs几乎提供了所有的底层操作的接口--可以把VXD看成ring0下的DLL。虚拟机管理器本身就是一个VXD，它导出的底层操作接口一般称为VMM服务，而其他VXD的调用接口则称为VXD服务。 <BR><BR>二者ring0调用方法均相同，即在INT20（CD 20）后面紧跟着一个服务识别码，VMM会利用服务识别码的前半部分设备标识--Device Id找到对应的VXD，然后再利用服务识别码的后半部分在VXD的服务表（Service Table）中定位服务函数的指针并调用之： <BR><BR>CD 20 INT 20H <BR><BR>01 00 0D 00 DD VKD_Define_HotKey <BR><BR>这条指令第一次执行后，VMM将以一个同样6字节间接调用指令替换之（并不都是修正为CALL指令，有时会利用JMP指令），从而省却了查询服务表的工作： <BR><BR>FF 15 XX XX XX XX CALL [$VKD_Define_HotKey] <BR><BR>必须注意，上述调用方法只适用于ring0，即只是一个从VXD中调用VXD/VMM服务的ring0接口。VXD还提供了V86（虚拟8086模式），Win16保护模式，Win32保护模式调用接口。其中V86和Win16保护模式的调用接口比较奇怪： <BR><BR>&nbsp;XOR DI DI <BR>&nbsp;MOV ES,DI <BR>&nbsp;MOV AX,1684 ；INT 2FH,AX = 1684H--&gt;取得设备入口 <BR>&nbsp;MOV BX,002A ；002AH = VWIN32.VXD的设备标识 <BR>&nbsp;INT 2F <BR>&nbsp;MOV AX,ES ；现在ES:DI中应该包含着入口 <BR>&nbsp;OR AX,AX <BR>&nbsp;JE failure <BR>MOV AH,00 ；VWIN32 服务 0 = VWIN32_Get_Version <BR>&nbsp;PUSH DS <BR>&nbsp;MOV DS,WORD PTR CS:[0002] <BR>&nbsp; <BR>&nbsp;MOV WORD PTR [lpfnVMIN32],DI <BR>&nbsp;MOV WORD PTR [lpfnVMIN32+2],ES ；保存ES和DI <BR>&nbsp;CALL FAR [lpfnVMIN32] ；call gate（调用门） <BR>&nbsp;ES:DI指向了3B段的一个保护模式回调： <BR><BR>003B：000003D0 INT 30 ；#0028:C025DB52 VWIN32（04）+0742 <BR><BR>INT30强迫CPU从ring3提升到ring0，然后WIN95的INT30处理函数先检查调用是否发自3B段，如是则利用引发回调的CS:IP索引一个保护模式回调表以求得一个ring0地址。本例中是0028:C025DB52 ，即所需服务VWIN32_Get_Version的入口地址。 <BR><BR>VXD的Win32保护模式调用接口我们在前面已经提到过。一个是DeviceIoControl，我们的ring3客户程序利用它来和监控驱动进行单向通信；另一个是VxdCall，它是Kernel32.dll的一个未公开的调用，被系统频繁使用，对我们则没有多大用处。 <BR><BR>你可以参看WIN95DDK的帮助，其中对每个系统VXD提供的调用接口均有详细说明，可按照需要选择相应的服务。 <BR><BR>可安装文件系统钩挂（IFSHook）就源自IFSMGR.VXD提供的一个服务IFSMgr_InstallFileSystemApiHook，利用这个服务驱动程序可以向系统注册一个钩子函数。以后系统中所有文件操作都会经过这个钩子的过滤，WIN9X下文件读写具体流程如下： <BR><BR>在读写操作进行时，首先通过未公开函数EnterMustComplete来增加MUSTCOMPLETECOUNT变量的记数，告诉操作系统本操作必须完成。该函数设置了KERNEL32模块里的内部变量来显示现在有个关键操作正在进行。有句题外话，在VMM里同样有个函数，函数名也是EnterMustComplete。那个函数同样告诉VMM，有个关键操作正在进行。防止线程被杀掉或者被挂起。 <BR><BR>接下来，WIN9X进行了一个_MapHandleWithContext(又是一个未公开函数)操作。该操作本身的具体意义尚不清楚，但是其操作却是得到HANDLE所指对象的指针，并且增加了引用计数。 <BR><BR>随后，进行的乃是根本性的操作：KERNEL32发出了一个调用VWIN32_Int21Dispatch的VxdCall。陷入VWIN32后，其 检查调用是否是读写操作。若是，则根据文件句柄切换成一个FSD能识别的句柄，并调用IFSMgr_Ring0_FileIO。接下来任务就转到了IFS MANAGER。 <BR><BR>IFS MANAGER生成一个IOREQ，并跳转到Ring0ReadWrite内部例程。Ring0ReadWrite检查句柄有效性，并且获取FSD在创建文件句柄时返回的CONTEXT，一起传入到CallIoFunc内部例程。CallIoFunc检查IFSHOOK的存在，如果不存在，IFS MANAGER生成一个缺省的IFS HOOK，并且调用相应的VFatReadFile/VFatWriteFile例程(因为目前 MS本身仅提供了VFAT驱动)；如果IFSHOOK存在，则IFSHOOK函数得到控制权，而IFS MANAGER本身就脱离了文件读写处理。然后，调用被层层返回。KERNEL32调用未公开函数LeaveMustComplete，减少MUSTCOMPLETECOUNT计数，最终回到调用者。 <BR><BR>由此可见通过IFSHook拦截本地文件操作是万无一失的，而通过ApiHook或VxdCall拦截文件则多有遗漏。著名的CIH病毒正是利用了这一技术，实现其驻留感染的，其中的代码片段如下： <BR><BR>&nbsp; lea eax, FileSystemApiHook-@6[edi] ；取得欲安装的钩子函数的地址 <BR>&nbsp;push eax <BR>&nbsp;int 20h ；调用IFSMgr_InstallFileSystemApiHook <BR>&nbsp;IFSMgr_InstallFileSystemApiHook = $ <BR>&nbsp;dd 00400067h <BR>&nbsp;mov dr0, eax ；保存前一个钩子的地址 <BR>&nbsp;pop eax <BR>&nbsp;&nbsp;正如我们看到的，系统中安装的所有钩子函数呈链状排列。最后安装的钩子，最先被系统调用。我们在安装钩子的同时必须将调用返回的前一个钩子的地址暂存以便在完成处理后向下传递该请求： <BR><BR>mov eax, dr0 ；取得前一个钩子的地址 <BR><BR>jmp [eax] ； 跳到那里继续执行 <BR><BR>对于病毒实时监控来说，我们在安装钩子时同样需要保存前一个钩子的地址。如果文件操作的对象携带了病毒，则我们可以通过不调用前一个钩子来简单的取消该文件请求；反之，我们则需及时向下传递该请求，若在钩子中滞留的时间过长--用于等待ring3级查毒模块的处理反馈--则会使用户明显感觉系统变慢。 <BR><BR>至于钩子函数入口参数结构和怎样从参数中取得操作类型（如IFSFN_OPEN）和文件名（以UNICODE形式存储）请参看相应的代码剖析部分。 <BR><BR>我们所需的另一项技术--APC/EVENT也是源自一个VXD导出的服务，这便是著名的VWIN32.vxd。这个奇怪的VXD导出了许多与WIN32 API对应的服务：如_VWIN32_QueueUserApc，_VWIN32_WaitSingleObject，_VWIN32_ResetWin32Event，_VWIN32_Get_Thread_Context，_VWIN32_Set_Thread_Context 等。这个VXD叫虚拟WIN32，大概名称即是由此而来的。虽然服务的名称与WIN32 API一样，但调用规则却大相径庭，千万不可用错。_VWIN32_QueueUserApc用来注册一个用户态的APC，这里的APC函数当然是指我们在ring3下以可告警状态睡眠的待查毒线程。ring3客户程序首先通过IOCTL把待查毒线程的地址传给驱动程序，然后当钩子函数拦截到待查文件时调用此服务排队一个APC，当ring3客户程序下一次被调度时，APC例程得以执行。_VWIN32_WaitSingleObject则用来在某个对象上等待，从而使当前ring0线程暂时挂起。我们的ring3客户程序先调用WIN32 API--CreateEvent创建一组事件对象，然后通过一个未公开的API--OpenVxdHandle将事件句柄转化为VXD可辩识的句柄（其实应是指向对象的指针）并用IOCTL发给ring0端VXD，钩子函数在排队APC后调用_VWIN32_WaitSingleObject在事件的VXD句柄上等待查毒的完成，最后由ring3客户程序在查毒完毕后调用WIN32 API--SetEvent来解除钩子函数的等待。 <BR><BR>当然，这里面存在着一个很可怕的问题：如果你按照的我说的那样去做，你会发现它会在一端时间内工作正常，但时间一长，系统就被挂起了。就连驱动编程大师Walter Oney在其著作《System Programming For Windows 95》的配套源码的说明中也称其APC例程在某些时候工作会不正常。而微软的工程师声称文件操作请求是不能被中断掉的，你不能在驱动中阻断文件操作并依赖于ring3的反馈来做出响应。网上关于这个问题也有一些讨论，意见不一：有人认为当系统DLL--KERNEL32在其调用ring0处理文件请求时拥有一个互斥量（MUTEX），而在某些情况下为了处理APC要拥有同样的互斥量，所以死锁发生了；还有人认为尽管在WIN9X下32位线程是抢先多任务的，但Win16子系统是以协作多任务来运行的。为了能平滑的运行老的16位程序，它引入了一个全局的互斥量--Win16Mutex。任何一个16位线程在其整个生命周期中都拥有Win16Mutex而32位线程当它转化成16位代码也要攫取此互斥量，因为WIN9X内核是16位的,如Knrl386.exe,gdi.exe。如果来自于拥有Win16Mutex的线程的文件请求被阻塞，系统将陷入死锁状态。这个问题的正确答案似乎在没有得到WIN9X源码的之前永远不可能被证实，但这是我们实时监控的关键，所以必须解决。 <BR><BR>我通过跟踪WIN95文件操作的流程，并反复做实验验证，终于找到了一个比较好的解决办法：在拦截到文件请求还没有排队APC之前我们通过Get_Cur_Thread_Handle取得当前线程的ring0tcb，从中找到TDBX，再在TDBX中取得ring3tcb根据其结构，我们从偏移44H处得到Flags域值，我发现如果它等于10H和20H时容易导致死锁，这只是一个实验结果，理由我也说不清楚，大概是这样的文件请求多来自于拥有Win16Mutex的线程，所以不能阻塞；另外一个根本的解决方法是在调用_VWIN32_WaitSingleObject时指定超时，如果在指定时间里没有收到ring3的唤醒信号，则自动解除等待以防止死锁的发生。 <BR><BR>以上对WIN9X下的实时监控的主要技术都做了详细的阐述。当然，还有一部分关于VXD的结构，编写和编译的方法由于篇幅的关系不可能在此一一说明。需要了解更详细内容的，请参看Walter Oney的著作《System Programming For Windows 95》，此书尚有台湾候俊杰翻译版《Windows 95系统程式设计》。 <BR><BR>3.3.2程序结构与流程 <BR>以下的程序结构与流程分析来自一著名反病毒软件的WIN9X实时监控虚拟设备驱动程序Hooksys.vxd： <BR><BR>1.当VXD收到来自VMM的ON_SYS_DYNAMIC_DEVICE_INIT消息--需要注意这是个动态VXD，它不会收到系统虚拟机初始化时发送的Sys_Critical_Init, Device_Init和Init_Complete控制消息--时，它开始初始化一些全局变量和数据结构，包括在堆上分配内存（HeapAllocate），创建备用，历史记录，打开文件，等待操作，关闭文件5个双向循环链表及用于链表操作互斥的5个信号量（调用Create_Semaphore），同时将全局变量_gNumOfFilters即文件名过滤项个数设置为0。 <BR><BR>2.当VXD收到来自VMM的ON_W32_DEVICEIOCONTROL消息时，它会从入口参数中取得用户程序利用DeviceIoControl传送进来的IO控制代码（IOCtlCode），以此判断用户程序的意图。和Hooksys.vxd协同工作的ring3级客户程序guidll.dll会依次向Hooksys.vxd发送IO控制请求来完成一系列工作，具体次序和代码含义如下： <BR><BR>83003C2B：将guidll取得的操作系统版本传给驱动（保存在iOSversion变量中），根据此变量值的不同，从ring0tcb结构中提取某些域时将采用不同的偏移，因为操作系统版本不同会影响内核数据结构。 <BR><BR>83003C1B：初始化后备链表，将guidll传入的用OpenVxdHandle转换过的一组事件指针保存在每个链表元素中。 <BR><BR>83003C2F：将guidll取得的驱动器类型值传给驱动（保存在DriverType变量中），根据此变量值的不同，调用VWIN32_WaitSingleObject设置不同的等待超时值，因为非固定驱动器的读写时间可能会稍长些。 <BR><BR>83003C0F：保存guidll传送的用户指定的拦截文件的类型，其实这个类型过滤器在查毒模块中已存在，这里再设置显然是为了提高处理效率：它确保不会将非指定类型文件送到ring3级查毒模块，节省了通信的开销。经过解析的各文件类型过滤块指针将保存在_gaFileNameFilterArra数组中，同时更新过滤项个数_gNumOfFilters 变量的值。 <BR><BR>83003C23：保存guidll中等待查杀打开文件的APC函数地址和当前线程KTHREAD指针。 <BR><BR>83003C13：安装系统文件钩子，启动拦截文件操作的钩子函数FilemonHookProc的工作。 <BR><BR>83003C27：保存guidll中等待查杀关闭文件的APC函数地址和当前线程KTHREAD指针。 <BR><BR>83003C17：卸载系统文件钩子，停止拦截文件操作的钩子函数FilemonHookProc的工作。 <BR><BR>以上列出的IO控制代码的发出是固定，而当钩子函数启动后，还会发出一些随机的控制代码： <BR><BR>83003C07：驱动将打开文件链表的头元素即最先的请求打开的文件删除并插入到等待链表尾部，同时将元素的用户空间地址传送至ring3级等待查杀打开文件的APC函数中处理。 <BR><BR>83003C0B：驱动将关闭文件链表的头元素即最先的请求关闭的文件删除并插入到备用链表尾部，同时将元素中的文件名串传送至ring3级等待查杀关闭文件的APC函数中处理 <BR><BR>83003C1F：当查得关闭文件是病毒时，更新历史记录链表。 <BR><BR>下面介绍钩子函数和guidll中等待查杀打开文件的APC函数协同工作流程，写文件和关闭文件的处理与之类似： <BR><BR>当文件请求进入钩子函数FilemonHookProc后，它先从入口参数中取得被执行的函数的代号并判断其是否为打开操作（IFSFN_OPEN 24H），若非则马上将这个IRQ向下传递，即构造入口参数并调用保存在PrevIFSHookProc中前一个钩子函数；若是则程序流程转向打开文件请求的处理分支。分支入口处首先要判断当前进程是否是我们自己，若是则必须放过去，因为查毒模块中要频繁的进行文件操作，所以拦截来自自身的文件请求将导致严重的系统死锁。接下来是从堆栈参数中取得完整的文件路径名并通过保存的文件类型过滤阵列检查其是否在拦截类型之列，如通过则进一步检查文件是否是以下几个须放过的文件之一：SYSTEM.DAT，USER.DAT，\PIPE\。然后查找历史记录链表以确定该文件是否最近曾被检查并记录过，若在历史记录链表中找到关于该文件的记录并且记录未失效即其时间戳和当前系统时间之差不得大于1F4h，则可直接从记录中读取查毒结果。至此才进入真正的检查打开文件函数_RAVCheckOpenFile，此函数入口处先从备用，等待或关闭链表头部摘得一空闲元素（_GetFreeEntry）并填充之（文件路径名域等）。接着通过一内核未公开的数据结构中的值（ring3tcb-&gt;Flags）判断可否对该文件请求排队APC。如可则将空闲元素加入打开文件链表尾部并排队一个ring3级检查打开文件函数的APC。然后调用_VWIN32_WaitSingleObject在空闲元素中保存的一个事件对象上等待ring3查毒的完成。当钩子函数挂起不久后，ring3的APC函数得到执行：它会向驱动发出一IO控制码为83003C07的请求以取得打开文件链表头元素即保存最先提交而未决的文件请求，驱动可以将内核空间中元素的虚拟地址直接传给它而不必考虑将之重新映射。实际上由于WIN9X内核空间没有页保护因而ring3级程序可以直接读写之。接着它调用RsEngine.dll中的fnScanOneFile函数进行查毒并在元素中设置查毒结果位，完毕后再对元素中保存的事件对象调用SetEvent唤醒在此事件上等待的钩子函数。被唤醒的钩子函数检查被ring3查毒代码设置的结果位以此决定该文件请求是被采纳即继续向下传递还是被取消即在EAX中放入-1后直接返回，同时增加历史记录。 <BR><BR>以上只是钩子函数与APC函数流程的一个简单介绍，其中省略了诸如判断固定驱动器，超时等内容，具体细节请参看guidll.dll和hooksys.vxd的反汇编代码注释。 <BR><BR>3.当VXD收到来自VMM的ON_SYS_DYNAMIC_DEVICE_EXIT消息时，它释放初始化时分配的堆内存（HeapFree），并清除5个用于互斥的信号量（Destroy_Semaphore）。 <BR><BR>3.3.3HOOKSYS.VXD逆向工程代码剖析 <BR>在剖析代码之前有必要介绍一下逆向工程的概念。逆向工程（Reverse Engineering）是指在没有源代码的情况下对可执行文件进行反汇编试图理解机器码本身的含义。逆向工程的用途很多，如摘掉软件保护，窥视其设计和编写技术，发掘操作系统内部奥秘等。本文中我们用到的不少未公开数据结构和服务就是利用逆向的方法得到的。逆向工程的难度可想而知：一个1K大小的exe文件反汇编后就有1000行左右，而我们要逆向的3个文件加起来有80多K，总代码量是8万多行。所以必须掌握一定的逆向技巧，否则工作起来将是非常困难的。 <BR><BR>首先要完成逆向工作，必须选择优秀的反汇编及调试跟踪工具。IDA（The Interactive Disassembler）是一款功能强大的反汇编工具：它以交互能力强而著称，允许使用者增加标签，注释及定义变量，函数名称；另外不少反汇编工具对于特殊处理的反逆向文件，如导入节损坏等显得无能为力，但IDA仍可胜任之。当文件被加过壳或插入了干扰指令时 就需要使用调试工具进行动态跟踪。Numega公司的Softice是调试工具中的佼佼者：它支持所有类型的可执行文件，包括vxd和sys驱动程序，能够用热键实时呼出，可对代码执行，内存和端口访问设置断点，总之功能非常之强大以至于连微软总裁比尔盖茨对此都惊叹不已。 <BR><BR>其次需要对编译器常用的编译结构有一定了解，这样有助于我们理解代码的含义。 <BR><BR>如下代码是MS编译器常用的一种编译高级语言函数的形式： <BR><BR>&nbsp; 0001224A push ebp ；保存基址寄存器 <BR>&nbsp;0001224B mov ebp, esp <BR>&nbsp;0001224D sub esp, 5Ch ；在堆栈留出局部变量空间 <BR>&nbsp;00012250 push ebx <BR>&nbsp;00012251 push esi <BR>&nbsp;00012252 push edi <BR>&nbsp;...... <BR>&nbsp;0001225B lea edi, [ebp-34h] ；引用局部变量 <BR>&nbsp;...... <BR>&nbsp;0001238D mov esi, [ebp+08h] ；引用参数 <BR>&nbsp;...... <BR>&nbsp;00012424 pop edi <BR>&nbsp;00012425 pop esi <BR>&nbsp;00012426 pop ebx <BR>&nbsp;00012427 leave <BR>&nbsp;00012428 retn 8 ；函数返回 <BR>&nbsp;如下代码是MS编译器常用的一种编译高级语言取串长度的形式： <BR><BR>&nbsp;0001170D lea edi, [eax+1Ch] ；串首地址指针 <BR>&nbsp;00011710 or ecx, 0FFFFFFFFh ；将ecx置为-1 <BR>&nbsp;00011713 xor eax, eax ；扫描串结束符号（NULL） <BR>&nbsp;00011715 push offset 00012C04h ；编译器优化 <BR>&nbsp;0001171A repne scasb ；扫描串结束符号位置 <BR>&nbsp;0001171C not ecx ；取反后得到串长度 <BR>&nbsp;0001171E sub edi, ecx ；恢复串首地址指针 <BR>最后一点是必须要有坚忍的毅力和清晰的头脑。逆向工程本身是件痛苦的工作：高级语言源代码中使用的变量和函数名字在这里仅是一个地址，需要反复调试琢磨才能确定其含义；另外编译器优化更为我们理解代码增加了不少障碍，如上例中那句压栈指令是将后面函数调用时参数入栈提前放置。所以毅力和头脑二者缺一不可。 <BR><BR>以下进入hooksys.vxd代码剖析，由于代码过于庞大，我只选择有代表性且精彩的部分进行介绍。代码中的变量和函数及标签名是我分析后自己添加的，可能会与原作者的意图有些出入。 <BR><BR>3.3.3.1钩子函数入口代码 <BR>&nbsp;C00012E0 push ebp <BR>&nbsp;C00012E1 mov ebp, esp <BR>&nbsp;C00012E3 sub esp, 11Ch <BR>&nbsp;C00012E9 push ebx <BR>&nbsp;C00012EA push esi <BR>&nbsp;C00012EB push edi <BR>&nbsp;C00012EC mov eax, [ebp+arg_4] ； 被执行的函数的代号 <BR>&nbsp;C00012EF mov [ebp+var_11C], eax <BR>&nbsp;C00012F5 cmp [ebp+var_11C], 1 ； IFSFN_WRITE <BR>&nbsp;C00012FC jz writefile <BR>&nbsp;C0001302 cmp [ebp+var_11C], 0Bh ； IFSFN_CLOSE <BR>&nbsp;C0001309 jz closefile <BR>&nbsp;C000130F cmp [ebp+var_11C], 24h ； IFSFN_OPEN <BR>&nbsp;C0001316 jz short openfile <BR>&nbsp;C0001318 jmp irqpassdown <BR>&nbsp;钩子函数入口处，堆栈参数分布如下： <BR><BR>&nbsp;ebp+00h -&gt; 保存的EBP值. <BR>&nbsp;ebp+04h -&gt; 返回地址. <BR>&nbsp;ebp+08h -&gt; 提供这个API要调用的FSD函数的的地址 <BR>&nbsp;ebp+0Ch -&gt; 提供被执行的函数的代号 <BR>&nbsp;ebp+10h -&gt; 提供了操作在其上执行的以1为基准的驱动器代号（如果UNC为-1) <BR>&nbsp;ebp+14h -&gt; 提供了操作在其上执行的资源的种类。 <BR>&nbsp;ebp+18h -&gt; 提供了用户串传递其上的代码页 <BR>&nbsp;ebp+1Ch -&gt; 提供IOREQ结构的指针。 <BR>钩子函数利用[ebp+0Ch]中保存的被执行的函数的代号来判断该请求的类型。同时它利用[ebp+0Ch]中保存的IOREQ结构的指针从该结构中偏移0ch处path_t ir_ppath域取得完整的文件路径名称。 <BR><BR>3.3.3.2取得当前进程名称代码 <BR>&nbsp;C0000870 push ebx <BR>&nbsp;C0000871 push esi <BR>&nbsp;C0000872 push edi <BR>&nbsp;C0000873 call VWIN32_GetCurrentProcessHandle ；在eax中返回ring0 PDB（进程数据库） <BR>&nbsp;C0000878 mov eax, [eax+38h] ；HTASK W16TDB <BR>&nbsp;；偏移38h处是Win16任务数据库选择子 <BR>&nbsp;C000087B push 0 ；DWORD Flags <BR>&nbsp;C000087D or al, <BR>&nbsp;C000087F push eax ；DWORD Selector <BR>&nbsp;C0000880 call Get_Sys_VM_Handle@0 <BR>&nbsp;C0000885 push eax ；取得系统VM的句柄 VMHANDLE hVM <BR>&nbsp;C0000886 call _SelectorMapFlat ；将选择子基址映射为平坦模式的线形地址 <BR>&nbsp;C000088B add esp, 0Ch <BR>&nbsp;C000088E cmp eax, 0FFFFFFFFh ；映射错误 <BR>&nbsp;C0000891 jnz short loc_C0000899 <BR>&nbsp;...... <BR>&nbsp;C0000899 lea edi, [eax+0F2h] ；从偏移0F2h取得模块名称 <BR>&nbsp;；char TDB_ModName[8] <BR>&nbsp;3.3.3.3通信部分代码 <BR>hooksys.vxd中代码： <BR><BR>C00011BC push ecx ；客户程序的ring0线程句柄 <BR>&nbsp;C00011BD push ebx ；传入APC的参数 <BR>&nbsp;C00011BE push edx ；ring3级APC函数的平坦模式地址 <BR>&nbsp;C00011BF call _VWIN32_QueueUserApc ；排队APC <BR>&nbsp;C00011C4 mov eax, [ebp+0Ch] ；事件对象的ring0句柄 <BR>&nbsp;C00011C7 push eax <BR>&nbsp;C00011C8 call _VWIN32_ResetWin32Event；设置事件对象为无信号态 <BR>&nbsp;...... <BR>&nbsp;C00011E7 mov eax, [ebp+0Ch] <BR>&nbsp;C00011EA push 3E8h ；超时设置 <BR>&nbsp;C00011EF push eax ；事件对象的ring0句柄 <BR>&nbsp;C00011F0 call _VWIN32_WaitSingleObject ；等待ring3查毒的完成 <BR>&nbsp;guidll.dll中代码： <BR><BR>&nbsp;APC函数入口： <BR>&nbsp;10001AD1 mov eax, hDevice ；取得设备句柄 <BR>&nbsp;10001AD6 lea ecx, [esp+4] <BR>&nbsp;10001ADA push 0 <BR>&nbsp;10001ADC push ecx ；返回字节数 <BR>&nbsp;10001ADD lea edx, [esp+8] <BR>&nbsp;10001AE1 push 4 ；输出缓冲区大小 <BR>&nbsp;10001AE3 push edx ；输出缓冲区指针 <BR>&nbsp;10001AE4 push 0 ；输入缓冲区大小 <BR>&nbsp;10001AE6 push 0 ；输入缓冲区指针 <BR>&nbsp;10001AE8 push 83003C07h ；IO控制代码 <BR>&nbsp;10001AED push eax ；设备句柄 <BR>&nbsp;10001AEE call ds:DeviceIoControl <BR>&nbsp;10001AF4 test eax, eax <BR>&nbsp;10001AF6 jz short loc_10001B05 <BR>&nbsp;10001AF8 mov ecx, [esp+0] ；得到打开文件链表头元素 <BR>&nbsp;10001AFC push ecx <BR>&nbsp;10001AFD call ScanOpenFile ；调用查毒函数 <BR>&nbsp;ScanOpenFile函数中： <BR><BR>&nbsp;1000185D call ds:fnScanOneFile ；调用真正查毒库导出函数 <BR>&nbsp;10001863 mov edx, hMutex <BR>&nbsp;10001869 add esp, 8 <BR>&nbsp;1000186C mov esi, eax ；查毒结果 <BR>&nbsp;1000186E push edx <BR>&nbsp;1000186F call ds:ReleaseMutex <BR>&nbsp;10001875 test esi, esi ；检查结果 <BR>&nbsp;10001877 jnz short OpenFileIsVirus ；如发现病毒则跳到OpenFileIsViru进一步处理 <BR>&nbsp;10001879 mov eax, [ebp+10h] ；事件对象的ring3句柄 <BR>&nbsp;1000187C mov byte ptr [ebp+16h], 0 ；设置元素中的结果位为无病毒 <BR>&nbsp;10001880 push eax <BR>&nbsp;10001881 call ds:SetEvent ；设置事件对象为有信号态唤醒钩子函数 <BR>&nbsp; 3.4WINNT/2000下的病毒实时监控 <BR>3.4.1实现技术详解 <BR>WINNT/2000下病毒实时监控的实现主要依赖于NT内核模式驱动编程，拦截IRP，驱动与ring3下客户程序的通信（命名的事件与信号量对象）三项技术。程序的设计思路和大体流程与前面介绍的WIN9X下病毒实时监控非常相似，只是在实现技术由于运行环境的不同将呈现很大的区别。 <BR><BR>WINNT/2000下不再支持VXD，我将在后面剖析的hooksys.sys其实是一种称为NT内核模式设备驱动的驱动程序。这种驱动程序无论从其结构还是工作方式都与VXD有很大不同。比较而言，NT内核模式设备驱动的编写比VXD难度更大：因为它要求编程者熟悉WINNT/2000的整体架构和运行机制，NT/2000是纯32位微内核操作系统，与WIN9X有很大区别；能灵活使用内核数据结构，如驱动程序对象，设备对象，文件对象，IO请求包，执行体进程/线程块，系统服务调度表等。另外编程者在编程时还需注意许多重要事项，如当前系统运行的IO请求级，分页/非分页内存等。 <BR><BR>这里首先介绍几个重要的内核数据结构，它们在NT内核模式设备驱动的编程中经常被用到，包括文件对象，驱动程序对象，设备对象，IO请求包（IRP），IO堆栈单元（IO_STACK_LOCATION）： <BR><BR>文件明显符合NT中的对象标准：它们是两个或两个以上用户态进程的线程可以共享的系统资源；它们可以有名称；它们被基于对象的安全性所保护；并且它们支持同步。对于用户态受保护的子系统，文件对象通常代表一个文件，设备目录，或卷的打开实例；而对于设备和中间型驱动，文件对象通常代表一个设备。文件对象结构中的域大部分是透明的驱动可以访问的域包括： <BR><BR>PDEVICE_OBJECT DeviceObject：指向文件于其上被打开的设备对象的指针。 <BR><BR>UNICODE_STRING FileName：在设备上被打开的文件的名字，如果当由DeviceObject代表的设备被打开时此串长度（FileName.Length）为0。 <BR><BR>驱动程序对象代表可装载的内核模式驱动的映象，当驱动被加载至系统中时，有I/O管理器负责创建。指向驱动程序对象的指针将作为一个输入参数传送到驱动的初始化例程（DriverEntry），再初始化例程（Reinitialize routines）和卸载例程（Unload routine）。驱动程序对象结构中的域大部分是透明的，驱动可以访问的域包括： <BR><BR>PDEVICE_OBJECT DeviceObject：指向驱动创建的设备对象的指针。当在初始化例程中成功调用IoCreateDevice后这个域将被自动更新。当驱动卸载时，它的卸载例程将使用此域和设备对象中NextDevice域调用IoDeleteDevice来清除驱动创建的每个设备对象。 <BR><BR>PDRIVER_INITIALIZE DriverInit：由I/O管理器设置的初始化例程（DriverEntry）入口地址。该例程负责创建驱动程序操作的每个设备的设备对象，需要的话还可以在设备名称和设备对用户态可见名称间创建符号链接。同时它还把驱动程序各例程入口点填入驱动程序对象相应的域中。 <BR><BR>PDRIVER_UNLOAD DriverUnload：驱动程序的卸载例程入口地址。 <BR><BR>PDRIVER_DISPATCH MajorFunction[IRP_MJ_MAXIMUM_FUNCTION+1]：一个或多个驱动程序调度例程入口地址数组。每个驱动必须在此数组中为驱动处理的IRP_MJ_XXX请求集设置至少一个调度入口，这样所有的IRP_MJ_XXX请求都会 被I/O管理器导入同一个调度例程。当然，驱动程序也可以为每个IRP_MJ_XXX请求设置独立的调度入口。 <BR><BR>当然，驱动程序中可能包含的例程将远不止以上列出的。比如启动I/O例程，中断服务例程（ISR），中断服务DPC例程，一个或多个完成例程，取消I/O例程，系统关闭通知例程，错误记录例程。只不过我们将要剖析的hooksys.sys中只用到例程中很少一部分，故其余的不予详细介绍。 <BR><BR>设备对象代表已装载的驱动程序为之处理I/O请求的一个逻辑，虚拟或物理设备。每个NT内核模式驱动程序必须在它的初始化例程中一次或多次调用IoCreateDevice来创建它支持的设备对象。例如tcpip.sys在其DriverEntry中就创建了3个共用此驱动的设备对象：Tcp，Udp，Ip。目前有一种比较流行的称为WDM（Windows Driver Model）的驱动程序，在大多数情况下，其二进制映像可以兼容WIN98和WIN2000(32位版本)。WDM与NT内核模式驱动程序的主要区别在于如何创建设备：在WDM驱动程序中，即插即用（PnP）管理器告知何时向系统中添加一个设备，或者从系统中删除设备。WDM驱动程序有一个特殊的AddDevice例程，PnP管理器为共用该驱动的每个设备实例调用该函数；而NT内核模式驱动程序需要做大量额外的工作，它们必须探测自己的硬件，为硬件创建设备对象(通常在DriverEntry中)，配置并初始化硬件使其正常工作。设备程序对象结构中的域大部分是透明的，驱动可以访问的域包括： <BR><BR>PDRIVER_OBJECT DriverObject：指向代表驱动程序装载映象的驱动程序对象的指针。 <BR><BR>所有I/O都是通过I/O请求包（IRP）驱动的。所谓IRP驱动，是指I/O管理器负责在系统的非分页内存中分配一定的空间，当接受用户发出的命令或由事件引发后，将工作指令按一定的数据结构置于其中并传递到驱动程序的服务例程。换言之，IRP中包含了驱动程序的服务例程所需的信息指令。IRP有两部分组成：固定部分（称为标题）和一个或多个堆栈单元。固定部分信息包括：请求的类型和大小，是同步请求还是异步请求，用于缓冲I/O的指向缓冲区的指针和由于请求的进展而变化的状态信息。 <BR><BR>PMDL MdlAddress：指向一个内存描述符表(MDL)，该表描述了一个与该请求关联的用户模式缓冲区。如果顶级设备对象的Flags域为DO_DIRECT_IO，则I/O管理器为IRP_MJ_READ或IRP_MJ_WRITE请求创建这个MDL。如果一个IRP_MJ_DEVICE_CONTROL请求的控制代码指定METHOD_IN_DIRECT或METHOD_OUT_DIRECT操作方式，则I/O管理器为该请求使用的输出缓冲区创建一个MDL。MDL本身用于描述用户模式虚拟缓冲区，但它同时也含有该缓冲区锁定内存页的物理地址。 <BR><BR>PVOID AssociatedIrp.SystemBuffer：SystemBuffer指针指向一个数据缓冲区，该缓冲区位于内核模式的非分页内存中于IRP_MJ_READ和IRP_MJ_WRITE操作，如果顶级设备指定DO_BUFFERED_IO标志I/O管理器就创建这个数据缓冲区。对于IRP_MJ_DEVICE_CONTROL操作，如果I/O控制功能代码指出需要缓冲区，则I/O管理器就创建这个数据缓冲区。I/O管理器把用户模式程序发送给驱动程序的数据复制到这个缓冲区，这也是创建IRP过程的一部分。这些数据可以是与WriteFile调用有关的数据，或者是DeviceIoControl调用中所谓的输入数据。对于读请求，设备驱动程序把读出的数据填到这个缓冲区，然后I/O管理器再把缓冲区的内容复制到用户模式缓冲区。对于指定了METHOD_BUFFERED的I/O控制操作，驱动程序把所谓的输出数据放到这个缓冲区， 然后I/O管理器再把数据复制到用户模式的输出缓冲区。 <BR><BR>IO_STATUS_BLOCK IoStatus：IoStatus(IO_STATUS_BLOCK)是一个仅包含两个域的结构，驱动程序在最终完成请求时设置这个结构。IoStatus.Status域将收到一个NTSTATUS代码。 <BR><BR>PVOID UserBuffer：对于METHOD_NEITHER方式的IRP_MJ_DEVICE_CONTROL请求，该域包含输出缓冲区的用户模式虚拟地址。该域还用于保存读写请求缓冲区的用户模式虚拟地址，但指定了DO_BUFFERED_IO或DO_DIRECT_IO标志的驱动程序，其读写例程通常不需要访问这个域。当处理一个METHOD_NEITHER控制操作时，驱动程序能用这个地址创建自己的MDL。 <BR><BR>任何内核模式程序在创建一个IRP时，同时还创建了一个与之关联的IO_STACK_LOCATION结构数组：数组中的每个堆栈单元都对应一个将处理该IRP的驱动程序，另外还有一个堆栈单元供IRP的创建者使用。堆栈单元中包含该IRP的类型代码和参数信息以及完成函数的地址。 <BR><BR>UCHAR MajorFunction：该IRP的主功能码。这个代码应该为类似IRP_MJ_READ一样的值，并与驱动程序对象中MajorFunction表的某个派遣函数指针相对应。 <BR><BR>UCHAR MinorFunction：该IRP的副功能码。它进一步指出该IRP属于哪个主功能类。 <BR><BR>PDEVICE_OBJECT DeviceObject：与该堆栈单元对应的设备对象的地址。该域由IoCallDriver函数负责填写。 <BR><BR>PFILE_OBJECT FileObject：内核文件对象的地址，IRP的目标就是这个文件对象。 <BR><BR>下面简要介绍一下WINNT/2000下I/O请求处理流程。先看对单层驱动程序的同步的I/O请求：I/O请求经过子系统DLL子系统DLL调用I/O管理器中相应的服务。I/O管理器以IRP的形式给设备驱动程序发送请求。驱动程序启动I/O操作。在设备完成了操作并且中断CPU时，设备驱动程序服务于中断。最后I/O管理器完成I/O请求。以上六步只是一个非常粗略的描述，其中的中断处理和I/O完成阶段比较复杂。 <BR><BR>当设备完成了I/O操作后，它将发出中断请求服务。设备中断发生时，处理器将控制权交给内核陷阱处理程序，内核陷阱处理程序将在它的中断调度表（IDT）中定位用于设备的ISR。驱动程序的ISR例程获得控制权后，它通常只在设备IRQL上停留获得设备状态所必需的一段时间，然后停止设备中断，接着它排队一个DPC并清除中断退出操作。IRQL降低至Dispatch/DPC级之前，所有中间优先级中断因而可以得到服务。当DPC例程得到控制时，它将启动设备队列中下一个I/O请求，然后完成中断服务。 <BR><BR>当驱动的DPC例程执行完后，在I/O请求可以考虑结束之前还有一些工作要做。如某些情况下，I/O系统必须将存储在系统内存中的数据复制到调用者的虚拟地址空间中，如将操作结果记录在调用者提供的I/O状态块中或执行缓冲I/O的服务将数据返回给调用线程。这样当DPC例程调用I/O管理器完成原始I/O请求后，I/O管理器会为调用线程调用线程排队一个核心态APC。当线程被调度执行时，挂起的APC被交付。它将把数据和返回状态复制到调用者的地址空间，释放代表I/O操作的IRP，并将调用者的文件句柄或调用者提供的事件或I/O完成端口设置为有信号状态。如果调用者用异步I/O函数ReadFileEx和WriteFileEx指定了用户态APC，则此时还需要将用户态APC排队。最后可以考虑完成I/O。在文件或其它对象句柄上等待的线程将被释放。 <BR><BR>基于文件系统设备的I/O请求处理过程与此是基本相同的，主要区别在于增加一个或多个附加的处理层。例如读文件操作，用户应用程序调用子系统库Kernel32.dll中的API函数ReadFile，ReadFile接着调用系统库Ntdll.dll中的NtReadFile，NtReadFile通过一个陷入指令（INT2E）将处理器模式提升至ring0。然后Ntoskrnl.exe中的系统服务调度程序KiSystemService将在系统服务调度表中定位Ntoskrnl.exe中的NtWReadFile并调用之，同时解除中断。此服务例程是I/O管理器的一部分。它首先检查传递给它们的参数以保护系统安全或防止用户模式程序非法存取数据，然后创建一个主功能代码为IRP_MJ_READ的IRP，并将之送到文件系统驱动程序的入口点。以下的工作会由文件系统驱动程序与磁盘驱动程序分层来完成。文件系统驱动程序可以重用一个IRP或是针对单一的I/O请求创建一组并行工作的关联（associated）IRP。执行IRP的磁盘驱动程序最后可能会访问硬件。对于PIO方式的设备，一个IRP_MJ_READ操作将导致直接读取设备的端口或者是设备实现的内存寄存器。尽管运行在内核模式中的驱动程序可以直接与其硬件会话，但它们通常都使用硬件抽象层(HAL)访问硬件：读操作最终会调用Hal.dll中的READ_PORT_UCHAR例程来从某个I/O口读取单字节数据。 <BR><BR>WINNT/2000下设备和驱动程序的有着明显堆栈式层次结构：处于堆栈最底层的设备对象称为物理设备对象，或简称为PDO，与其对应的驱动程序称为总线驱动程序。在设备对象堆栈的中间某处有一个对象称为功能设备对象，或简称FDO，其对应的驱动程序称为功能驱动程序。在FDO的上面和下面还会有一些过滤器设备对象。位于FDO上面的过滤器设备对象称为上层过滤器，其对应的驱动程序称为上层过滤器驱动程序；位于FDO下面(但仍在PDO之上)的过滤器设备对象称为下层过滤器，其对应的驱动程序称为下层过滤器驱动程序。这种栈式结构可以使I/O请求过程更加明了。每个影响到设备的操作都使用IRP。通常IRP先被送到设备堆栈的最上层驱动程序，然后逐渐过滤到下面的驱动程序。每一层驱动程序都可以决定如何处理IRP。有时，驱动程序不做任何事，仅仅是向下层传递该IRP。有时，驱动程序直接处理完该IRP，不再向下传递。还有时，驱动程序既处理了IRP，又把IRP传递下去。这取决于设备以及IRP所携带的内容。 <BR><BR>通过上面的介绍可得知：如果我们想拦截系统的文件操作，就必须拦截I/O管理器发向文件系统驱动程序的IRP。而拦截IRP最简单的方法莫过于创建一个上层过滤器设备对象并将之加入文件系统设备所在的设备堆栈中。具体方法如下：首先通过IoCreateDevice创建自己的设备对象，然后调用IoGetDeviceObjectPointer来得到文件系统设备（Ntfs，Fastfat，Rdr或Mrxsmb，Cdfs）对象的指针，最后通过IoAttachDeviceToDeviceStack将自己的设备放到设备堆栈上成为一个过滤器。 <BR><BR>这是拦截IRP最常用也是最保险的方法，Art Baker的《Windows NT设备驱动程序设计指南》中有详细介绍，但用它实现病毒实时监控却存在两个问题：其一这种方法是将过滤器放到堆栈的最上层，当存在其它上层过滤器时就不能保证过滤器正好在文件系统设备之上；其二由于过滤器设备需要表现的和文件系统设备一样，这样其所有特性都需从文件系统设备中复制。另外文件系统驱动对象中调度例程过滤器驱动必须都支持，这就意味着我们无法使过滤器驱动中的调度例程供自己的ring3级客户程序所专用，因为原本发往文件系统驱动调度例程的IRP现在都会先从过滤器驱动的调度例程中经过。 <BR><BR>所以Hooksys.sys没有使用上述方法。它的方法更简单且更为直接：它先通过ObReferenceObjectByName得到文件系统驱动对象的指针。然后将驱动对象中MajorFunction数组中的打开，关闭，清除，设置文件信息，和写入调度例程入口地址改为Hooksys.sys中相应钩子函数的入口地址来达到拦截IRP的目的。具体操作细节请参看代码剖析一节。 <BR><BR>下面介绍驱动与ring3下客户程序的通信技术。与WIN9X下驱动与ring3下客户程序通信技术相同，NT/2000仍然支持使用DeviceIoControl实现从ring3到ring0的单向通信，但从ring0通过排队APC来唤醒ring3线程的方法却无法使用了。原因是我没有找到一个公开的函数来实现（Walter Oney的书中说存在一个未公开的函数实现从ring0排队APC）。其实不通过APC我们也可以通过命名的事件/信号量对象来实现双向唤醒，而且这可能比APC更为可靠些。 <BR><BR>对象管理器在Windows NT/2000内核中占了极其重要的位置，其一个最主要职能是组织管理系统内核对象。在Windows NT/2000中，内核对象管理器大量引入了C++面向对象的思想，即所有内核对象都封装在对象管理器内部，除对象管理器自己以外，对其他所有想引用内核对象结构成员的子系统都是不透明的，也即都需通过对象管理器访问这些结构。Microsoft极力推荐内核驱动代码遵循这一原则（用户态代码根本不能直接访问这些数据），它提供了一系列以Ob开头的例程供我们使用。 <BR><BR>内核已命名对象存于系统全局命名内核区，与传统的DOS目录和文件组织方式相似，对象管理器也采用树状结构管理这些对象，这样可以快速检索内核对象。当然使用这种树状结构组织内核已命名对象，还有另一个优点，那就是使所有已命名对象组织的十分有条理，如设备对象处于\Device下，而对象类型名称处于\ObjectTypes下等等。再者这样也能达到使用户态进程仅能访问\??与\BaseNamedObjects下的对象，而内核态代码则没有任何限制的目的。至于系统内部如何组织管理这些已命名对象，其实Windows NT/2000内部由内核变量ObpRootDirectoryObject指向的Directory对象代表根目录，使用哈希表(HashTable)来组织管理这些命名内核对象。 <BR><BR>Hooksys.sys中使用命名的信号量来唤醒ring3级线程。具体做法如下：首先在guidll.dll中调用CreateSemaphore创建一个命名信号量Hookopen并设为无信号状态，同时调用CreateThread创建一个线程。线程代码的入口处通过调用WaitForSingleObject在此信号量上等待被ring0钩子函数唤醒查毒。驱动程序这边则在初始化过程中通过未公开的例程ObReferenceObjectByName（\BaseNamedObjects\Hookopen）得到命名信号量对象Hookopen的指针，当它拦截到文件打开请求时调用KeReleaseSemaphore将Hookopen置为有信号状态唤醒ring3级等待检查打开文件的线程。其实guidll.dll共创建了两个命名信号量，还有一个Hookclose用于唤醒ring3级等待检查关闭文件的线程。 <BR><BR>guidll.dll中使用命名的事件来唤醒暂时挂起等待查毒完毕的ring0钩子函数。具体做法如下：Hooksys.sys在其初始化过程中通过ZwCreateEvent函数创建一组命名事件对象（此处必须合理设置安全描述符，否则ring3线程将无法使用事件句柄）并得到其句柄，同时通过ObReferenceObjectByHandle得到句柄引用的事件对象的指针。然后Hooksys.sys将这一组事件句柄和指针对以及事件名保存在备用链表的每个元素中：ring3使用句柄，ring0使用指针。当钩子函数拦截到文件请求时它首先唤醒ring3查毒线程，然后马上调用KeWaitForSingleObject在一个事件\BaseNamedObjects\Hookxxxx上等待查毒的完成。而被唤醒的ring3查毒线程通过OpenEventA函数由事件名字得到其句柄，在结束查毒后发出一个SetEvent调用将事件置为有信号状态从而唤醒ring0挂起的钩子函数。当然，以上讨论仅限于打开文件操作，钩子函数在拦截到其它文件请求时并不调用KeWaitForSingleObject等待查毒的完成，而是唤醒ring3查毒线程后直接返回；相应的ring3查毒线程也就不必在查毒完成后调用SetEvent进行远程唤醒。 <BR><BR>另外在编写NT内核模式驱动程序时还必须注意一些事项。首先是中断请求级（IRQL），这是在进行NT驱动编程时特别值得注意的问题。每个内核例程都要求在一定的IRQL上运行，如果在调用时不能确定当前IRQL在哪个级别，则可调用KeGetCurrentIrql获取当前的IRQL值并进行判断。例如欲获得指向当前进程Eprocess的指针可以考虑先判断当前的IRQL，如大于等于DISPATCH_LEVEL时可调用IoGetCurrentProcess；而当IRQL小于调度/延迟过程调用级别时（DISPATCH_LEVEL/DPC）则可使用PsGetCurrentProcessId和PsLookupProcessByProcessId。其次要注意的问题是分页/非分页内存。由于执行在提升的IRQL级上时系统将不能处理页故障，因为系统在APC级处理页故障，因而这里总的原则是：执行在高于或等于DISPATCH_LEVEL级上的代码绝对不能造成页故障。这也意味着执行在高于或等于DISPATCH_LEVEL级上的代码必须存在于非分页内存中。此外，所有这些代码要访问的数据也必须存在于非分页内存中。最后是同步互斥问题，这对于如病毒实时监控等系统范围共享的驱动程序尤显重要。虽然在Hooksys中没有创建多线程（PsCreateSystemThread），但由于它挂接了系统文件钩子，系统中所有线程的文件请求都会从Hooksys中经过。当一个线程的文件请求被处理过程中Hooksys会去访问一些全局共享的数据，如过滤器，历史记录等，有可能在访问进行到一半时该线程由于某种原因被抢占了，结果是其它线程的文件请求经过时Hooksys访问的共享数据将是错误的。为此驱动程序必须合理使用自旋锁，互斥量，资源等内核同步对象对共享全局数据的所有线程进行同步。 <BR><BR>3.4.2程序结构与流程 <BR>以下的程序结构与流程分析来自一著名反病毒软件的WINNT/2000实时监控NT内核模式设备驱动程序Hooksys.sys： <BR><BR>1.初始化例程（DriverEntry）：调用_GetProcessNameOffset取得进程名在Eprocess中的偏移。初始化备用，打开文件等待操作，关闭文件，历史记录5个双向循环链表及用于链表操作互斥的4把自旋锁和1个快速互斥量。将全局变量_IrqCount（IRP记数）设置为0。创建卸载保护用事件对象。为文件名过滤数组初始化同步用资源变量。在系统全局命名内核区中检索Hookopen和Hookclose两个命名信号量（ _CreateSemaphore）。为备用（_AllocateBuffer）和历史记录（_AllocatHistoryBuf）链表在系统非分页池中分配空间，同时创建一组命名事件对象Hookxxxx并保存至备用链表的每个元素中（_CreateOneEvent）。创建设备，设置驱动例程入口，为设备建立符号连接。创建磁盘驱动器设备对象指针（_QuerySymbolicLink）和文件系统驱动程序对象指针（_HookSys）列表。 <BR><BR>2.打开例程（IRP_MJ_CREATE）：将备用链表用系统非分页内存（首地址保存在_SysBufAddr中）映射到用户空间中（保存在_UserBufAddr）以便从用户态可以直接访问这段内存（_MapMemory）。 <BR><BR>3.设备控制例程（IRP_MJ_DEVICE_CONTROL）：它会从入口IRP当前堆栈单元中取得用户程序利用DeviceIoControl传送进来的IO控制代码（IoControlCode），以此判断用户程序的意图。和Hooksys.sys协同工作的ring3级客户程序guidll.dll会依次向Hooksys.sys发送IO控制请求来完成一系列工作，具体次序和代码含义如下： <BR><BR>83003C2F：将guidll取得的驱动器类型值传给驱动（保存在DriverType变量中），根据此变量值的不同，设置不同的等待（KeWaitForSingleObject）超时值，因为非固定驱动器的读写时间会稍长些。 <BR><BR>83003C0F：保存guidll传送的用户指定的拦截文件的类型，其实这个类型过滤器在查毒模块中已存在，这里再设置显然是为了提高处理效率：它确保不会将非指定类型文件送到ring3级查毒模块，节省了通信的开销。经过解析的各文件类型过滤块指针将保存在_gaFileNameFilterArra数组中，同时更新过滤项个数_gNumOfFilters变量的值。 <BR><BR>83003C13：修改文件系统驱动程序对象调度例程入口，启动拦截文件操作的钩子函数的工作。 <BR><BR>83003C17：恢复文件系统驱动程序原调度例程入口，停止拦截文件操作的钩子函数工作。 <BR><BR>以上列出的IO控制代码的发出是固定，而当钩子函数启动后，还会发出一些随机的控制代码： <BR><BR>83003C07：驱动将打开文件链表的头元素即最先的请求打开的文件删除并插入到等待链表尾部，同时将元素的用户空间地址传送至ring3级等待查杀打开文件的线程中处理。 <BR><BR>83003C0B：驱动将关闭文件链表的头元素即最先的请求关闭的文件删除并插入到备用链表尾部，同时将元素中的文件名串传送至ring3级等待查杀关闭文件的线程中处理 <BR><BR>83003C1F：当查得关闭文件是病毒时，更新历史记录链表。 <BR><BR>下面介绍钩子函数_HookCreateDispatch和guidll中等待查杀打开文件的线程协同工作流程，而关闭，清除，设置文件信息，和写入操作的处理与此大同小异： <BR><BR>当文件请求进入钩子函数_HookCreateDispatch后，它首先从入口IRP中定位当前的堆栈单元并从中取得代表此次请求的文件对象。然后判断当前进程是否为我们自己，若是则必须放过去，因为查毒模块中要频繁的进行文件操作，所以拦截来自ravmon的文件请求将导致严重的系统死锁。接下来利用堆栈单元中的文件对象取得完整的文件路径名并确保文件不是：\PIPE\，\IPC。之后查找历史记录链表以确定该文件是否最近曾被检查并记录过，若在历史记录链表中找到关于该文件的记录并且记录未失效即其时间戳和当前系统时间之差不得大于1F4h，则可直接从记录中读取查毒结果。如历史链表中没有该文件的记录则利用保存的文件类型过滤阵列检查文件是否在被拦截的文件类型之列。至此才进入真正的检查打开文件函数_RAVCheckOpenFile，此函数入口处先从备用，等待或关闭链表头部摘得一空闲元素（_GetFreeEntry）并填充之，如文件路径名域等。接着将空闲元素加入打开文件链表尾部并释放Hookopen信号量唤醒ring3下等待检查打开文件的线程。然后调用KeWaitForSingleObject在空闲元素中保存的一个事件对象上等待ring3查毒的完成。当钩子函数挂起后，ring3查毒线程得到执行：它会向驱动发出一IO控制码为83003C07的请求以取得打开文件链表头元素即保存最先提交而未决的文件请求，驱动会将元素映射到用户空间中的偏移地址直接传给它。接着它调用RsEngine.dll中的fnScanOneFile函数进行查毒并在元素中设置查毒结果位，完毕后再对元素中保存的事件对象调用SetEvent唤醒在此事件上等待的钩子函数。被唤醒的钩子函数检查被ring3查毒代码设置的结果位以此决定该文件请求是被采纳即调用保存的原调度例程还是被取消即调用IofCompleteRequest直接返回，同时增加历史记录。 <BR><BR>以上只是钩子函数与ring3线程流程的一个简单介绍，其中省略了诸如判断固定驱动器，超时等内容，具体细节请参看guidll.dll和hooksys.sys的反汇编代码注释。 <BR><BR>4.关闭例程（IRP_MJ_CLOSE）：停止钩子函数工作，恢复文件系统驱动程序原调度入口（_StopFilter）。解除到用户空间的内存映射。 <BR><BR>5.卸载例程（DriverUnload）：停止钩子函数工作，恢复文件系统驱动程序原调度入口。删除设备和符号连接。删除初始化时创建的一组命名事件对象Hookxxxx，包括解除指针引用，关闭打开的句柄。释放为MDL（_pMdl），备用链表（_SysBufAddr），历史记录链表（_HistoryBuf）和过滤器分配的内存空间。删除为文件名过滤数组访问同步设置的资源变量（_FilterResource）。解除对系统全局命名内核区中Hookopen和Hookclose两个命名信号量的指针引用。 <BR><BR>3.4.3HOOKSYS.SYS逆向工程代码剖析 <BR>3.4.3.1取得当前进程名称代码 <BR>初始化例程中取得进程名在Eprocess中偏移 <BR><BR>00011889 call ds:__imp__IoGetCurrentProcess@0 ；得到当前进程System的Eprocess指针 <BR>&nbsp;0001188F mov edi, eax ；Eprocess基地址 <BR>&nbsp;00011891 xor esi, esi ；初始化偏移为0 <BR>&nbsp;00011893 lea eax, [esi+edi] ；扫描指针 <BR>&nbsp;00011896 push 6 ；进程名长度 <BR>&nbsp;00011898 push eax ；扫描指针 <BR>&nbsp;00011899 push offset $SG8452 ; "System" ；进程名串 <BR>&nbsp;0001189E call ds:__imp__strncmp ；比较扫描指针处是否为进程名 <BR>&nbsp;000118A4 add esp, 0Ch ；恢复堆栈 <BR>&nbsp;000118A7 test eax, eax ；测试比较结果 <BR>&nbsp;000118A9 jz short loc_118B9 ；找到则跳出循环 <BR>&nbsp;000118AB inc esi ；增加偏移量 <BR>&nbsp;000118AC cmp esi, 3000h ；在12K范围中扫描 <BR>&nbsp;000118B2 jb short loc_11893 ；在范围之内则继续比较 <BR>&nbsp;钩子函数开始处取得当前进程名 <BR><BR>&nbsp;00010D1E call ds:__imp__IoGetCurrentProcess@0 ；得到当前进程System的Eprocess指针 <BR>&nbsp;00010D24 mov ecx, _ProcessNameOffset ；取得保存的进程名偏移量 <BR>&nbsp;00010D2A add eax, ecx ；得到指向进程名的指针 <BR>3.4.3.2启动钩子函数工作代码 <BR>&nbsp;000114F4 push 4 ；预先将文件系统驱动对象个数压栈 <BR>&nbsp;000114F6 mov esi, offset FsDriverObjectPtrList ；取得文件系统驱动对象指针列表偏移地址 <BR>&nbsp;000114FB pop edi ；用EDI做记数器，初始值为4 <BR>&nbsp;000114FC mov eax, [esi] ；取得第一个驱动对象的指针 <BR>&nbsp;000114FE test eax, eax ；测试是否合法 <BR>&nbsp;00011500 jz short loc_11548 ；不合法则继续下一个修改驱动对象 <BR>&nbsp;00011502 mov edx, offset _HookCreateDispatch@8 ；取得自己的钩子函数的偏移地址 <BR>&nbsp;00011507 lea ecx, [eax+38h] ；取得对象中打开调度例程（IRP_MJ_CREATE）偏移 <BR>&nbsp;0001150A call @InterlockedExchange@8 ；原子操作，替换驱动对象中打开调度例程的入口为钩子函数的偏移地址 <BR>&nbsp;0001150F mov [esi-10h], eax ；保存原打开调度例程的入口 <BR>&nbsp;&nbsp;3.4.3.3映射系统内存至用户空间代码 <BR>&nbsp;0001068E push esi ；系统内存大小 <BR>&nbsp;0001068F push _SysBufAddr ；系统内存基地址 <BR>&nbsp;00010695 call ds:__imp__MmSizeOfMdl@8 ；计算描述系统内存所需内存描述符表（MDL）大小 <BR>&nbsp;0001069B push 206B6444h ；调试用标签 <BR>&nbsp;000106A0 push eax ；MDL大小 <BR>&nbsp;000106A1 push 0 ；在系统非分页内存池中分配 <BR>&nbsp;000106A3 call ds:__imp__ExAllocatePoolWithTag@12 ；为MDL分配内存 <BR>&nbsp;000106A9 push esi ；系统内存大小 <BR>&nbsp;000106AA mov _pMdl, eax ；保存MDL指针 <BR>&nbsp;000106AF push _SysBufAddr ；系统内存基地址 <BR>&nbsp;000106B5 push eax ；MDL指针 <BR>&nbsp;000106B6 call ds:__imp__MmCreateMdl@12 ；初始化MDL <BR>&nbsp;000106BC push eax ；MDL指针 <BR>&nbsp;000106BD mov _pMdl, eax ；保存MDL指针 <BR>&nbsp;000106C2 call ds:__imp__MmBuildMdlForNonPagedPool@4 <BR>&nbsp;；填写MDL后物理页面数组 <BR>&nbsp;000106C8 push 1 ；访问模式 <BR>&nbsp;000106CA push _pMdl ；MDL指针 <BR>&nbsp;000106D0 call ds:__imp__MmMapLockedPages@8 ；映射MDL描述的物理内存页面 <BR>&nbsp;...... <BR>&nbsp;000106DB mov _UserBufAddr, eax ；保存映射后的用户空间地址 <BR>&nbsp;_UserBufAddr 和_SysBufAddr映射到相同的物理地址。 <BR>&nbsp;&nbsp;&nbsp;结 论 <BR>至此本论文已告撰写完毕。本论文在介绍了诸多目前较为流行的病毒技术后着重讨论了当今两大反病毒技术：虚拟机和实时监控。 <BR><BR>我参与开发的w32encode是一个功能完备且结构复杂的商用虚拟机，它属于32位自含指令式虚拟机，与其它搜索清除模块合并在一起组成了一个功能强大的反病毒引擎。虽然目前它还不能支持所有的386+指令集，但从其查杀毒的运行效果来看结果还是非常令人满意的：普通的加密变形病毒可以在虚拟机默认的处理常式中查杀；特殊的，如hps,marburg等复杂加密变形病毒则可通过向虚拟机中添加少量的病毒特定处理代码来完成查杀。由于反虚拟执行技术的出现，所以今后对此虚拟机源代码的更新--向其中添加更多的对操作系统机制的支持--或者重写--成为真正的虚拟机器而非虚拟CPU--将是不可避免的。 <BR><BR>同时，我通过逆向工程某反病毒软件的实时监控程序，在系统原理和驱动编程上又有了新的认识，并且它大大增强了我的反汇编功力。今后我会将注释的反汇编代码编写成C语言版源代码，并把病毒扫描模块移到系统核心态下工作，从而使整个工程变为“主动的与内核无缝连接”式监控。 <BR><BR>总之当今反病毒技术的主流发展方向是屏弃传统的特征码扫描，创建智能的监控与行为分析引擎，这就必然要求更加先进的虚拟机和实时监控技术。 <BR><BR>致 谢 <BR>在这次毕业设计中，我首先特别要感谢的是我的指导教师赵博士，是他在百忙之中对我耐心的辅导才使这次毕业设计顺利完成。 <BR><BR>其次，对我的联系教师邓老师表示我的最真诚的感谢。虽然我和邓老师接触的时间不是很长，但她的热心诚恳和认真负责给我留下了深刻的印象。 <BR><BR>最后，我还要向北京XX电脑技术开发责任有限公司的几名同事表示感谢。他们在技术上给予了我很大的支持，并且正是他们提供了病毒样本才使得本论文中相关部分得以完成。 <BR><BR>主要参考文献 <BR>David A. Solomon, Mark Russinovich 《Inside Microsoft Windows 2000》September 2000 <BR>David A. Solomon 《Inside Windows NT》 May 1998 <BR>Prasad Dabak，Sandeep Phadke，Milind Borate 《Undocumented Windows NT》October 1999 <BR>Matt Pietrek 《Windows 95 System Programming Secrets》 March 1996 <BR>Walter Oney 《System Programming for Windows 95》 March 1996 <BR>Walter Oney 《Programming the Windows Driver Model》 1999 <BR>陆麟 《WINDOWS9X文件读写Internal》2001</font>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <tr align="right"> 
+            <td colspan="2"> 
+              
+            <p>&nbsp;</p>
+              <table width=565 border=0 cellspacing=0 cellpadding=0>
+              <tr>
+                <td align=right><font id="zoom" class="f14">【<a href=http://www.mlyj.net/forum/ target="_blank">军团论坛</a>】【<a href="javascript:doZoom(16)">大</a> <a href="javascript:doZoom(14)">中</a> <a href="javascript:doZoom(12)">小</a>】【<a href="javascript:void(0);" onclick="window.external.AddFavorite(location.href, document.title);">收藏</a>】【<a href="javascript:window.close()">关闭</a>】【<a href="#">顶部</a>】来源：<a href=http://www.juntuan.org/index.asp target=_blank>www.xfocus.com</font></a>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+              </tr>
+            </table>
+            <br>
+          </td>
+			</tr>
+			<tr>
+            <td colspan="2"> 
+              &nbsp;·上一条：<a class='MainContentS' href='shownews.asp?NewsID=714' title='' target='_blank'>瑞星杀毒软件2003版 V15.60</a>&nbsp;<font Class=TitleMore>(11-4)</font><br>		
+              &nbsp;·下一条：<a class='MainContentS' href='shownews.asp?NewsID=716' title='' target='_blank'>黑客离我远一点 我的电脑你别Ping</a>&nbsp;<font Class=TitleMore>(11-4)</font>
+            </td>			
+          </tr>
+          <tr> 
+            <td colspan="2"> </td>
+          </tr>
+          <tr> 
+            <td valign="top"> 
+              <table border='0' cellspacing='1' cellpadding='0' width='100%' align='center' bgcolor='FFFFFF'><tr><TD background="images/hline.gif" HEIGHT="1"></TD></tr><tr><td width='100%' bgcolor='FFFFFF' height='18' Class=maintitle>&nbsp;相关专题：<a Class=maintitle href='Special.asp?SpecialName=无' target=_self>无</a></td></tr><tr><TD background="images/hline.gif" HEIGHT="1"></TD></tr><tr><td bgcolor='FFFFFF'><table width='100%' border='0' cellspacing='5' cellpadding='0'><tr height=100><td width='100%' valign=top>&nbsp;尚无信息</td></tr></table></td></tr></table>
+            </td>
+            <td valign="top"> 
+              <table border='0' cellspacing='1' cellpadding='0' width='100%' align='center' bgcolor='FFFFFF'><tr><TD background="images/hline.gif" HEIGHT="1"></TD></tr><tr><td width='100%' bgcolor='FFFFFF' height='18' class=maintitle>&nbsp;相关信息：反病毒引擎设计</td></tr><tr><TD background="images/hline.gif" HEIGHT="1"></TD></tr><tr><td bgcolor='FFFFFF'><table width='100%' border='0' cellspacing='5' cellpadding='0'><tr height=100><td valign=top>&nbsp;尚无信息</td></tr></table></td></tr></table>
+            </td>
+          </tr>
+        </table>
+<table width="98%" border="0" cellspacing="0" cellpadding="0" align="center">
+<tr>
+<td>
+
+</td>
+</tr>
+<tr>
+<td>
+
+</td>
+</tr>
+</table>
+</td>
+<TD background="images/lline.gif" WIDTH="1"></TD>
+<td width="160" align="right" valign="top" bgcolor="FFFFFF">
+	
+<table border="0" cellspacing="0" cellpadding="0" width="100%" align="center" bgcolor="333333">
+  <tr> 
+    <td width="33%" height="18" align="center" background="" bgcolor="7B91A9" class=RightTitle>&nbsp;</td>
+    <td width="33%" align="center" bgcolor="7B91A9" class=RightTitle>推荐文章</td>
+    <td width="33%" align="center" background="" bgcolor="7B91A9" class=RightTitle>&nbsp;</td>
+  </tr>
+  <tr><TD BGCOLOR=333333 HEIGHT='1'></TD></tr>
+  <tr> 
+    <td height="18" colspan="3" bgcolor="FFFFFF"> 
+      <table width="95%" border="0" cellspacing="0" cellpadding="0" style="TABLE-LAYOUT: fixed" align="center">
+        
+        <tr> 
+          <td class=RightContent valign=top width="8">-</td>
+          <td class=RightContent style="WORD-WRAP: break-word"> <a class='RightContent' href='shownews.asp?NewsID=420' title='如何破解PCAnyWhere的密码' target='_blank'>如何破解PCAnyWhere的</a><br> </td>
+        </tr>
+        
+        <tr> 
+          <td class=RightContent valign=top width="8">-</td>
+          <td class=RightContent style="WORD-WRAP: break-word"> <a class='RightContent' href='shownews.asp?NewsID=405' title='' target='_blank'>破解电子邮件</a><br> </td>
+        </tr>
+        
+        <tr> 
+          <td class=RightContent valign=top width="8">-</td>
+          <td class=RightContent style="WORD-WRAP: break-word"> <a class='RightContent' href='shownews.asp?NewsID=307' title='利用dvbbs短消息漏洞入侵服务器的动画' target='_blank'>利用dvbbs短消息漏洞入</a><br> </td>
+        </tr>
+        
+        <tr> 
+          <td class=RightContent valign=top width="8">-</td>
+          <td class=RightContent style="WORD-WRAP: break-word"> <a class='RightContent' href='shownews.asp?NewsID=277' title='得到浪客联盟的文章管理的密码' target='_blank'>得到浪客联盟的文章管</a><br> </td>
+        </tr>
+        
+        <tr> 
+          <td class=RightContent valign=top width="8">-</td>
+          <td class=RightContent style="WORD-WRAP: break-word"> <a class='RightContent' href='shownews.asp?NewsID=259' title='' target='_blank'>入侵LINUX实例</a><br> </td>
+        </tr>
+        
+        <tr> 
+          <td class=RightContent valign=top width="8">-</td>
+          <td class=RightContent style="WORD-WRAP: break-word"> <a class='RightContent' href='shownews.asp?NewsID=255' title='看看SQL是怎么一天内两次改换黑白的首页更新的' target='_blank'>看看SQL是怎么一天内两</a><br> </td>
+        </tr>
+        
+        <tr> 
+          <td class=RightContent valign=top width="8">-</td>
+          <td class=RightContent style="WORD-WRAP: break-word"> <a class='RightContent' href='shownews.asp?NewsID=243' title='' target='_blank'>Foxmail口令解密教程</a><br> </td>
+        </tr>
+        
+        <tr> 
+          <td class=RightContent valign=top width="8">-</td>
+          <td class=RightContent style="WORD-WRAP: break-word"> <a class='RightContent' href='shownews.asp?NewsID=236' title='' target='_blank'>OICQ聊天记录破解</a><br> </td>
+        </tr>
+        
+        <tr> 
+          <td class=RightContent valign=top width="8">-</td>
+          <td class=RightContent style="WORD-WRAP: break-word"> <a class='RightContent' href='shownews.asp?NewsID=231' title='' target='_blank'>IP和MAC捆绑的破解</a><br> </td>
+        </tr>
+        
+        <tr> 
+          <td class=RightContent valign=top width="8">-</td>
+          <td class=RightContent style="WORD-WRAP: break-word"> <a class='RightContent' href='shownews.asp?NewsID=230' title='' target='_blank'>收费网站破解攻略</a><br> </td>
+        </tr>
+        
+        <tr> 
+          <td class=RightContent valign=top width="8">-</td>
+          <td class=RightContent style="WORD-WRAP: break-word"> <a class='RightContent' href='shownews.asp?NewsID=218' title='' target='_blank'>教你一步一步的入侵</a><br> </td>
+        </tr>
+        
+        <tr> 
+          <td class=RightContent valign=top width="8">-</td>
+          <td class=RightContent style="WORD-WRAP: break-word"> <a class='RightContent' href='shownews.asp?NewsID=215' title='' target='_blank'>超好的端口对照表</a><br> </td>
+        </tr>
+        
+        <tr> 
+          <td class=RightContent valign=top width="8">-</td>
+          <td class=RightContent style="WORD-WRAP: break-word"> <a class='RightContent' href='shownews.asp?NewsID=118' title='' target='_blank'>有趣的mysql入侵记录</a><br> </td>
+        </tr>
+        
+        <tr> 
+          <td class=RightContent valign=top width="8">-</td>
+          <td class=RightContent style="WORD-WRAP: break-word"> <a class='RightContent' href='shownews.asp?NewsID=95' title='浅谈139/445与入侵2K主机' target='_blank'>浅谈139/445与入侵2K主</a><br> </td>
+        </tr>
+        
+      </table></td>
+  </tr>
+  <tr><TD BGCOLOR=333333 HEIGHT='1'></TD></tr>
+</table>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="333333" height="100%">
+<tr>
+<td bgcolor="FFFFFF" height="100%">&nbsp;</td>
+</tr>
+</table>
+<TD BGCOLOR="#000000" WIDTH="1"></TD><TD BGCOLOR='7B91A9' WIDTH="7"></TD><TD BGCOLOR="#7B91A9" WIDTH="1"></TD>
+</tr>
+	
+</table>
+
+<table width=780 border=0 cellspacing=0 cellpadding=0>
+<tr>
+<TD BGCOLOR="7B91A9" WIDTH="1"></TD>
+<TD BGCOLOR='7B91A9' WIDTH="7">
+    <td style="BORDER-TOP: #000000 1px double" bgcolor="7B91A9" height="24" align="center" class=top4>
+      <script src=js/nav.js></script>
+    </td>
+	
+<TD BGCOLOR='7B91A9' WIDTH="7"></TD>
+<TD BGCOLOR="7B91A9" WIDTH="1"></TD>			
+</tr>
+</table>
+<table width=780 border=0 cellspacing=0 cellpadding=0>
+<tr>
+<TD BGCOLOR="7B91A9" WIDTH="1"></TD>	
+<TD BGCOLOR='7B91A9' WIDTH="7">
+    <td style="BORDER-TOP: #000000 1px double" bgcolor="7B91A9" height="24" align="center" class=top4> 
+      <a class=top4 href="#" onClick="this.style.behavior='url(#default#homepage)';this.setHomePage('http://www.juntuan.org/index.asp');">设为首页</a> 
+      | <a class=top4 title=欢迎光临中国第八军团
+onClick="window.external.addFavorite('http://www.juntuan.org/index.asp','欢迎光临中国第八军团')"
+href="http://www.juntuan.org/index.asp"><a href="#top" onClick="window.external.addFavorite('http://www.juntuan.org','第八军团')" title=第八军团  class=date><font color="#FFFFFF">加入收藏</font></a> 
+      | <a class=top4 href="mailto:webmaster@juntuan.net">联系管理员</a>|<script>var tc_user="gzjuntuan";var tc_class="2";</script><script src="http://stat.t2t2.com/stat.js"></script> </td>
+<TD BGCOLOR='7B91A9' WIDTH="7"></TD><TD BGCOLOR="7B91A9" WIDTH="1"></TD>	
+</tr>
+</table>
+
+<table width="780" border="0" cellpadding="0" cellspacing="0" background="" bgcolor="C7C6C6">
+
+<tr>
+<td width="100%" height="6"></td>
+</tr>
+<tr>
+<td width="100%" align=center class=bottom>第八军团 | 版权所有 <font face=Verdana, Arial, Helvetica, sans-serif>Copyright &copy; 2003-2004 <b><font color=#000000>Www.Juntuan.Org</font></b>, All Rights Reserved .</font></td>
+</tr>
+</table>
+</div></body>
+</html>
