@@ -1,0 +1,74 @@
+<html>
+	<head>
+		<title>AppBar</title>
+		<meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5">
+		<style>
+			.ButtonMouseOut
+			{
+				background-color: #ffc731;
+				border:1px outset;
+			}
+			.ButtonMouseOver
+			{
+				background-color: #ffffde;
+				border:1px outset;
+			}
+		</style>
+	</head>
+	<body background="bg.jpg" scroll="no" topmargin="0" leftmargin="0" rightmargin="0" bottommargin="0" style="BACKGROUND-COLOR: #cccccc">
+		<table id="cont" style="TABLE-LAYOUT:fixed; DISPLAY:none" width="100%" height="100%">
+			<tr>
+				<td width="300">
+					<input type="button" value="关闭" class="ButtonMouseOut" onmouseout="this.className='ButtonMouseOut'" onmouseover="this.className='ButtonMouseOver'" onclick="closeWin()">
+					<input type="button" value="防总内网" class="ButtonMouseOut" onmouseout="this.className='ButtonMouseOut'" onmouseover="this.className='ButtonMouseOver'" onclick="openOA()">
+					<input type="button" value="防汛抗旱会商系统" class="ButtonMouseOut" onmouseout="this.className='ButtonMouseOut'" onmouseover="this.className='ButtonMouseOver'" onclick="openHiss()">
+				</td>
+				<td>
+					<iframe name="frameContent" frameborder="0" style="WIDTH:100%;HEIGHT:100%" scrolling="no">
+					</iframe><iframe style="DISPLAY:none" src="http://lan/ShareDB2/OnOff.htm"></iframe>
+				</td>
+			</tr>
+		</table>
+		<table id="flashImg" style="FONT-SIZE:64px;BACKGROUND-IMAGE:url(title.bmp);WIDTH:100%;HEIGHT:100%">
+			<tr>
+				<td valign="center" align="middle">国家防办应用系统集成
+				</td>
+			</tr>
+		</table>
+		<script>	
+		function window.onload()
+		{
+			window.setTimeout(flashWin,1000);
+		}
+		function document.onmouseover()
+		{
+			try
+			{
+				window.external.Application.Show();
+			}
+			catch(eee)
+			{}
+		}
+		function flashWin()
+		{
+			window.external.Application.Start(1);	
+			cont.style.display="";
+			flashImg.style.display="none";
+		}
+		function closeWin()
+		{			
+			if(!confirm("如果您退出此程序将无法接收到消息与活动通知！确实要退出吗？"))return;
+			window.external.Application.SetEnableClose(1);
+			window.external.Close();			
+		}
+		function openOA()
+		{
+			alert("还没有挂接这个系统！");
+		}		
+		function openHiss()
+		{
+			window.open("http://lan/hissquery/version/enter.aspx");
+		}
+		</script>
+	</body>
+</html>

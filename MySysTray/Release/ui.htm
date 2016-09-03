@@ -1,0 +1,30 @@
+<html>
+<head>
+<META HTTP-EQUIV="Content-Type" content="text/html; charset=gb2312">
+</head>
+<body>
+	<script>
+		var menu;
+		window.external.Application.InitSystemTray();
+		alert(window.external.Setup.GetFileVersion("F:\\lan\\drafttest\\MyShell\\Release\\myshell.exe"));
+		function window.onload()
+		{			
+			menu=window.external.Menu.CreatePopupMenu();
+			window.external.Menu.InsertMenuItem(menu,0,1,"About",true,false,true);
+			window.external.Menu.InsertMenuItem(menu,0,2,"Exit",true,false,true);
+		}
+		function OnTrayPopup(x,y)
+		{
+			var r=window.external.Menu.TrackPopupMenu(menu,x-window.screenLeft,y-window.screenTop,window.external.GetMessageHwnd());
+			if(r==1)
+			{
+				alert("Jianghe Richway");
+			}
+			else if(r==2)
+			{
+				window.close();
+			}
+		}
+	</script>
+</body>
+</html>

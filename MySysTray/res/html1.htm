@@ -1,0 +1,57 @@
+<html>
+	<head>
+		<title>水雨情遥测系统数据提取程序</title>	
+	</head>
+	<body>
+		<table id="addrTb" style="display:none" width="80%" height="100%" align="center">
+			<tr>
+				<td>
+				</td>
+				<td>
+				</td>
+			</tr>
+			<tr height="24">
+				<td width="90px">服务地址:
+				</td>
+				<td>
+					<input id="urlAddr" style="width:100%;border-style:groove" type=text value="" NAME="urlAddr">
+				</td>
+			</tr>
+			<tr height="24">
+				<td width="90px">
+				</td>
+				<td>
+					<input type=button value="启动系统" onclick="clickOK()" ID="Button1" NAME="Button1">
+				</td>
+			</tr>
+			<tr>
+				<td>
+				</td>
+				<td>
+				</td>
+			</tr>
+		</table>
+		<script>
+			function window.onload()
+			{
+				window.external.Application.InitSystemTray();
+				var ui=window.external.Setup.RegRead("HKCU\\SOFTWARE\\Richway Software\\DataExtractSystem\\MainPage",0);
+				if(!ui)
+				{
+					addrTb.style.display="";
+				}
+				else
+					goUrl(ui);
+			}
+			function clickOK()
+			{
+				window.external.Setup.RegWrite("HKCU\\SOFTWARE\\Richway Software\\DataExtractSystem\\MainPage",urlAddr.value,0);
+				goUrl(urlAddr.value);
+			}
+			function goUrl(url)
+			{
+				window.external.GetWebBrowser().Navigate(url,null,"_self",null,null);
+			}
+		</script>
+	</body>
+</html>

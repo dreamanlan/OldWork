@@ -1,0 +1,133 @@
+<html>
+	<head>
+		<meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5">
+		<title>测试</title>
+		<link rel="stylesheet" href="TreeTable.css" type="text/css">
+		<script language="javascript" src="TreeTableU.js"></script>
+		<style>
+			.Search
+			{
+				background-color:#667788;
+			}
+			.Clear
+			{
+			}
+		</style>
+	</head>
+	<body style="BACKGROUND-COLOR: honeydew" scroll="no" topmargin="0" leftmargin="0" rightmargin="0" bottommargin="0">
+		<table style="WIDTH: 100%;BORDER-COLLAPSE: collapse;HEIGHT: 100%" border="1" bordercolor="blue">
+			<tr>
+				<td id="leftText" style="display:;" width="200px">
+					<textarea id="ta1" style="width:100%;height:100%" wrap="off"></textarea>
+				</td>
+				<td valign="top">
+					<div id="resultArea" style="width:400px;height:280px;overflow:scroll;">
+						<table id="ta2" style="BORDER-COLLAPSE: collapse;width:100%;" cellpadding="0" cellspacing="0" border="2">
+						</table>
+					</div>
+				</td>
+			</tr>
+			<tr height="16px">
+				<td colspan="2">
+					<input type="button" value="hide left" onclick="showHide(this);"> <input type="button" value="UnDecorate" onclick="undecorate();">
+					<input id="searchText" type="text" value=""> <input type="button" value="search" onclick="search();">
+				</td>
+			</tr>
+			<tr height="16px">
+				<td colspan="2">
+					<span id="statusBar" style="height:16px;display:"></span>
+				</td>
+			</tr>
+		</table>
+		<script>
+		var searchResult=new Array();
+		function showHide(obj)
+		{
+			if(obj.value=="hide left")
+			{
+				leftText.style.display="none";
+				obj.value="show left";				
+			}
+			else
+			{
+				leftText.style.display="";
+				obj.value="hide left";
+			}
+			window.external.UiCharge.OnSize();
+		}
+		function undecorate()
+		{
+			while(ta2.rows.length>0)
+				ta2.deleteRow();
+			var tb=new Table(ta2,true);
+			var s=ta1.value.split("\r\n");
+			var d;			
+			var i=0;
+			convert();
+			function convert()
+			{
+				window.status="转换第"+(i+1)+"个函数...";
+				if(i<s.length)
+				{
+					d=window.external.Model.UnDecorateName(s[i]);
+					var row=tb.appendRow();
+					tb.setText(row.rowIndex,-1,s[i]);
+					tb.setText(row.rowIndex,-1,d);
+					i++;
+					window.setTimeout(convert,10);
+				}
+				else
+					window.status="共有"+s.length+"个函数！";
+			}			
+		}
+		function search()
+		{		
+			if(searchResult.length>0)
+			{
+				for(var i=0;i<searchResult.length;i++)
+				{
+					searchResult.className="Clear";
+				}
+				searchResult.splice(0,searchResult.length);
+			}
+			var str=searchText.value;
+			for(var i=0;i<ta2.rows.length;i++)
+				if(ta2.rows(i).cells(0).innerText.indexOf(str)>=0 || ta2.rows(i).cells(0).innerText.indexOf(str)>=0)
+				{
+					ta2.rows(i).className="Search";
+					searchResult.push(ta2.rows(i));					
+				}
+		}
+		var testnum=0;
+		init();
+		function init()
+		{
+			window.external.UiCharge=new UiCharge();	
+			window.external.MoveBy(0,0,1,0);
+		}
+		//UI服务模型
+		function UiCharge()
+		{
+			this.OnSize=function()
+			{
+				if(leftText.style.display=="none")
+					resultArea.style.width=document.body.clientWidth;
+				else
+					resultArea.style.width=document.body.clientWidth-200;
+				resultArea.style.height=document.body.clientHeight-50;
+			}
+			this.OnStatusBar=function(v)
+			{
+				if(v)
+					statusBar.style.display="";
+				else
+					statusBar.style.display="none";	
+			}			
+			this.OnStatusTextChange=function(t)
+			{
+				statusBar.innerText=t;
+			}
+		}
+		</script>
+	</body>
+</html>

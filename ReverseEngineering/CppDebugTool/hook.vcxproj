@@ -131,7 +131,7 @@
     <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Unicode Release MinSize|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Unicode Release MinSize|Win32'" />
     <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Unicode Release MinSize|Win32'" />
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release MinDependency|Win32'">E:\WTL\include;$(IncludePath)</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release MinDependency|Win32'">$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release MinSize|Win32'">
     <CustomBuildStep>
@@ -384,7 +384,7 @@ echo Warning : Cannot register Unicode DLL on Windows 95
       <ProgramDataBaseFileName>.\ReleaseMinDependency/</ProgramDataBaseFileName>
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalIncludeDirectories>E:\work\OpenSource\OldWork\MyInclude;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\work\OpenSource\OldWork\WTL\include;E:\work\OpenSource\OldWork\MyInclude;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -392,7 +392,6 @@ echo Warning : Cannot register Unicode DLL on Windows 95
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>odbc32.lib;odbccp32.lib;winmm.lib;shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>.\ReleaseMinDependency/debug.dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <ModuleDefinitionFile>.\hook.def</ModuleDefinitionFile>
       <ProgramDatabaseFile>.\ReleaseMinDependency/hook.pdb</ProgramDatabaseFile>
