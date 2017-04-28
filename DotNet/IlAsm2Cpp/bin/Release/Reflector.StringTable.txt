@@ -1,0 +1,7 @@
+ApplicationName=.NET Reflector
+Accept=OK
+Cancel=Cancel
+Homepage=http://www.aisto.com/roeder/dotnet
+Email=reflector@aisto.com
+AssemblyFilter=Assembly files (*.exe,*.dll,*.mcl)|*.dll;*.exe;*.mcl|All files (*.*)|*.*
+AllFilesFilter=All files (*.*)|*.*
